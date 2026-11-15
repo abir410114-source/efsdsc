@@ -1561,16 +1561,19 @@ if(mcq.length)mcq.forEach(([s,qs],si)=>{if(!cont)no=0;qs.forEach((q,k)=>{no++;ke
 let h=(si==0&&k==0?'<div class="ust">MCQ অংশ</div>':'')+(k==0?`<div class="usn">${s}</div>`:'')+mcqHtml(q,no);units.push({h,col:2})})});
 if(wr.length)wr.forEach(([s,bs],si)=>bs.forEach((b,k)=>{units.push({h:(si==0&&k==0?'<div class="ust" style="margin-top:0">লিখিত অংশ</div>':'')+(k==0?`<div class="usn" style="text-align:left">${s}</div>`:'')+wHtml(b),col:1,newPage:si==0&&k==0})}));
 let pn=0,page=null,body=null;
-const mk=(first,col)=>{page=document.createElement('div');page.className='upg';page.innerHTML=(first?header(set):'')+'<div class="ub'+(col==1?' one':'')+'"></div><div class="upn">'+bn(++pn)+'</div>';out.appendChild(page);body=page.querySelector('.ub');body.col=col;page.style.fontSize=(+gv('ua_fs')||13.5)+'px';page.style.lineHeight=(+gv('ua_ln')||1.35);if(FFM[gv('ua_ff')])page.style.fontFamily=FFM[gv('ua_ff')];if(col!=1){body.style.columnCount=+gv('ua_col')||2;body.style.columnGap=((gv('ua_cg')===''?9:+gv('ua_cg')))+'mm'}const used=page.querySelector('.uh')?page.querySelector('.uh').offsetHeight:0;
-const cs=getComputedStyle(page),inner=page.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);body.style.height=(inner-used-(first?22:0)-30)+'px'};
-const ov=()=>body.scrollWidth>body.clientWidth+2||body.scrollHeight>body.clientHeight+2;
+const mk=(first,col)=>{page=document.createElement('div');page.className='upg';page.innerHTML=(first?header(set):'')+'<div class="ub'+(col==1?' one':'')+'"></div><div class="upn">'+bn(++pn)+'</div>';out.appendChild(page);body=page.querySelector('.ub');body.col=col;page.style.fontSize=(+gv('ua_fs')||13.5)+'px';page.style.lineHeight=(+gv('ua_ln')||1.35);if(FFM[gv('ua_ff')])page.style.fontFamily=FFM[gv('ua_ff')];
+const nc=col==1?1:(+gv('ua_col')||2),gap=(gv('ua_cg')===''?9:+gv('ua_cg'));body.style.columns='auto';body.style.display='flex';body.style.gap=gap+'mm';body.style.overflow='hidden';body.innerHTML='';body.cols=[];body.ci=0;
+for(let i=0;i<nc;i++){const c=document.createElement('div');c.className='uc';c.style.cssText='flex:1 1 0;min-width:0;height:100%;overflow:hidden';body.appendChild(c);body.cols.push(c)}
+const used=page.querySelector('.uh')?page.querySelector('.uh').offsetHeight:0;
+const cs=getComputedStyle(page),inner=page.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);body.style.height=Math.max(100,inner-used-(first?14:0)-28)+'px'};
+const ovc=c=>c.scrollHeight>c.clientHeight+1;
 let first=true;units.forEach(u=>{if(!page||(u.newPage)||body.col!=u.col){mk(first,u.col);first=false}
-const d=document.createElement('div');d.className='u';d.innerHTML=u.h;body.appendChild(d);
-if(ov()&&body.children.length>1){body.removeChild(d);mk(false,u.col);body.appendChild(d)}});
+const d=document.createElement('div');d.className='u';d.innerHTML=u.h;
+for(let guard=0;guard<500;guard++){const c=body.cols[body.ci];c.appendChild(d);if(!ovc(c)||c.children.length==1)break;c.removeChild(d);if(body.ci+1<body.cols.length)body.ci++;else{mk(false,u.col)}}});
 if(!page){mk(true,2);body.innerHTML='<p>কোনো প্রশ্ন দেওয়া হয়নি।</p>'}
 return keyLines}
 let KEYS={};
-async function gen(sets){await mathReady();let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
+async function gen(sets){await mathReady();try{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,3000))])}catch(_){}let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
 const w=out.parentNode;sets.forEach(s=>{KEYS[s]=build(s,out)});
 let pg=$('#pg');if(pg)pg.textContent='@page{size:A4;margin:0}';out.scrollIntoView({behavior:'smooth'});showKey()}
 function showKey(){const ks=Object.keys(KEYS);$('#ua_keyout').textContent=ks.length?ks.map(k=>'সেট-'+bn(k)+': '+KEYS[k].map(x=>bn(x)).join('  ')).join('\n'):''}
