@@ -311,7 +311,7 @@ table.rt{width:100%;border-collapse:collapse;font-size:.92em}table.rt th,table.r
 .upn{position:absolute;bottom:6mm;left:0;right:0;text-align:center;font-weight:700}
 .ust{border:1.5px solid #000;padding:1px 16px;font-weight:700;display:block;width:max-content;margin:2px auto 8px}
 .usn{text-align:center;font-weight:700;font-size:1.1em;margin:4px 0 5px}
-.uq .op{display:flex;flex-wrap:wrap;margin-left:1.3em}.uq .op span{padding-right:10px}.uq .op.c4 span{flex:0 0 25%;box-sizing:border-box;padding-right:4px}.uq .op.c2 span{flex:0 0 50%;box-sizing:border-box}.uq .op.c1 span{flex:0 0 100%}
+.upg mjx-container,#ua_pv mjx-container{margin:0!important;color:#000}.upg mjx-container[display="true"],#ua_pv mjx-container[display="true"]{display:block;margin:.25em 0!important;text-align:center}.upg mjx-container svg,#ua_pv mjx-container svg{display:inline-block;vertical-align:middle;max-width:100%}.uq .op{display:flex;flex-wrap:wrap;margin-left:1.3em}.uq .op span{padding-right:10px}.uq .op.c4 span{flex:0 0 25%;box-sizing:border-box;padding-right:4px}.uq .op.c2 span{flex:0 0 50%;box-sizing:border-box}.uq .op.c1 span{flex:0 0 100%}
 .uw{display:flex;gap:10px;align-items:flex-start}.uw .t{flex:1;white-space:pre-wrap}.uw .m{min-width:2.2em;text-align:right;font-weight:700}
 </style>
 <div class="utabs"><button type="button" class="on" data-ot="1">১. প্রশ্নপত্র তৈরি</button><button type="button" data-ot="2">২. OMR স্ক্যানার</button></div>
@@ -329,6 +329,9 @@ table.rt{width:100%;border-collapse:collapse;font-size:.92em}table.rt th,table.r
 </div><div class="bar"><button type="button" class="p" id="ua_go">প্রশ্নপত্র তৈরি করুন</button><button type="button" id="ua_all">সব সেট একসাথে (১–<span id="ua_nn">১৫</span>)</button><label style="display:inline">সেট সংখ্যা <select id="ua_cnt"></select></label><button type="button" id="ua_print">প্রিন্ট / PDF সেভ</button><button type="button" id="ua_key">উত্তরমালা দেখান</button></div>
 <p class="note">MCQ ফরম্যাট: প্রতিটি প্রশ্ন ফাঁকা লাইন বা “১.” দিয়ে আলাদা; অপশন A. B. C. D. (বা ক. খ. গ. ঘ.) — একই বা আলাদা লাইনে। সঠিক অপশনের শেষে <b>*</b> দিন (সেট-১-এর বাইরে অপশন/প্রশ্নের ক্রম এলোমেলো হবে, উত্তরমালা সঙ্গে মিলে যাবে)। লিখিত অংশে প্রশ্নের শেষে <b>[৫]</b> লিখলে নম্বর লাইনের ডানে সারিবদ্ধ হবে; ফাঁকা লাইন দিয়ে প্রশ্ন আলাদা করুন।</p></fieldset>
 <fieldset><legend>OMR পৃষ্ঠা (প্রশ্নপত্রের প্রথম পৃষ্ঠা) — সিরিয়াল ও নম্বর বণ্টন</legend><div class="g"><label>OMR-এ প্রতিষ্ঠান (সংক্ষিপ্ত)<input id="ua_oorg" value="EFSDSC রাজশাহী"></label><label>৬ ডিজিট সিরিয়াল (সেট-১); পরের সেটে +১ — ফাঁকা রাখলে স্বয়ংক্রিয়, নিজে দিলে কাস্টম<input id="ua_ser" inputmode="numeric" maxlength="6" placeholder="যেমন: 100001"></label><label>&nbsp;<button type="button" id="ua_autoser">স্বয়ংক্রিয় সিরিয়াল বসান</button></label></div><p class="note">প্রতি বিষয়ের MCQ ও লিখিত নম্বর (ফাঁকা রাখলে প্রশ্ন সংখ্যা / [নম্বর] যোগ করে স্বয়ংক্রিয়):</p><div class="g"><label>পদার্থবিজ্ঞান — MCQ<input id="ua_mm0" type="number" step="0.25"></label><label>পদার্থবিজ্ঞান — লিখিত<input id="ua_wm0" type="number" step="0.25"></label><label>রসায়ন — MCQ<input id="ua_mm1" type="number" step="0.25"></label><label>রসায়ন — লিখিত<input id="ua_wm1" type="number" step="0.25"></label><label>জীববিজ্ঞান — MCQ<input id="ua_mm2" type="number" step="0.25"></label><label>জীববিজ্ঞান — লিখিত<input id="ua_wm2" type="number" step="0.25"></label><label>উচ্চতর গণিত — MCQ<input id="ua_mm3" type="number" step="0.25"></label><label>উচ্চতর গণিত — লিখিত<input id="ua_wm3" type="number" step="0.25"></label><label>বাংলা — MCQ<input id="ua_mm4" type="number" step="0.25"></label><label>বাংলা — লিখিত<input id="ua_wm4" type="number" step="0.25"></label><label>ইংরেজি — MCQ<input id="ua_mm5" type="number" step="0.25"></label><label>ইংরেজি — লিখিত<input id="ua_wm5" type="number" step="0.25"></label></div></fieldset>
+<fieldset><legend>সমীকরণ ইনপুট (MCQ ও লিখিত — সব বিষয়ে)</legend><div class="note">যেকোনো ফরম্যাটের সমীকরণ কপি করে নিচের যেকোনো বিষয়ের ঘরে পেস্ট করুন — LaTeX (<code>$ … $</code>, <code>\( … \)</code>, <code>$$ … $$</code>), ChatGPT/KaTeX কপি, MS Word-এর Professional/Unicode/Linear সমীকরণ, MathML, Unicode (x² √ ∫ ≤), বা সাধারণ লেখা (x^2, sqrt(x), a/b)। পেস্ট করতেই স্বয়ংক্রিয়ভাবে সমীকরণে রূপান্তর হবে এবং প্রশ্নপত্র/প্রিন্ট/PDF-এ ছাত্র-ছাত্রীর পড়ার মতো সুন্দর গাণিতিক আকারে আসবে।</div>
+<div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="ua_cv" checked>পেস্টে স্বয়ংক্রিয় রূপান্তর (ChatGPT/Word কপি, Unicode x² √ ∫, x^2, sqrt(x), a/b → সমীকরণ)</label><button type="button" id="ua_conv">সব ঘরের লেখা রূপান্তর করো</button></div>
+<div id="ua_eqbar" class="bar"></div><div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="ua_atx" checked>ডেলিমিটার ছাড়া শুদ্ধ LaTeX হলে নিজে $…$ দাও</label><button type="button" id="ua_pvb">সমীকরণ প্রিভিউ (শেষ ক্লিক করা ঘর)</button></div><div id="ua_pv" style="border:1px solid var(--bd);padding:8px;min-height:30px;background:#fff;color:#000"></div></fieldset>
 <fieldset><legend>MCQ অংশ — বিষয়ভিত্তিক প্রশ্ন</legend><div class="usub" id="ua_m"></div></fieldset>
 <fieldset><legend>লিখিত অংশ — বিষয়ভিত্তিক প্রশ্ন</legend><div class="usub" id="ua_w"></div></fieldset>
 <div id="ua_keyout" class="note" style="white-space:pre-wrap"></div></div>
@@ -1244,6 +1247,126 @@ $('#ua_nn').textContent=bn($('#ua_cnt').value);
 document.querySelectorAll('#l [data-ot]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#l [data-ot]').forEach(x=>x.classList.toggle('on',x==b));$('#ul1').hidden=b.dataset.ot!='1';$('#ul2').hidden=b.dataset.ot!='2'});
 function rng(seed){let a=seed*2654435761>>>0||1;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 function shuf(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* ===== সমীকরণ সাপোর্ট (LaTeX / Unicode / ChatGPT / MS Word OMML / MathML) ===== */
+const HAVEQ=typeof normQ=='function'&&typeof autoTex=='function';
+const LASTTA={el:null};
+let MJOK=false;
+async function mathReady(){for(let i=0;i<50&&!(window.MathJax&&typeof MathJax.tex2svg=='function');i++)await new Promise(r=>setTimeout(r,200));
+if(!(window.MathJax&&typeof MathJax.tex2svg=='function'))return MJOK=false;
+try{if(MathJax.startup&&MathJax.startup.promise)await MathJax.startup.promise}catch(_){}
+try{if(!document.getElementById('ua_mjcss')&&MathJax.svgStylesheet){const st=MathJax.svgStylesheet();st.id='ua_mjcss';document.head.appendChild(st)}}catch(_){}
+return MJOK=true}
+function fmTags(s){const st=[];let out=s.replace(/&lt;(\/?)([biu])&gt;/g,(m,c,t)=>{if(!c){st.push(t);return'<'+t+'>'}const i=st.lastIndexOf(t);if(i<0)return'';let r='';while(st.length>i+1)r+='</'+st.pop()+'>';st.pop();return r+'</'+t+'>'});while(st.length)out+='</'+st.pop()+'>';return out}
+function texH(tex,disp,raw){if(!MJOK)return esc(raw);try{const n=MathJax.tex2svg(tex.trim(),{display:disp});if(n.querySelector('[data-mml-node="merror"],mjx-merror'))return'<span style="color:#b00">'+esc(raw)+'</span>';return n.outerHTML}catch(_){return esc(raw)}}
+const atxOn=()=>{const c=$('#ua_atx');return c&&c.checked};
+const cvOn=()=>{const c=$('#ua_cv');return !c||c.checked};
+const DLMU=/(<\/?[biu]>|\[\[(?:img|fig|fa):\d+\]\]|\$\$[\s\S]*?\$\$|\$[^$\n]*\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|\\begin\{[A-Za-z*]+\}[\s\S]*?\\end\{[A-Za-z*]+\})/;
+function mh(s){s=String(s==null?'':s);
+if(HAVEQ&&atxOn())s=/<\/?[biu]>/.test(s)?s.split(/(<\/?[biu]>)/).map((p,i)=>i%2?p:autoTex(p)).join(''):autoTex(s);
+let o='';s.split(DLMU).forEach((g,i)=>{if(!(i%2)){o+=esc(g);return}
+if(/^<\/?[biu]>$/.test(g)){o+='&lt;'+g.slice(1,-1)+'&gt;';return}
+if(/^\[\[/.test(g))return;
+let tex=g,disp=true;
+if(g.slice(0,2)=='$$')tex=g.slice(2,-2);else if(g[0]=='$'){tex=g.slice(1,-1);disp=false}else if(g.slice(0,2)=='\\('){tex=g.slice(2,-2);disp=false}else if(g.slice(0,2)=='\\[')tex=g.slice(2,-2);
+o+=texH(tex,disp,g)});
+return fmTags(o)}
+/* স্বাভাবিকীকরণ: অপশন/মার্ক ঠিক রেখে সমীকরণ রূপান্তর */
+function normU(t,mcq){t=String(t==null?'':t).replace(/\r/g,'');
+if(!HAVEQ)return t;
+if(mcq)t=t.split('\n').map(l=>{if((/(^|\s)\(?[Aa][.)]\s/.test(l)&&/\s\(?[Bb][.)]\s/.test(l))||(/(^|\s)ক[.)]\s/.test(l)&&/\sখ[.)]\s/.test(l)))l=l.replace(/\s+(?=\(?(?:[A-Da-d]|[কখগঘ])[.)]\s)/g,'\n');return l}).join('\n');
+const tails=[];
+t=t.split('\n').map(l=>{const m=l.match(/(\s*(?:\[[^\[\]$\\\n]{1,12}\]|\*))\s*$/);if(m&&m.index>0){tails.push(m[1]);return l.slice(0,m.index)+' \uE010'+(tails.length-1)+'\uE011'}return l}).join('\n');
+if(cvOn())t=t.split('\n').map(wrapTex).join('\n');
+try{t=normQ(t,cvOn())}catch(_){}
+return t.replace(/ ?\uE010(\d+)\uE011/g,(m,i)=>tails[+i]||'')}
+/* ডেলিমিটারহীন LaTeX (\frac{a}{b} ইত্যাদি) বাক্যের মাঝে থাকলে $…$ দাও */
+function wrapTex(line){if(!/\\[a-zA-Z]+/.test(line))return line;
+return line.split(DLMU).map((seg,i)=>{if(i%2||!/\\[a-zA-Z]+/.test(seg))return seg;
+const parts=seg.split(/(\s+)/),idx=[];parts.forEach((p,k)=>{if(k%2==0&&p)idx.push(k)});
+const strong=w=>/\\[a-zA-Z]+|[{}^_]/.test(w),weak=w=>/^[A-Za-z0-9=+\-*\/<>|()\[\],.'!:]{1,12}$/.test(w);
+const used=new Array(idx.length).fill(false);let res=parts.slice();const runs=[];
+for(let k=0;k<idx.length;k++){if(used[k]||!strong(idx[k]!=null?parts[idx[k]]:''))continue;let a=k,b=k;
+while(a>0&&!used[a-1]&&weak(parts[idx[a-1]])&&/^ +$/.test(parts[idx[a]-1]||''))a--;
+while(b<idx.length-1&&(strong(parts[idx[b+1]])||weak(parts[idx[b+1]]))&&/^ +$/.test(parts[idx[b+1]-1]||''))b++;
+while(a<b&&/^[A-Za-z]{3,}[:,.]?$/.test(parts[idx[a]]))a++;
+for(let t=a;t<=b;t++)used[t]=true;runs.push([a,b])}
+runs.reverse().forEach(([a,b])=>{const f=idx[a],l=idx[b];let txt=parts.slice(f,l+1).join(''),tail='';const m=txt.match(/[.,;:?!।]+$/);if(m){tail=m[0];txt=txt.slice(0,-tail.length)}parts.splice(f,l-f+1,'$'+txt+'$'+tail)});
+return parts.join('')}).join('')}
+const parseMU=t=>parseM(normU(t,true));
+const visLen=s=>String(s).replace(/\\[a-zA-Z]+/g,'x').replace(/[{}$\\^_]/g,'').length;
+/* ---- MS Word OMML → LaTeX ---- */
+const NS_M='http://schemas.openxmlformats.org/officeDocument/2006/math';
+const symTxt=x=>[...String(x)].map(c=>(typeof SYMm!='undefined'&&SYMm[c])||c).join('');
+const FUNCS=new Set(['sin','cos','tan','cot','sec','csc','sinh','cosh','tanh','log','ln','lim','exp','det','min','max','arcsin','arccos','arctan','sup','inf','gcd','deg']);
+function ommlTex(n){const kids=el=>[...el.childNodes].filter(c=>c.nodeType==1),ln=el=>el.localName,
+ ch=(el,name)=>kids(el).find(c=>ln(c)==name),
+ sub=(el,name)=>{const c=ch(el,name);return c?conv(c):''},
+ conv=el=>kids(el).map(one).join(''),
+ attr=(pr,name)=>{if(!pr)return null;const c=ch(pr,name);return c?(c.getAttribute('m:val')||c.getAttributeNS(NS_M,'val')):null},
+ arg=x=>{x=x.trim();return x},
+ one=c=>{switch(ln(c)){
+ case'r':{const t=kids(c).filter(k=>ln(k)=='t').map(k=>k.textContent).join('');return symTxt(t).replace(/([^\s\\{}^_$]) +(?=[^\s])/g,'$1 ')}
+ case'f':{const pr=ch(c,'fPr'),ty=attr(pr,'type'),a=arg(sub(c,'num')),b=arg(sub(c,'den'));if(ty=='lin')return '{'+a+'}/{'+b+'}';if(ty=='noBar')return '\\binom{'+a+'}{'+b+'}';return '\\frac{'+a+'}{'+b+'}'}
+ case'rad':{const d=arg(sub(c,'deg')),e=arg(sub(c,'e')),pr=ch(c,'radPr'),hide=attr(pr,'degHide');return (!d||hide=='1'||hide=='on'||hide=='true')?'\\sqrt{'+e+'}':'\\sqrt['+d+']{'+e+'}'}
+ case'sSup':return '{'+arg(sub(c,'e'))+'}^{'+arg(sub(c,'sup'))+'}';
+ case'sSub':return '{'+arg(sub(c,'e'))+'}_{'+arg(sub(c,'sub'))+'}';
+ case'sSubSup':return '{'+arg(sub(c,'e'))+'}_{'+arg(sub(c,'sub'))+'}^{'+arg(sub(c,'sup'))+'}';
+ case'sPre':return '{}_{'+arg(sub(c,'sub'))+'}^{'+arg(sub(c,'sup'))+'}{'+arg(sub(c,'e'))+'}';
+ case'nary':{const pr=ch(c,'naryPr');let chr=attr(pr,'chr');const hs=attr(pr,'subHide'),hp=attr(pr,'supHide');const M={'∑':'\\sum','∏':'\\prod','∫':'\\int','∬':'\\iint','∭':'\\iiint','∮':'\\oint','⋃':'\\bigcup','⋂':'\\bigcap'};let op=chr==null?'\\int':(M[chr]||symTxt(chr));const lo=arg(sub(c,'sub')),up=arg(sub(c,'sup'));return op+((lo&&hs!='1')?'_{'+lo+'}':'')+((up&&hp!='1')?'^{'+up+'}':'')+' '+arg(sub(c,'e'))}
+ case'd':{const pr=ch(c,'dPr');let b=attr(pr,'begChr'),e=attr(pr,'endChr'),sp=attr(pr,'sepChr');if(b==null)b='(';if(e==null)e=')';if(sp==null)sp='|';const L=x=>x==''?'.':(x=='{'?'\\{':(x=='}'?'\\}':(x=='⟨'||x=='〈'?'\\langle':(x=='⟩'||x=='〉'?'\\rangle':(x=='‖'?'\\|':(x=='⌊'?'\\lfloor':(x=='⌋'?'\\rfloor':(x=='⌈'?'\\lceil':(x=='⌉'?'\\rceil':x)))))))));const es=kids(c).filter(k=>ln(k)=='e').map(k=>conv(k).trim());return '\\left'+L(b)+' '+es.join(sp==''?' ':(sp=='|'?',':symTxt(sp)))+' \\right'+L(e)}
+ case'func':{let f=conv(ch(c,'fName')||c).trim();const nm=f.replace(/\\/g,'');if(FUNCS.has(nm))f='\\'+nm;else if(/^[A-Za-z]{2,}$/.test(f))f='\\operatorname{'+f+'}';return f+' '+arg(sub(c,'e'))}
+ case'limLow':{const e=arg(sub(c,'e')),l=arg(sub(c,'lim'));return (e=='lim'||e=='\\lim')?'\\lim_{'+l+'}':'\\underset{'+l+'}{'+e+'}'}
+ case'limUpp':return '\\overset{'+arg(sub(c,'lim'))+'}{'+arg(sub(c,'e'))+'}';
+ case'acc':{const pr=ch(c,'accPr');const chr=attr(pr,'chr');const M={'\u0302':'\\hat','\u0303':'\\tilde','\u20D7':'\\vec','→':'\\vec','\u0305':'\\overline','\u00AF':'\\overline','\u0307':'\\dot','\u0308':'\\ddot','\u0301':'\\acute','\u0300':'\\grave','\u030C':'\\check','\u0306':'\\breve','^':'\\hat','~':'\\tilde'};return (M[chr]||'\\hat')+'{'+arg(sub(c,'e'))+'}'}
+ case'bar':{const pr=ch(c,'barPr');return (attr(pr,'pos')=='bot'?'\\underline{':'\\overline{')+arg(sub(c,'e'))+'}'}
+ case'groupChr':{const pr=ch(c,'groupChrPr');const chr=attr(pr,'chr'),pos=attr(pr,'pos'),e=arg(sub(c,'e'));if(chr=='⏞'||(pos=='top'&&chr!='⏟'))return '\\overbrace{'+e+'}';return '\\underbrace{'+e+'}'}
+ case'box':case'borderBox':return conv(c);
+ case'phant':return conv(c);
+ case'eqArr':return '\\begin{aligned} '+kids(c).filter(k=>ln(k)=='e').map(k=>conv(k).trim()).join(' \\\\ ')+' \\end{aligned}';
+ case'm':return '\\begin{matrix} '+kids(c).filter(k=>ln(k)=='mr').map(r=>kids(r).filter(k=>ln(k)=='e').map(k=>conv(k).trim()).join(' & ')).join(' \\\\ ')+' \\end{matrix}';
+ case'oMath':case'e':case'num':case'den':case'deg':case'sup':case'sub':case'lim':case'fName':return conv(c);
+ case'oMathPara':return kids(c).map(one).join(' \\\\ ');
+ default:return /Pr$/.test(ln(c))?'':conv(c)}};
+ return one(n)}
+function ommlToTex(xml){try{const d=new DOMParser().parseFromString('<root xmlns:m="'+NS_M+'" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'+xml.replace(/<\?xml[^>]*\?>/,'')+'</root>','application/xml');if(d.querySelector('parsererror'))return null;const el=d.documentElement.firstElementChild;if(!el)return null;const disp=el.localName=='oMathPara';const tx=ommlTex(el).replace(/\s+/g,' ').trim();return tx?{tex:tx,disp}:null}catch(_){return null}}
+/* ---- MathML → LaTeX ---- */
+function mmlTex(m){const ko=el=>[...el.children],cv=el=>ko(el).map(one).join(''),a=(el,i)=>ko(el)[i]?one(ko(el)[i]):'',
+ one=c=>{const t=c.localName;switch(t){
+ case'mi':case'mn':case'mtext':return symTxt(c.textContent.trim());
+ case'mo':{const x=c.textContent.trim();return x==='\u2061'||x==='\u2062'||x==='\u2063'||x==='\u2064'?'':symTxt(x)}
+ case'mfrac':return '\\frac{'+a(c,0)+'}{'+a(c,1)+'}';
+ case'msqrt':return '\\sqrt{'+cv(c)+'}';
+ case'mroot':return '\\sqrt['+a(c,1)+']{'+a(c,0)+'}';
+ case'msup':return '{'+a(c,0)+'}^{'+a(c,1)+'}';
+ case'msub':return '{'+a(c,0)+'}_{'+a(c,1)+'}';
+ case'msubsup':return '{'+a(c,0)+'}_{'+a(c,1)+'}^{'+a(c,2)+'}';
+ case'munder':return (/^\\?(lim|sum|prod)/.test(a(c,0)))?a(c,0)+'_{'+a(c,1)+'}':'\\underset{'+a(c,1)+'}{'+a(c,0)+'}';
+ case'mover':{const b=a(c,1);if(/^(\\to|→|\\vec|¯|\^|\\hat|\\bar)/.test(b)&&b.length<8)return (b.indexOf('to')>=0||b=='→'?'\\vec{':(b=='\\hat'||b=='^'?'\\hat{':'\\overline{'))+a(c,0)+'}';return '\\overset{'+b+'}{'+a(c,0)+'}'}
+ case'munderover':return a(c,0)+'_{'+a(c,1)+'}^{'+a(c,2)+'}';
+ case'mfenced':{const o=c.getAttribute('open')??'(',cl=c.getAttribute('close')??')';return '\\left'+(o==''?'.':o=='{'?'\\{':o)+' '+ko(c).map(one).join(',')+' \\right'+(cl==''?'.':cl=='}'?'\\}':cl)}
+ case'mtable':return '\\begin{matrix} '+ko(c).map(r=>ko(r).map(one).join(' & ')).join(' \\\\ ')+' \\end{matrix}';
+ case'mtr':return ko(c).map(one).join(' & ');
+ case'mtd':case'mrow':case'mstyle':case'math':case'semantics':return cv(c);
+ case'annotation':case'annotation-xml':case'mspace':return '';
+ default:return cv(c)||symTxt(c.textContent.trim())}};
+ return one(m).replace(/\s+/g,' ').trim()}
+/* ---- ক্লিপবোর্ড HTML → লেখা (Word OMML, MathML, KaTeX/MathJax) ---- */
+function uaHtmlToText(html){
+const eqs=[];
+html=html.replace(/<!--\[if gte msEquation 12\]>([\s\S]*?)<!\[endif\]-->(?:\s*<!\[if !msEquation\]>[\s\S]*?<!\[endif\]>)?/g,(m,x)=>{const r=ommlToTex(x);if(!r)return m;eqs.push(r);return '\uE020'+(eqs.length-1)+'\uE021'});
+const d=new DOMParser().parseFromString(html,'text/html');
+d.querySelectorAll('math').forEach(el=>{if(el.closest('.katex,mjx-container,.MathJax'))return;if(el.querySelector('annotation[encoding="application/x-tex"]')||el.getAttribute('data-latex'))return;const tx=mmlTex(el);if(!tx)return;eqs.push({tex:tx,disp:el.getAttribute('display')=='block'});el.replaceWith('\uE020'+(eqs.length-1)+'\uE021')});
+const hasK=!!d.querySelector('.katex,.katex-display,mjx-container,math,annotation');
+if(hasK||eqs.length){
+ d.querySelectorAll('.katex-display').forEach(el=>{const a=el.querySelector('annotation[encoding="application/x-tex"]');el.replaceWith('\n$$'+(a?a.textContent.trim():el.textContent.trim())+'$$\n')});
+ d.querySelectorAll('.katex,mjx-container,math').forEach(el=>{if(!el.isConnected)return;const a=el.querySelector('annotation[encoding="application/x-tex"]');el.replaceWith('$'+(a?a.textContent.trim():(el.getAttribute('data-latex')||el.textContent.trim()))+'$')});
+ d.querySelectorAll('style,script,head,title,meta,link').forEach(x=>x.remove());
+ const BL=/^(p|div|li|tr|h[1-6]|ul|ol|table|blockquote|pre)$/i;let out='';
+ (function walk(n){if(n.nodeType==3){out+=n.textContent.replace(/\s+/g,' ');return}if(n.nodeType!=1)return;const t=n.localName;if(t=='br'){out+='\n';return}if(/^(style|script)$/.test(t))return;[...n.childNodes].forEach(walk);if(BL.test(t)&&!/\n$/.test(out))out+='\n'})(d.body);
+ out=out.replace(/\uE020(\d+)\uE021/g,(m,i)=>{const e=eqs[+i];return e.disp?'\n$$'+e.tex+'$$\n':'$'+e.tex+'$'}).replace(/[ \t]*\n[ \t]*/g,'\n').replace(/ {2,}/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+ return out}
+return null}
 const MK=/(?:^|\s)\(?([A-Da-dকখগঘ])[.)]\s*/g,L2={ক:'A',খ:'B',গ:'C',ঘ:'D'};
 function parseM(t){const lines=String(t).replace(/\r/g,'').split('\n'),blocks=[];let cur=[];
 const push=()=>{if(cur.length)blocks.push(cur.join('\n'));cur=[]};
@@ -1254,10 +1377,10 @@ const parts=rest.split(/(?:^|\s)\(?([A-Da-dকখগঘ])[.)]\s*/).slice(1);
 for(let i=0;i+1<parts.length;i+=2){let tx=parts[i+1].replace(/\s*\n\s*/g,' ').trim();if(/\*\s*$/.test(tx)){ans=ops.length;tx=tx.replace(/\s*\*\s*$/,'')}ops.push(tx)}
 return{stem,ops,ans}}).filter(q=>q.stem||q.ops.length)}
 function bnLab(i){return 'ABCD'[i]}
-function mcqHtml(q,no){const mx=Math.max(0,...q.ops.map(o=>o.length)),c=mx<=11?'c4':mx<=30?'c2':'c1';
-return `<div class="uq"><div>${bn(no)}. ${esc(q.stem)}</div><div class="op ${c}">${q.ops.map((o,i)=>`<span>${bnLab(i)}. ${esc(o)}</span>`).join('')}</div></div>`}
+function mcqHtml(q,no){const mx=Math.max(0,...q.ops.map(o=>visLen(o))),c=mx<=11?'c4':mx<=30?'c2':'c1';
+return `<div class="uq"><div>${bn(no)}. ${mh(q.stem)}</div><div class="op ${c}">${q.ops.map((o,i)=>`<span>${bnLab(i)}. ${mh(o)}</span>`).join('')}</div></div>`}
 function wBlocks(t){return String(t).replace(/\r/g,'').split(/\n\s*\n/).map(x=>x.replace(/^\n+|\s+$/g,'')).filter(x=>x.trim())}
-function wHtml(b){return b.split('\n').map(l=>{const m=l.match(/^(.*?)\s*\[([^\]]+)\]\s*$/);return m?`<div class="uw"><span class="t">${esc(m[1])}</span><b class="m">${esc(m[2])}</b></div>`:`<div class="uw"><span class="t">${esc(l)}</span></div>`}).join('')}
+function wHtml(b){return b.split('\n').map(l=>{const m=l.match(/^(.*?)\s*\[([^\]]+)\]\s*$/);return m?`<div class="uw"><span class="t">${mh(m[1])}</span><b class="m">${esc(m[2])}</b></div>`:`<div class="uw"><span class="t">${mh(l)}</span></div>`}).join('')}
 function header(set){const v=i=>esc($('#'+i).value);
 return `<div class="uh"><span class="sbx">সেট-${bn(set)}</span><div style="clear:both"></div><div class="tb" style="margin-top:6px"><div class="big" style="font-size:1.05em">${v('ua_org')}</div><div class="big">${v('ua_uni')}</div><div class="big">${v('ua_unit')}</div><div>আন্ডারগ্র্যাজুয়েট প্রোগ্রাম ভর্তি পরীক্ষা ${v('ua_yr')}</div>
 <div class="r"><span>সময়: ${v('ua_time')}</span><span>MCQ (${v('ua_mcq')}) এবং লিখিত (${v('ua_wr')}) পরীক্ষার প্রশ্ন</span><span>পূর্ণমান: ${v('ua_full')}</span></div>
@@ -1266,7 +1389,7 @@ const SF="Kalpurush,'Noto Sans Bengali',Arial,Helvetica,sans-serif",PAT='1001011
 const en=s=>String(s).replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d));
 function serialOf(set){let b=String($('#ua_ser').value).replace(/\D/g,'');if(b.length!=6){b=String(100000+(Date.now()%800000));$('#ua_ser').value=b}return String((+b+set-1)%1000000).padStart(6,'0')}
 function marksOf(i){const mi=$('#ua_mm'+i).value.trim(),wi=$('#ua_wm'+i).value.trim();
-let m=mi!==''?mi:(()=>{const n=parseM($('[data-ua=m'+i+']').value).length;return n?String(n):''})();
+let m=mi!==''?mi:(()=>{const n=parseMU($('[data-ua=m'+i+']').value).length;return n?String(n):''})();
 let w=wi!==''?wi:(()=>{let t=0,f=0;$('[data-ua=w'+i+']').value.split('\n').forEach(l=>{const x=en(l).match(/\[\s*([\d.]+)\s*\]\s*$/);if(x){t+=parseFloat(x[1]);f=1}});return f?String(t):''})();
 return[m,w]}
 function omrSvg(set,serial){
@@ -1347,10 +1470,10 @@ d.querySelector('#bcslot').outerHTML=`<svg x="878" y="238" width="124" height="8
 try{d.querySelector('#qr1').outerHTML=qrSvg('EFSDSC|'+serial,695,722,100);d.querySelector('#qr2').outerHTML=qrSvg('EFSDSC|'+serial+'|SET'+set+'|'+$('#ua_yr').value,695,866,100)}catch(_){}
 return d}
 function build(set,out){out.appendChild(omrPage(set));const r=rng(set*7919+13),keyLines=[];let units=[],no=0;const cont=$('#ua_cont').value=='1';
-const mcq=[];SUBS.forEach((s,i)=>{let qs=parseM($('[data-ua=m'+i+']').value);if(!qs.length)return;
+const mcq=[];SUBS.forEach((s,i)=>{let qs=parseMU($('[data-ua=m'+i+']').value);if(!qs.length)return;
 if(set>1){qs=shuf(qs,r).map(q=>{if(!q.ops.length)return q;const idx=shuf(q.ops.map((_,k)=>k),r);return{stem:q.stem,ops:idx.map(k=>q.ops[k]),ans:q.ans<0?-1:idx.indexOf(q.ans)}})}
 mcq.push([s,qs])});
-const wr=[];SUBS.forEach((s,i)=>{const b=wBlocks($('[data-ua=w'+i+']').value);if(b.length)wr.push([s,b])});
+const wr=[];SUBS.forEach((s,i)=>{const b=wBlocks(normU($('[data-ua=w'+i+']').value,false));if(b.length)wr.push([s,b])});
 if(mcq.length)mcq.forEach(([s,qs],si)=>{if(!cont)no=0;qs.forEach((q,k)=>{no++;keyLines.push(no+'-'+(q.ans>=0?bnLab(q.ans):'?'));
 let h=(si==0&&k==0?'<div class="ust">MCQ অংশ</div>':'')+(k==0?`<div class="usn">${s}</div>`:'')+mcqHtml(q,no);units.push({h,col:2})})});
 if(wr.length)wr.forEach(([s,bs],si)=>bs.forEach((b,k)=>{units.push({h:(si==0&&k==0?'<div class="ust" style="margin-top:0">লিখিত অংশ</div>':'')+(k==0?`<div class="usn" style="text-align:left">${s}</div>`:'')+wHtml(b),col:1,newPage:si==0&&k==0})}));
@@ -1364,14 +1487,31 @@ if(ov()&&body.children.length>1){body.removeChild(d);mk(false,u.col);body.append
 if(!page){mk(true,2);body.innerHTML='<p>কোনো প্রশ্ন দেওয়া হয়নি।</p>'}
 return keyLines}
 let KEYS={};
-function gen(sets){let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
+async function gen(sets){await mathReady();let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
 const w=out.parentNode;sets.forEach(s=>{KEYS[s]=build(s,out)});
 let pg=$('#pg');if(pg)pg.textContent='@page{size:A4;margin:0}';out.scrollIntoView({behavior:'smooth'});showKey()}
 function showKey(){const ks=Object.keys(KEYS);$('#ua_keyout').textContent=ks.length?ks.map(k=>'সেট-'+bn(k)+': '+KEYS[k].map(x=>bn(x)).join('  ')).join('\n'):''}
 $('#ua_go').onclick=()=>gen([+$('#ua_set').value]);
 $('#ua_all').onclick=()=>gen(Array.from({length:+$('#ua_cnt').value},(_,i)=>i+1));
-$('#ua_print').onclick=()=>{if(!$('#uout')||!$('#uout').children.length)gen([+$('#ua_set').value]);setTimeout(()=>window.print(),300)};
+$('#ua_print').onclick=async()=>{if(!$('#uout')||!$('#uout').children.length)await gen([+$('#ua_set').value]);setTimeout(()=>window.print(),300)};
 $('#ua_key').onclick=()=>{if(!Object.keys(KEYS).length)gen([+$('#ua_set').value]);else showKey()};
+
+/* ---- সমীকরণ বার, পেস্ট, রূপান্তর, প্রিভিউ ---- */
+(function(){
+const tas=()=>[...document.querySelectorAll('#ul1 textarea[data-ua]')],isM=t=>/^m/.test(t.dataset.ua),fire=t=>t.dispatchEvent(new Event('input',{bubbles:true}));
+$('#ul1').addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches('textarea[data-ua]'))LASTTA.el=e.target});
+const EQL=typeof EQS!='undefined'?EQS:[];
+$('#ua_eqbar').innerHTML=EQL.map((x,i)=>`<button type="button" data-uaeq="${i}">${esc(x[0])}</button>`).join('');
+$('#ua_eqbar').addEventListener('click',ev=>{const b=ev.target.closest('button[data-uaeq]');if(!b)return;const t=LASTTA.el||tas()[0],s=EQL[+b.dataset.uaeq][1],a=t.selectionStart,z=t.selectionEnd;t.value=t.value.slice(0,a)+s+t.value.slice(z);t.focus();t.selectionStart=t.selectionEnd=a+s.length;LASTTA.el=t;fire(t)});
+tas().forEach(t=>t.addEventListener('paste',ev=>{const cd=ev.clipboardData;if(!cd||!HAVEQ)return;const html=cd.getData('text/html'),pt=cd.getData('text/plain');let raw=null;
+if(html&&/katex|annotation|<math|mjx-container|msEquation/i.test(html)){try{raw=uaHtmlToText(html)}catch(_){raw=null}}
+if(raw==null){if(pt)raw=pt;else return}
+const out=normU(raw,isM(t));ev.preventDefault();const a=t.selectionStart,z=t.selectionEnd;t.value=t.value.slice(0,a)+out+t.value.slice(z);t.selectionStart=t.selectionEnd=a+out.length;fire(t)}));
+$('#ua_conv').onclick=()=>{if(!HAVEQ)return;tas().forEach(t=>{const v=normU(t.value,isM(t));if(v!==t.value){t.value=v;fire(t)}})};
+$('#ua_pvb').onclick=async()=>{const t=LASTTA.el||tas()[0],o=$('#ua_pv'),ok=await mathReady();let h;
+if(isM(t))h=parseMU(t.value).slice(0,30).map((q,i)=>mcqHtml(q,i+1)).join('');else h=wBlocks(normU(t.value,false)).slice(0,30).map(wHtml).join('<hr style="border:0;border-top:1px dashed #bbb">');
+o.innerHTML=(h||'প্রশ্ন পাওয়া যায়নি')+(ok?'':'<div class="note">সমীকরণ লাইব্রেরি লোড হয়নি (ইন্টারনেট/নেটওয়ার্ক দেখুন); কাঁচা LaTeX দেখাচ্ছে।</div>')};
+})();
 window.__ua={gen,parseM};
 })();
 </script>
