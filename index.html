@@ -1906,12 +1906,12 @@ RAW.setItem=function(k,v){origSet.call(this,k,v);if(this===localStorage&&!SKIP(k
 RAW.removeItem=function(k){origRem.call(this,k);if(this===localStorage&&!SKIP(k)&&!applying)mark()};
 function mark(){dirty=true;origSet.call(localStorage,'__gdirty','1');if(!tok)return;clearTimeout(tmr);tmr=setTimeout(push,2500)}
 function snapshot(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!SKIP(k))d[k]=localStorage.getItem(k)}return d}
-async function api(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+tok},opt.headers||{});const r=await fetch(url,opt);if(r.status==401){tok=null;throw new Error('auth')}if(!r.ok)throw new Error(r.status);return r}
+async function api(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+tok},opt.headers||{});const r=await fetch(url,opt);if(r.status==401){tok=null;throw new Error('auth')}if(!r.ok){let m='';try{m=((await r.json()).error||{}).message||''}catch(_){}throw new Error(r.status+' '+m)}return r}
 async function findFile(){if(fileId)return fileId;const r=await api("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id)&q="+encodeURIComponent("name='"+FN+"'"));const j=await r.json();fileId=j.files&&j.files[0]?j.files[0].id:null;return fileId}
 async function push(){if(!tok||busy)return;busy=true;try{status('☁ সেভ হচ্ছে…');const ts=Date.now(),body=JSON.stringify({ts,data:snapshot(),log});await findFile();
 if(fileId){await api('https://www.googleapis.com/upload/drive/v3/files/'+fileId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body})}
 else{const bd='xb'+ts,meta=JSON.stringify({name:FN,parents:['appDataFolder']});const mp=`--${bd}\r\nContent-Type: application/json\r\n\r\n${meta}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${bd}--`;const r=await api('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});fileId=(await r.json()).id}
-origSet.call(localStorage,'__gts',String(ts));origSet.call(localStorage,'__gdirty','');dirty=false;status('☁ Drive-এ সেভ হয়েছে','লগআউট')}catch(e){status('⚠ সিঙ্ক ব্যর্থ — আবার চেষ্টা হবে','লগআউট');setTimeout(()=>{if(tok)push()},15000)}busy=false}
+origSet.call(localStorage,'__gts',String(ts));origSet.call(localStorage,'__gdirty','');dirty=false;status('☁ Drive-এ সেভ হয়েছে','লগআউট')}catch(e){console.error(e);status('⚠ সিঙ্ক ব্যর্থ: '+String(e.message).slice(0,140),'লগআউট');if(!/^40[13]/.test(e.message))setTimeout(()=>{if(tok)push()},15000)}busy=false}
 async function pull(){await findFile();if(!fileId){await push();return}const r=await api('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media');const j=await r.json();const lts=+localStorage.getItem('__gts')||0,ldirty=localStorage.getItem('__gdirty')==='1';
 if(j.ts>lts&&!ldirty){applying=true;try{for(const k of Object.keys(j.data||{}))origSet.call(localStorage,k,j.data[k]);origSet.call(localStorage,'__glog',JSON.stringify(j.log||[]));origSet.call(localStorage,'__gts',String(j.ts))}finally{applying=false}
 if(!sessionStorage.getItem('__gr')){sessionStorage.setItem('__gr','1');location.reload();return}}
@@ -1928,7 +1928,7 @@ $('#gdskip').onclick=()=>{o.remove();status('⚠ লগইন নেই — শ�
 let client=null;
 function login(cid,interactive){if(!(window.google&&google.accounts&&google.accounts.oauth2)){if(interactive)alert('Google লাইব্রেরি লোড হয়নি — ইন্টারনেট/HTTPS লিংক দেখুন');return}
 client=google.accounts.oauth2.initTokenClient({client_id:cid,scope:SC,callback:async r=>{if(r.error){if(interactive)overlay('লগইন ব্যর্থ: '+r.error);else overlay();return}
-tok=r.access_token;origSet.call(localStorage,'__gtok',JSON.stringify({t:tok,e:Date.now()+(r.expires_in-120)*1000}));origSet.call(localStorage,'__glogged','1');const o=$('#gdov');if(o)o.remove();status('☁ সিঙ্ক হচ্ছে…');try{await pull()}catch(e){status('⚠ Drive সংযোগ ব্যর্থ','লগআউট')}
+tok=r.access_token;origSet.call(localStorage,'__gtok',JSON.stringify({t:tok,e:Date.now()+(r.expires_in-120)*1000}));origSet.call(localStorage,'__glogged','1');const o=$('#gdov');if(o)o.remove();status('☁ সিঙ্ক হচ্ছে…');try{await pull()}catch(e){status('⚠ Drive ব্যর্থ: '+String(e.message).slice(0,140),'লগআউট')}
 setTimeout(()=>{if(tok){try{client.requestAccessToken({prompt:''})}catch(_){}}},(r.expires_in-180)*1000)},error_callback:()=>{if(!interactive)overlay()}});
 client.requestAccessToken({prompt:interactive?'select_account':''})}
 function logout(){try{if(tok&&window.google)google.accounts.oauth2.revoke(tok)}catch(_){}tok=null;fileId=null;origRem.call(localStorage,'__gtok');origRem.call(localStorage,'__glogged');overlay()}
