@@ -303,6 +303,7 @@ table.rt{width:100%;border-collapse:collapse;font-size:.92em}table.rt th,table.r
 #uout{display:none}body[data-mode=u] #uout{display:block}body[data-mode=u] #rout,body[data-mode=u] #out,body[data-mode=u] #fout,body[data-mode=u] #nout,body[data-mode=u] #mout{display:none}
 .upg{width:210mm;height:297mm;box-sizing:border-box;padding:11mm 12mm 14mm;position:relative;background:#fff;color:#000;margin:0 auto 8px;overflow:hidden;font:13.5px/1.35 Kalpurush,"Noto Sans Bengali","Times New Roman",serif;border:1px solid #bbb;break-after:page;page-break-after:always}
 .upg:last-child{break-after:auto;page-break-after:auto}
+#uout .uset>.upg:last-child,#uout .uset>.omrp:last-child{break-after:page;page-break-after:always}#uout .uset:last-child>.upg:last-child{break-after:auto;page-break-after:auto}
 @media print{.upg{margin:0;border:0}}
 .uh{text-align:center}.uh .sbx{background:none;height:auto;vertical-align:baseline;display:inline-block;border:1.5px solid #000;padding:1px 14px;float:left}
 .uh .tb{border:1.5px solid #000;margin-top:8px;padding:3px 6px;text-align:center;font-weight:700;line-height:1.5}
@@ -1552,7 +1553,7 @@ if(window.JsBarcode){try{const t=document.createElementNS('http://www.w3.org/200
 d.querySelector('#bcslot').outerHTML=`<svg x="878" y="238" width="124" height="80" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${t.innerHTML}</svg>`}catch(_){}}
 try{d.querySelector('#qr1').outerHTML=qrSvg('EFSDSC|'+serial,695,722,100);d.querySelector('#qr2').outerHTML=qrSvg('EFSDSC|'+serial+'|SET'+set+'|'+$('#ua_yr').value,695,866,100)}catch(_){}
 return d}
-function build(set,out){out.appendChild(omrPage(set));const r=rng(set*7919+13),keyLines=[];let units=[],no=0,kn=0;const cont=$('#ua_cont').value=='1';
+function build(set,out){const wrap=document.createElement('div');wrap.className='uset';wrap.style.display='contents';out.appendChild(wrap);wrap.appendChild(omrPage(set));const r=rng(set*7919+13),keyLines=[];let units=[],no=0,kn=0;const cont=$('#ua_cont').value=='1';
 const mcq=[];SUBS.forEach((s,i)=>{let qs=parseMU($('[data-ua=m'+i+']').value);if(!qs.length)return;
 if(set>1){qs=shuf(qs,r).map(q=>{if(!q.ops.length)return q;const idx=shuf(q.ops.map((_,k)=>k),r);return{stem:q.stem,ops:idx.map(k=>q.ops[k]),ans:q.ans<0?-1:idx.indexOf(q.ans)}})}
 mcq.push([s,qs])});
@@ -1560,17 +1561,27 @@ const wr=[];SUBS.forEach((s,i)=>{const b=wBlocks(normU($('[data-ua=w'+i+']').val
 if(mcq.length)mcq.forEach(([s,qs],si)=>{if(!cont)no=0;qs.forEach((q,k)=>{no++;keyLines.push((++kn)+'-'+(q.ans>=0?bnLab(q.ans):'?'));
 let h=(si==0&&k==0?'<div class="ust">MCQ অংশ</div>':'')+(k==0?`<div class="usn">${s}</div>`:'')+mcqHtml(q,no);units.push({h,col:2})})});
 if(wr.length)wr.forEach(([s,bs],si)=>bs.forEach((b,k)=>{units.push({h:(si==0&&k==0?'<div class="ust" style="margin-top:0">লিখিত অংশ</div>':'')+(k==0?`<div class="usn" style="text-align:left">${s}</div>`:'')+wHtml(b),col:1,newPage:si==0&&k==0})}));
-let pn=0,page=null,body=null;
-const mk=(first,col)=>{page=document.createElement('div');page.className='upg';page.innerHTML=(first?header(set):'')+'<div class="ub'+(col==1?' one':'')+'"></div><div class="upn">'+bn(++pn)+'</div>';out.appendChild(page);body=page.querySelector('.ub');body.col=col;page.style.fontSize=(+gv('ua_fs')||13.5)+'px';page.style.lineHeight=(+gv('ua_ln')||1.35);if(FFM[gv('ua_ff')])page.style.fontFamily=FFM[gv('ua_ff')];
+const pgs=[];
+const paginate=()=>{pgs.forEach(p=>p.remove());pgs.length=0;let pn=0,page=null,body=null,first=true;
+const mk=(isFirst,col)=>{page=document.createElement('div');page.className='upg';page.innerHTML=(isFirst?header(set):'')+'<div class="ub'+(col==1?' one':'')+'"></div><div class="upn">'+bn(++pn)+'</div>';wrap.appendChild(page);pgs.push(page);body=page.querySelector('.ub');body.col=col;page.style.fontSize=(+gv('ua_fs')||13.5)+'px';page.style.lineHeight=(+gv('ua_ln')||1.35);if(FFM[gv('ua_ff')])page.style.fontFamily=FFM[gv('ua_ff')];
 const nc=col==1?1:(+gv('ua_col')||2),gap=(gv('ua_cg')===''?9:+gv('ua_cg'));body.style.columns='auto';body.style.display='flex';body.style.gap=gap+'mm';body.style.overflow='hidden';body.innerHTML='';body.cols=[];body.ci=0;
 for(let i=0;i<nc;i++){const c=document.createElement('div');c.className='uc';c.style.cssText='flex:1 1 0;min-width:0;height:100%;overflow:hidden';body.appendChild(c);body.cols.push(c)}
 const used=page.querySelector('.uh')?page.querySelector('.uh').offsetHeight:0;
-const cs=getComputedStyle(page),inner=page.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);body.style.height=Math.max(100,inner-used-(first?14:0)-28)+'px'};
-const ovc=c=>c.scrollHeight>c.clientHeight+1;
-let first=true;units.forEach(u=>{if(!page||(u.newPage)||body.col!=u.col){mk(first,u.col);first=false}
+const cs=getComputedStyle(page),inner=page.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);body.style.height=Math.max(100,inner-used-(isFirst?14:0)-28)+'px'};
+/* মাপ: একক সংখ্যার বদলে প্রকৃত বক্সের নিচের সীমা দিয়ে মেলানো — স্ক্রল-হাইট ভুল দিলেও কলাম ফাঁকা থাকে না */
+const fits=(c,d)=>{const cr=c.getBoundingClientRect(),dr=d.getBoundingClientRect();return dr.bottom<=cr.bottom+.75};
+units.forEach(u=>{if(!page||(u.newPage)||body.col!=u.col){mk(first,u.col);first=false}
 const d=document.createElement('div');d.className='u';d.innerHTML=u.h;
-for(let guard=0;guard<500;guard++){const c=body.cols[body.ci];c.appendChild(d);if(!ovc(c)||c.children.length==1)break;c.removeChild(d);if(body.ci+1<body.cols.length)body.ci++;else{mk(false,u.col)}}});
-if(!page){mk(true,2);body.innerHTML='<p>কোনো প্রশ্ন দেওয়া হয়নি।</p>'}
+for(let guard=0;guard<500;guard++){const c=body.cols[body.ci];c.appendChild(d);if(fits(c,d)||c.children.length==1)break;c.removeChild(d);if(body.ci+1<body.cols.length)body.ci++;else{mk(false,u.col)}}});
+if(!page){mk(true,2);body.innerHTML='<p>কোনো প্রশ্ন দেওয়া হয়নি।</p>'}};
+paginate();
+/* ফন্ট/ছবি/সমীকরণ বসার পর এবং প্রিন্টের ঠিক আগে আবার সাজাও — যাতে আগের মাপের ভুলে কলাম ফাঁকা না থাকে */
+const redo=()=>{if(wrap.isConnected)paginate()};redo.w=wrap;
+window.__uaRedo=(window.__uaRedo||[]).filter(f=>f.w&&f.w.isConnected);window.__uaRedo.push(redo);
+if(!window.__uaRedoBound){window.__uaRedoBound=1;window.addEventListener('beforeprint',()=>{(window.__uaRedo||[]).forEach(f=>{try{f()}catch(_){}})})}
+try{(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(redo,60))}catch(_){}
+setTimeout(redo,800);setTimeout(redo,2200);
+wrap.querySelectorAll('img').forEach(i=>{if(!i.complete)i.addEventListener('load',redo,{once:true})});
 return keyLines}
 let KEYS={};
 async function gen(sets){await mathReady();try{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,3000))])}catch(_){}let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
@@ -1812,7 +1823,7 @@ if(!best||best.sc<.4)return null;best.d=decodeSheet(best.wg,best.Wt,minFill);ret
 function scanGray(G,o){o=o||{};const minFill=o.minFill||.55,bin=binarize(G),C=comps(bin,G.w,G.h),quad=findQuad(C,G.w,G.h);
 if(!quad)return{ok:false,err:'চারটি কোণার কালো বর্গ পাওয়া যায়নি — পুরো OMR শিট, সমান আলোয়, ছবিতে আনুন'};
 const best=pickDecode(G,quad,minFill);if(!best)return{ok:false,err:'শিটের দিক/অবস্থান শনাক্ত হয়নি — ফোকাস, আলো ও চার কোণের বর্গ দেখুন'};
-return{ok:true,ser:best.d.ser,roll:best.d.roll,all:best.d.all,opt:best.d.opt}}
+return{ok:true,ser:best.d.ser,roll:best.d.roll,all:best.d.all,opt:best.d.opt,img:fieldCrops(best.wg,best.Wt)}}
 function scanSource(src,o){o=o||{};return scanGray(toGray(src,o.maxDim||2000),o)}
 /* ===== UO UI ===== */
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -1869,6 +1880,7 @@ const F="Kalpurush,'Noto Sans Bengali',Arial,sans-serif",LB=['A','B','C','D'];
 const DEFSUB='Physics,Chemistry,Mathematics,Biology,Bangla,English';
 let KEYS=lg('uo_keys',{}),STU=lg('uo_stu',{}),SCN=lg('uo_scn',[]),CF=lg('uo_cfg',{}),KS=null;
 const saveK=()=>ls('uo_keys',KEYS),saveS=()=>ls('uo_stu',STU),saveC=()=>ls('uo_scn',SCN),saveCF=()=>ls('uo_cfg',CF);
+let IMG=lg('uo_img',{});const saveI=()=>{if(!ls('uo_img',IMG))toast('⚠ নাম/স্বাক্ষরের ছবি সেভ হয়নি (জায়গা শেষ) — এই সেশনে থাকবে')};
 const val=i=>{const e=$('#'+i);return e?e.value.trim():''},chk=i=>{const e=$('#'+i);return e&&e.checked};
 const subjects=()=>{const a=(val('uo_subj')||DEFSUB).split(',').map(x=>x.trim());while(a.length<6)a.push('Subject '+(a.length+1));return a.slice(0,6)};
 function toast(m){const t=$('#uo_toast');if(!t)return;t.textContent=m;clearTimeout(toast.t);toast.t=setTimeout(()=>t.textContent='',3500)}
@@ -2018,7 +2030,7 @@ function loadImg(f){if(window.createImageBitmap){return createImageBitmap(f,{ima
 function loadImg2(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=u})}
 const scOpt=()=>({maxDim:ST.maxDim,minFill:ST.minFill/100});
 function beep(){if(!ST.beep)return;try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.frequency.value=880;o.connect(a.destination);o.start();setTimeout(()=>{o.stop();a.close()},120);navigator.vibrate&&navigator.vibrate(60)}catch(_){}}
-function addScan(r){const s={id:'S'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:Date.now(),ser:r.ser,roll:r.roll,all:r.all,opt:r.opt,use:$('#so_key')?$('#so_key').value:''};
+function addScan(r){const s={id:'S'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:Date.now(),ser:r.ser,roll:r.roll,all:r.all,opt:r.opt,use:$('#so_key')?$('#so_key').value:''};if(r.img){IMG[s.id]=r.img;saveI()}
 if(ST.dup=='replace'&&r.roll&&r.ser.indexOf('?')<0){const i=SCN.findIndex(x=>x.ser==r.ser&&x.roll==r.roll);if(i>=0){SCN[i]=s;saveC();scRender();return s}}
 SCN.push(s);if(!saveC())$('#us_msg').textContent='⚠ জায়গা শেষ — ব্যাকআপ নিয়ে পুরনো স্ক্যান মুছুন';scRender();return s}
 async function scFiles(files){const m=$('#us_msg');let ok=0,bad=[];for(const f of files){if(!/^image\//.test(f.type)&&!/\.(jpe?g|png|webp|bmp)$/i.test(f.name)){bad.push(f.name+' (ছবি নয়)');continue}m.textContent='স্ক্যান হচ্ছে: '+f.name+' …';await new Promise(r=>setTimeout(r,30));try{const im=await loadImg(f),r=scanSource(im,scOpt());if(r.ok){addScan(r);ok++}else bad.push(f.name+' — '+r.err)}catch(x){bad.push(f.name+' — পড়া যায়নি')}}
@@ -2032,7 +2044,7 @@ const h=r.ser+'|'+r.roll+'|'+r.all.join(',');stab=h==lastH?stab+1:1;lastH=h;if(h
 if(ST.live&&stab>=3&&r.ser.indexOf('?')<0){addScan(r);lastAcc=h;beep();m.textContent='✅ সিরিয়াল '+bn(r.ser)+' স্ক্যান হয়েছে'}else m.textContent=ST.live?'শিট ধরা পড়েছে, স্থির রাখুন… ('+bn(stab)+')':'শিট ধরা পড়েছে — “এখন তুলুন” চাপুন'}finally{busy=false}}
 function liveShot(){const v=$('#us_vid');if(!v.videoWidth)return;const r=scanSource(v,scOpt()),m=$('#us_msg');if(r.ok){addScan(r);beep();m.textContent='✅ স্ক্যান হয়েছে'}else m.innerHTML=`<span class="uo-t3">${esc(r.err)}</span>`}
 function scRender(){const o=$('#us_res');if(!SCN.length){o.innerHTML='<p class="note">এখনো কোনো OMR স্ক্যান হয়নি।</p>';fillAna();return}
-o.innerHTML='<table class="uo-tb"><tr><th>#</th><th>রোল</th><th>সিরিয়াল</th><th>নাম</th><th>সঠিক</th><th>ভুল</th><th>স্কিপ</th><th>একাধিক</th><th>নম্বর</th><th>%</th><th></th></tr>'+SCN.map((s,i)=>{const g=gradeScan(s),st=STU[s.ser]||{};return`<tr><td>${bn(i+1)}</td><td>${esc(s.roll||'—')}</td><td>${esc(s.ser)}</td><td>${esc(st.name||'')}</td>`+(g?`<td>${bn(g.c)}</td><td>${bn(g.w)}</td><td>${bn(g.b)}</td><td>${bn(g.m)}</td><td><b>${bn(g.score)}</b>/${bn(g.full)}</td><td>${bn(g.pct)}</td>`:'<td colspan="6" class="uo-t3">এই সিরিয়ালের উত্তরপত্র নেই</td>')+`<td><button type="button" data-a="sv" data-i="${s.id}">দেখুন/ঠিক করুন</button> <button type="button" data-a="sd" data-i="${s.id}">মুছুন</button></td></tr>`}).join('')+'</table>';fillAna()}
+o.innerHTML='<table class="uo-tb"><tr><th>#</th><th>রোল</th><th>সিরিয়াল</th><th>নাম</th><th>সঠিক</th><th>ভুল</th><th>স্কিপ</th><th>একাধিক</th><th>নম্বর</th><th>%</th><th></th></tr>'+SCN.map((s,i)=>{const g=gradeScan(s),st=STU[s.ser]||{};return`<tr><td>${bn(i+1)}</td><td>${esc(s.roll||'—')}</td><td>${esc(s.ser)}</td><td>${st.name?esc(st.name):(IMG[s.id]&&IMG[s.id].n?'<img src="'+IMG[s.id].n+'" style="height:7mm;max-width:38mm;vertical-align:middle">':'')}</td>`+(g?`<td>${bn(g.c)}</td><td>${bn(g.w)}</td><td>${bn(g.b)}</td><td>${bn(g.m)}</td><td><b>${bn(g.score)}</b>/${bn(g.full)}</td><td>${bn(g.pct)}</td>`:'<td colspan="6" class="uo-t3">এই সিরিয়ালের উত্তরপত্র নেই</td>')+`<td><button type="button" data-a="sv" data-i="${s.id}">দেখুন/ঠিক করুন</button> <button type="button" data-a="sd" data-i="${s.id}">মুছুন</button></td></tr>`}).join('')+'</table>';fillAna()}
 function scDetail(id){const s=SCN.find(x=>x.id==id),d=$('#us_det');if(!s){d.innerHTML='';return}const g=gradeScan(s),K=KEYS[s.use||s.ser],subs=K?K.subj:subjects();
 d.innerHTML=`<hr><div class="g"><label>রোল<input data-sf="roll" data-i="${id}" value="${esc(s.roll)}"></label><label>সিরিয়াল<input data-sf="ser" data-i="${id}" value="${esc(s.ser)}" maxlength="6"></label><label>উত্তরপত্র<select data-sf="use" data-i="${id}"><option value="">সিরিয়াল অনুযায়ী</option>${Object.keys(KEYS).map(k=>`<option value="${k}"${s.use==k?' selected':''}>${bn(k)}</option>`).join('')}</select></label></div>
 <p>ঐচ্ছিক বিষয় (শিক্ষার্থী যেগুলোর বৃত্ত ভরাট করেছে): ${[2,3,4,5].map((b,j)=>`<label style="display:inline"><input type="checkbox" data-so="${j}" data-i="${id}"${s.opt[j]?' checked':''}> ${esc(subs[b])}</label>`).join(' ')}</p>
@@ -2041,7 +2053,7 @@ d.innerHTML=`<hr><div class="g"><label>রোল<input data-sf="roll" data-i="${
 const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return h.toString(16).toUpperCase().padStart(8,'0')};
 const SYM={C:'✓',W:'✗',B:'স্কিপ',M:'**',X:'–',N:'?'};
 function head(t){const il=instLogo();return`<div class="hd">${il?`<img src="${il}">`:''}<div><b style="font-size:1.25em">${esc(val('uo_org'))}</b><br><b>${esc(t)}</b><br><small>${esc([val('uo_unit'),val('uo_exam')?'পরীক্ষা নং '+bn(val('uo_exam')):'',val('uo_chap')].filter(Boolean).join(' · '))}</small></div></div>`}
-function info(s,g){const st=STU[s.ser]||{};return`<div class="inf"><div>নাম: <b>${esc(st.name||'………………')}</b></div><div>সিরিয়াল: <b>${esc(s.ser)}</b> &nbsp; রোল: <b>${esc(s.roll||'—')}</b></div><div>পিতা: <b>${esc(st.father||'………………')}</b></div><div>মাতা: <b>${esc(st.mother||'………………')}</b></div><div>প্রাপ্ত নম্বর: <b>${bn(g.score)} / ${bn(g.full)}</b> (${bn(g.pct)}%)</div><div>সঠিক ${bn(g.c)} · ভুল ${bn(g.w)} · স্কিপ ${bn(g.b)} · একাধিক দাগ ${bn(g.m)}</div>${st.sig?`<div style="grid-column:1/-1">পরীক্ষার্থীর স্বাক্ষর: <img src="${st.sig}" style="height:9mm;vertical-align:middle;filter:grayscale(1)"></div>`:''}</div>`}
+function info(s,g){const st=STU[s.ser]||{};return`<div class="inf"><div>নাম: ${imgOr(s,st.name,'n',7)}</div><div>সিরিয়াল: <b>${esc(s.ser)}</b> &nbsp; রোল: <b>${esc(s.roll||'—')}</b></div><div>পিতা: ${imgOr(s,st.father,'f',6.5)}</div><div>মাতা: ${imgOr(s,st.mother,'m',6.5)}</div><div>প্রাপ্ত নম্বর: <b>${bn(g.score)} / ${bn(g.full)}</b> (${bn(g.pct)}%)</div><div>সঠিক ${bn(g.c)} · ভুল ${bn(g.w)} · স্কিপ ${bn(g.b)} · একাধিক দাগ ${bn(g.m)}</div>${(st.sig||(IMG[s.id]&&IMG[s.id].s))?`<div style="grid-column:1/-1">পরীক্ষার্থীর স্বাক্ষর: <img src="${st.sig||IMG[s.id].s}" style="height:9mm;vertical-align:middle;filter:grayscale(1)"></div>`:''}</div>`}
 function a4(s,g){const K=g.K;let t='';for(let b=0;b<6;b++){let rows='';for(let r=0;r<15;r++){const i=b*15+r,a=s.all[i],k=K.ans[i],x=g.res[i];rows+=`<tr${x=='W'||x=='M'?' style="background:#ddd;font-weight:700"':''}><td>${bn(r+1)}</td><td>${a>=0?LB[a]:a==-2?'**':'—'}</td><td>${k>=0?LB[k]:'?'}</td><td>${SYM[x]}</td></tr>`}
 t+=`<table class="t" style="width:32.5mm"><tr><th colspan="4">${esc(K.subj[b])}</th></tr><tr><th>প্র.</th><th>দাগ</th><th>সঠিক</th><th>ফল</th></tr>${rows}</table>`}
 const L=[];g.res.forEach((x,i)=>{if(x=='W'||x=='B'||x=='M'){const b=(i/15)|0,a=s.all[i],k=g.K.ans[i];L.push(`${esc(K.subj[b])}-${bn(i%15+1)}: ${x=='W'?'ভুল (দিয়েছেন '+LB[a]+')':x=='B'?'স্কিপ':'একাধিক দাগ'} → সঠিক <b>${LB[k]}</b>`)}});
@@ -2119,6 +2131,101 @@ else if(a=='pdf1'){const s=SCN.find(x=>x.id==$('#ua2_sel').value);if(!s)return a
 const au=$('#ua_autoser');if(au)au.onclick=()=>{$('#ua_ser').value=String(100000+Math.floor(Math.random()*800000))};
 document.querySelectorAll('#l [data-ot="2"]').forEach(b=>b.addEventListener('click',()=>syncPaper(false)));
 const ko=$('#ua_keyout');if(ko)new MutationObserver(()=>{const n=importPaperKeys();if(n)keyRender()}).observe(ko,{childList:true,characterData:true,subtree:true});
+})();
+
+/* ===================== নতুন: নাম/স্বাক্ষর ক্রপ + CQ মার্জ + সমন্বিত রেজাল্ট শিট ===================== */
+function imgOr(s,txt,k,h){return txt?'<b>'+esc(txt)+'</b>':(IMG[s.id]&&IMG[s.id][k]?'<img src="'+IMG[s.id][k]+'" style="height:'+h+'mm;max-width:62mm;vertical-align:middle;filter:grayscale(1)">':'<b>………………</b>')}
+/* ঘরের ক্রপ: সংশোধিত (warp) করা ছবি থেকে মিমি-অবস্থানে কেটে, কালি গাঢ় ও কাগজ সাদা করে ছোট JPEG */
+function cropMM(wg,Wt,x0,y0,x1,y1){const X0=Math.round(x0*PPM),Y0=Math.round(y0*PPM),w=Math.round((x1-x0)*PPM),h=Math.round((y1-y0)*PPM);
+const px=(x,y)=>{const v=wg[(Y0+y)*Wt+X0+x];return v===undefined?255:v};
+const hist=new Uint32Array(256);for(let y=0;y<h;y++)for(let x=0;x<w;x++)hist[px(x,y)]++;
+const tot=w*h;let a=0,lo=0,hi=255;for(let v=0;v<256;v++){a+=hist[v];if(a>=tot*.01){lo=v;break}}a=0;for(let v=0;v<256;v++){a+=hist[v];if(a>=tot*.7){hi=v;break}}hi=Math.max(hi,lo+45);
+const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d'),im=cx.createImageData(w,h);
+for(let y=0;y<h;y++)for(let x=0;x<w;x++){let v=(px(x,y)-lo)*255/(hi-lo);v=v<0?0:v>255?255:v;const j=(y*w+x)*4;im.data[j]=im.data[j+1]=im.data[j+2]=v;im.data[j+3]=255}
+cx.putImageData(im,0,0);const k=Math.min(1,340/w),o=document.createElement('canvas');o.width=Math.max(1,Math.round(w*k));o.height=Math.max(1,Math.round(h*k));const ox=o.getContext('2d');ox.fillStyle='#fff';ox.fillRect(0,0,o.width,o.height);ox.drawImage(c,0,0,o.width,o.height);return o.toDataURL('image/jpeg',.55)}
+function fieldCrops(wg,Wt){const R={n:[14,42.5,93,57.5],f:[14,65,93,75.5],m:[97,61.5,161.5,75.5],s:[97.5,41.5,161.5,57.5]},o={};for(const k in R){try{o[k]=cropMM(wg,Wt,...R[k])}catch(_){o[k]=''}}return o}
+window.__uoCrop={cropMM,fieldCrops};
+
+(function(){const ul2=$('#ul2');if(!ul2)return;
+const bar=ul2.querySelector('.uo-sub');if(!bar)return;
+const b5=document.createElement('button');b5.type='button';b5.dataset.us='5';b5.textContent='৫. CQ স্ক্যান ও রেজাল্ট শিট';bar.appendChild(b5);
+const up5=document.createElement('div');up5.id='up5';up5.hidden=true;ul2.appendChild(up5);
+document.head.insertAdjacentHTML('beforeend',`<style id="rs_css">
+.uos.rs{padding:8mm 9mm;font:10.5px/1.3 ${F};color:#000}
+.uos.rs .rh{display:flex;align-items:center;gap:3mm;border-bottom:.8mm solid #000;padding-bottom:1.6mm}
+.uos.rs .rh img.lg{height:14mm;filter:grayscale(1) contrast(1.3)}
+.uos.rs .rh .c{flex:1;text-align:center}.uos.rs .rh .c b{font-size:1.25em}
+.uos.rs .rh .id{border:.3mm solid #000;padding:1mm 2.2mm;font-size:.95em;line-height:1.5;min-width:36mm}
+.uos.rs .st{display:grid;grid-template-columns:1fr 62mm;gap:3mm;margin-top:2.5mm}
+.uos.rs .fl{border-bottom:.25mm dotted #000;padding:.4mm 0 .6mm;min-height:11mm;display:flex;flex-direction:column;justify-content:flex-end}
+.uos.rs .fl small{font-size:.78em;color:#000;opacity:.75;margin-bottom:.3mm}
+.uos.rs .fl img{height:8.2mm;max-width:100%;object-fit:contain;object-position:left bottom;filter:grayscale(1)}
+.uos.rs .tot{border:.45mm solid #000;text-align:center;padding:1.6mm;display:flex;flex-direction:column;justify-content:center}
+.uos.rs .tot .n{font-size:2.6em;font-weight:700;line-height:1.1}.uos.rs .tot small{font-size:.82em}
+.uos.rs table{border-collapse:collapse;width:100%}
+.uos.rs table.sm td,.uos.rs table.sm th{border:.25mm solid #000;padding:.5mm 1.4mm;text-align:center;font-size:.95em}
+.uos.rs table.sm td.l{text-align:left}.uos.rs table.sm tr.t td{font-weight:700;border-top:.5mm solid #000}
+.uos.rs h4{margin:2.4mm 0 1mm;font-size:1em;border-bottom:.25mm solid #000;padding-bottom:.3mm}
+.uos.rs .gr{display:flex;gap:1.4mm}.uos.rs .gr table{flex:1}
+.uos.rs .gr td,.uos.rs .gr th{border:.2mm solid #000;padding:0 .4mm;text-align:center;font-size:7pt;line-height:1.28}
+.uos.rs .gr th.s{font-size:7.4pt}.uos.rs .gr tr.x td{background:#ddd;font-weight:700}.uos.rs .gr.na td{color:#888}
+.uos.rs .wl{columns:3;column-gap:3mm;font-size:6.8pt;line-height:1.3;max-height:38mm;overflow:hidden}
+.uos.rs .sg{display:flex;gap:4mm;margin-top:3mm;align-items:flex-end}.uos.rs .sg>div{flex:1;text-align:center;border-top:.3mm solid #000;padding-top:.8mm;font-size:.88em;min-height:5mm;position:relative}
+.uos.rs .sg>div img{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);height:10mm;max-width:100%;filter:grayscale(1)}
+.uos.rs .ft{position:absolute;left:9mm;right:9mm;bottom:6mm;display:flex;justify-content:space-between;align-items:flex-end;font-size:6.6pt}
+#up5 table.uo-tb td img{height:6mm;vertical-align:middle}
+</style>`);
+const CQN=['পদার্থবিজ্ঞান','রসায়ন','জীববিজ্ঞান','উচ্চতর গণিত','বাংলা','ইংরেজি'];
+const cqIdx=(nm,b)=>{const n=String(nm||'').toLowerCase();return /phys|পদার্থ/.test(n)?0:/chem|রসায়ন/.test(n)?1:/bio|জীব/.test(n)?2:/math|গণিত/.test(n)?3:/bang|বাংলা/.test(n)?4:/eng|ইংরেজি/.test(n)?5:b};
+const cqOf=s=>s?(CQR.find(x=>x.ser==s.ser&&x.roll==s.roll)||(s.ser&&String(s.ser).indexOf('?')<0?CQR.find(x=>x.ser==s.ser):null)||null):null;
+function rsList(){const L=[],used=new Set();SCN.forEach(s=>{const c=cqOf(s);if(c)used.add(c.id);L.push({s,c})});CQR.forEach(c=>{if(!used.has(c.id))L.push({s:null,c})});return L}
+function rsCalc(it){const{s,c}=it,g=s?gradeScan(s):null,names=g?g.K.subj:subjects(),wf=+(($('#rs_wf')||{}).value)||0;
+const rows=names.map((nm,b)=>{const ci=cqIdx(nm,b),cs=c&&c.subs[ci]?c.subs[ci]:null,wv=cs?cs.w:'',S=g?g.sub[b]:null,na=!!(S&&S.x>0),w=(wv===''||wv==null||wv==='?')?null:+wv,m=S&&!na?S.sc:null;
+return{nm,ch:S?S.ch:'',w,wbad:wv==='?',m,na,S,full:S&&!na?S.full:0,tot:(w==null&&m==null)?null:(w||0)+(m||0),att:g?!na:w!=null}});
+let tw=0,tm=0,fm=0,att=0;rows.forEach(r=>{if(r.w!=null)tw+=r.w;if(r.m!=null){tm+=r.m;fm+=r.full}if(r.att)att++});
+const fw=wf>0?wf*att:0,tot=+(tw+tm).toFixed(2),full=fw+fm;
+return{g,rows,tw:+tw.toFixed(2),tm:+tm.toFixed(2),tot,fw,fm,full,pct:full>0?+(tot/full*100).toFixed(1):null}}
+function rsSheet(it){const{s,c}=it,R=rsCalc(it),g=R.g,st=(s&&STU[s.ser])||{},im=(s&&IMG[s.id])||{},cn=(c&&c.names)||{},ser=(s&&s.ser)||(c&&c.ser)||'',roll=(s&&s.roll)||(c&&c.roll)||'';
+const pic=(src,txt)=>src?`<img src="${src}">`:(txt?`<b>${esc(txt)}</b>`:'');
+const il=instLogo(),K=g?g.K:null,code=hash((ser||'')+(roll||'')+(s?s.all.join(''):'')+R.tot);
+const fmt=v=>v==null?'—':bn(+(+v).toFixed(2));
+const sum=R.rows.map(r=>`<tr><td class="l">${esc(r.nm)}</td><td class="l">${esc(r.ch||'')}</td><td${r.wbad?' style="background:#ddd"':''}>${r.wbad?'?':fmt(r.w)}</td><td>${r.S?(r.na?'—':bn(r.S.c)+' / '+bn(r.S.w)+' / '+bn(r.S.b+r.S.m)):'—'}</td><td>${r.na?'—':fmt(r.m)}</td><td><b>${fmt(r.tot)}</b></td></tr>`).join('');
+let grid='';if(g){for(let b=0;b<6;b++){const S=g.sub[b],na=S.x>0;let t='';for(let r=0;r<15;r++){const i=b*15+r,a=s.all[i],k=g.K.ans[i],x=g.res[i];t+=`<tr${x=='W'||x=='M'?' class="x"':''}><td>${bn(r+1)}</td><td>${na?'':a>=0?LB[a]:a==-2?'**':'—'}</td><td>${na?'':k>=0?LB[k]:'?'}</td><td>${na?'':SYM[x]}</td></tr>`}
+grid+=`<table class="${na?'na':''}"><tr><th class="s" colspan="4">${esc(g.K.subj[b])}${na?' (নয়)':''}</th></tr><tr><th>প্র.</th><th>দাগ</th><th>সঠিক</th><th>ফল</th></tr>${t}</table>`}}
+const wl=[];if(g)g.res.forEach((x,i)=>{if(x=='W'||x=='B'||x=='M'){const b=(i/15)|0,a=s.all[i],k=g.K.ans[i];wl.push(`${esc(g.K.subj[b])}-${bn(i%15+1)}: ${x=='W'?'দিয়েছেন '+LB[a]:x=='B'?'স্কিপ':'একাধিক দাগ'} → <b>${LB[k]}</b>`)}});
+const unit=[val('uo_unit'),val('uo_exam')?'পরীক্ষা নং '+bn(val('uo_exam')):'',val('uo_chap')].filter(Boolean).join(' · ');
+return`<div class="uos a4 rs"><div class="rh">${il?`<img class="lg" src="${il}">`:''}<div class="c"><b>${esc(val('uo_org')||'')}</b><br><b>সমন্বিত ফলাফল শিট</b> (MCQ + লিখিত)<br><small>${esc(unit)}</small></div><div class="id">রোল: <b>${esc(roll||'—')}</b><br>সিরিয়াল: <b>${esc(ser||'—')}</b></div></div>
+<div class="st"><div><div class="fl"><small>পরীক্ষার্থীর নাম</small>${pic(cn.c||im.n,st.name)}</div><div class="fl"><small>পিতার নাম</small>${pic(cn.f||im.f,st.father)}</div><div class="fl"><small>মাতার নাম</small>${pic(cn.m||im.m,st.mother)}</div></div>
+<div class="tot"><small>সর্বমোট প্রাপ্ত নম্বর</small><div class="n">${bn(R.tot)}</div><small>${R.full>0?'পূর্ণমান '+bn(R.full)+' · '+bn(R.pct)+'%':'লিখিত '+bn(R.tw)+' + MCQ '+bn(R.tm)}</small></div></div>
+<h4>বিষয়ভিত্তিক ফলাফল</h4><table class="sm"><tr><th class="l" style="width:24%">বিষয়</th><th style="width:25%">অধ্যায়/বিষয়বস্তু</th><th>লিখিত</th><th>MCQ সঠিক/ভুল/স্কিপ</th><th>MCQ নম্বর</th><th>মোট</th></tr>${sum}<tr class="t"><td class="l" colspan="2">সর্বমোট</td><td>${fmt(R.tw)}</td><td>${g?bn(g.c)+' / '+bn(g.w)+' / '+bn(g.b+g.m):'—'}</td><td>${g?fmt(R.tm):'—'}</td><td>${fmt(R.tot)}</td></tr></table>
+${g?`<p style="margin:1mm 0 0;font-size:.85em">উত্তরপত্র: ${esc(g.K.name||g.K.exam||'')} · সঠিক উত্তরে ${bn(g.pm)} নম্বর${g.ng?', ভুলে −'+bn(g.ng):''}${g.useOpt?' · ঐচ্ছিক বিষয়: যে ২টির বৃত্ত ভরাট শুধু সেগুলো ধরা হয়েছে':''}</p><h4>MCQ-এর বিস্তারিত (৯০টি)</h4><div class="gr">${grid}</div><p style="margin:.8mm 0 0;font-size:.8em">✓ সঠিক · ✗ ভুল (ধূসর) · স্কিপ · ** একাধিক দাগ · – ঐচ্ছিক বিষয় নয়</p><h4>ভুল / স্কিপ প্রশ্ন ও সঠিক উত্তর (${bn(wl.length)}টি)</h4><div class="wl">${wl.length?wl.join('<br>'):'কোনো ভুল বা স্কিপ নেই'}</div>`:`<p style="margin:3mm 0;border:.3mm dashed #000;padding:3mm">এই সিরিয়ালে MCQ OMR স্ক্যান বা উত্তরপত্র পাওয়া যায়নি — শুধু লিখিত নম্বর দেখানো হয়েছে।</p>`}
+<div class="sg"><div>কোঅর্ডিনেটর</div><div>ইনভিজিলেটর</div><div>প্রধান শিক্ষক</div><div>${st.sig||im.s?`<img src="${st.sig||im.s}">`:''}পরীক্ষার্থীর স্বাক্ষর</div></div>
+<div class="ft"><span>RESULT · ${esc(ser)}-${esc(roll||'x')} · যাচাই কোড ${code} · তৈরি: ${new Date().toLocaleString('en-GB')}</span><span class="rq" data-qr="${esc('EFSDSC|RES|'+ser+'|'+(roll||'')+'|'+code)}"></span></div></div>`}
+function rsOut(list,doPrint){if(!list.length)return alert('আগে স্ক্যান করুন');$('#pg').textContent='@page{size:A4 portrait;margin:0}';const o=outBox();o.innerHTML=list.map(rsSheet).join('');document.body.dataset.mode='uo';
+o.querySelectorAll('[data-qr]').forEach(d=>{try{new QRCode(d,{text:d.dataset.qr,width:60,height:60,correctLevel:QRCode.CorrectLevel.M})}catch(_){}});o.scrollIntoView({behavior:'smooth'});if(doPrint)setTimeout(()=>window.print(),600)}
+/* ---- UI ---- */
+const cqFs=[...(document.getElementById('m')?document.getElementById('m').children:[])];
+up5.innerHTML=`<fieldset><legend>স্মার্ট স্ক্যান — MCQ OMR ও CQ শিট একসাথে (নিজে চিনে নেবে)</legend><div class="bar"><input type="file" id="rs_up" accept="image/*" multiple style="display:none"><input type="file" id="rs_cam" accept="image/*" capture="environment" style="display:none"><button type="button" class="p" data-rs="up">🖼 ছবি/ফাইল দিন (একাধিক, মিশ্র চলবে)</button><button type="button" data-rs="cam">📷 ক্যামেরায় তুলুন</button></div><p class="note" id="rs_msg">যেকোনো ছবি দিন — চার কোণের বর্গ ও অবস্থান দেখে নিজেই বুঝে নেবে সেটি MCQ OMR নাকি CQ (লিখিত) শিট। দুটোই একই সিরিয়াল+রোল দিয়ে নিজে মিলে যাবে। MCQ শিট থেকে নাম/পিতা/মাতা ও স্বাক্ষরের ঘর স্বয়ংক্রিয়ভাবে ছবি আকারে কেটে রাখা হয়।</p></fieldset><div id="rs_cqhost"></div>
+<fieldset><legend>সমন্বিত রেজাল্ট শিট (A4, সাদা-কালো, মিনিমালিস্টিক)</legend><div class="g"><label>লিখিত পূর্ণমান (প্রতি বিষয়ে; ফাঁকা = পূর্ণমান/শতকরা দেখাবে না)<input id="rs_wf" type="number" min="0" step="1" placeholder="যেমন: 20"></label></div><div class="bar"><button type="button" class="p" data-rs="all">সবার রেজাল্ট শিট (প্রিভিউ + PDF প্রিন্ট)</button><button type="button" data-rs="allv">শুধু প্রিভিউ</button><button type="button" data-rs="csv">সমন্বিত CSV</button></div><div id="rs_list" style="overflow-x:auto;margin-top:6px"></div><p class="note">নাম/পিতা/মাতার ছবি: CQ শিট থাকলে সেখান থেকে, না থাকলে MCQ OMR থেকে; স্বাক্ষর MCQ OMR-এর স্বাক্ষর-ঘর থেকে। নম্বরগুলো: লিখিত = CQ শিটের বৃত্ত, MCQ = ৯০টি উত্তরের স্বয়ংক্রিয় মূল্যায়ন। লাল/ধূসর ঘর যাচাই করে CQ তালিকায় ঠিক করুন।</p></fieldset>`;
+cqFs.forEach(f=>up5.querySelector('#rs_cqhost').appendChild(f));
+const m=document.getElementById('m');if(m)m.hidden=true;
+function refreshRes(){const o=$('#rs_list');if(!o)return;const L=rsList();if(!L.length){o.innerHTML='<p class="note">এখনো কোনো স্ক্যান নেই।</p>';return}
+o.innerHTML='<table class="uo-tb"><tr><th>#</th><th>রোল</th><th>সিরিয়াল</th><th>নাম (ছবি)</th><th>MCQ</th><th>CQ</th><th>মোট</th><th></th></tr>'+L.map((it,i)=>{const R=rsCalc(it),s=it.s,c=it.c,im=(s&&IMG[s.id])||{},nimg=(c&&c.names&&c.names.c)||im.n;
+return`<tr><td>${bn(i+1)}</td><td>${esc((s&&s.roll)||(c&&c.roll)||'—')}</td><td>${esc((s&&s.ser)||(c&&c.ser)||'')}</td><td>${nimg?'<img src="'+nimg+'" style="height:6mm">':''}</td><td>${R.g?'✓ '+bn(R.tm):(s?'<span class="uo-t3">উত্তরপত্র নেই</span>':'<span class="uo-t3">স্ক্যান নেই</span>')}</td><td>${c?'✓ '+bn(R.tw):'<span class="uo-t3">স্ক্যান নেই</span>'}</td><td><b>${bn(R.tot)}</b></td><td><button type="button" data-rs="one:${i}">রেজাল্ট শিট</button></td></tr>`}).join('')+'</table>'}
+window.__uoRes=refreshRes;
+async function smart(fs){const msg=$('#rs_msg');let a=0,b=0,bad=[];for(const f of fs){msg.textContent='পড়া হচ্ছে: '+f.name+' …';await new Promise(r=>setTimeout(r,30));try{const im=await loadImg(f);const r=scanSource(im,scOpt());if(r.ok){addScan(r);a++;continue}
+const q=window.__cq.scan(im,{maxDim:2200});if(q.ok){window.__cq.add(q,f.name);b++}else bad.push(f.name+' — '+r.err)}catch(x){bad.push(f.name+' — পড়া যায়নি')}}
+msg.innerHTML=(a||b?'✅ MCQ OMR '+bn(a)+'টি, CQ শিট '+bn(b)+'টি স্ক্যান হয়েছে। ':'')+bad.map(x=>`<span class="uo-t3">${esc(x)}</span>`).join('<br>');if(a&&ST.beep)beep();refreshRes()}
+up5.addEventListener('change',e=>{const t=e.target;if(t.id=='rs_up'||t.id=='rs_cam'){smart([...t.files]);t.value=''}if(t.id=='rs_wf')refreshRes()});
+up5.addEventListener('input',e=>{if(e.target.id=='rs_wf')refreshRes()});
+up5.addEventListener('click',e=>{const b=e.target.closest('[data-rs]');if(!b)return;const a=b.dataset.rs;
+if(a=='up')$('#rs_up').click();else if(a=='cam')$('#rs_cam').click();
+else if(a=='all')rsOut(rsList(),true);else if(a=='allv')rsOut(rsList(),false);
+else if(a.indexOf('one:')==0){const it=rsList()[+a.slice(4)];if(it)rsOut([it],false)}
+else if(a=='csv'){const rows=[['#','রোল','সিরিয়াল',...CQN.flatMap(n=>[n+' (লিখিত)',n+' (MCQ)']),'লিখিত','MCQ','মোট']];rsList().forEach((it,i)=>{const R=rsCalc(it);rows.push([i+1,(it.s&&it.s.roll)||(it.c&&it.c.roll)||'',(it.s&&it.s.ser)||(it.c&&it.c.ser)||'',...R.rows.flatMap(r=>[r.w==null?'':r.w,r.m==null?'':r.m]),R.tw,R.tm,R.tot])});
+const t='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n'),an=document.createElement('a');an.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'}));an.download='combined-result.csv';document.body.appendChild(an);an.click();setTimeout(()=>{URL.revokeObjectURL(an.href);an.remove()},500)}});
+ul2.addEventListener('click',e=>{const us=e.target.closest('[data-us]');if(!us)return;up5.hidden=us.dataset.us!='5';if(us.dataset.us=='5')refreshRes()});
+['#cq_res','#us_res'].forEach(sel=>{const el=$(sel);if(el)new MutationObserver(()=>{if(!up5.hidden)refreshRes()}).observe(el,{childList:true})});
 })();
 
 })();
@@ -2234,3 +2341,54 @@ document.getElementById('bkx').onclick=()=>{const o={};for(let i=0;i<localStorag
 document.getElementById('bki').onclick=()=>document.getElementById('bkf').click();
 document.getElementById('bkf').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j.data)throw 0;if(!confirm('ব্যাকআপের তথ্য এই ডিভাইসে বসানো হবে (একই নামের তথ্য বদলে যাবে)। এগোবেন?'))return;for(const k in j.data)localStorage.setItem(k,j.data[k]);alert('সম্পন্ন! পেজ রিলোড হচ্ছে।');location.reload()}catch(_){alert('ফাইলটি সঠিক ব্যাকআপ নয়')}};})();
 </script>
+<style>
+.jk-bar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px;position:sticky;top:0;z-index:6;background:var(--bg,#fff);padding:4px 0;border-bottom:1px solid var(--bd,#999)}
+.jk-bar button{padding:7px 14px;border:1px solid var(--bd,#999);background:none;color:inherit;font:inherit;cursor:pointer;border-radius:6px}
+.jk-bar button.on{background:var(--fg);color:var(--bg);font-weight:700}
+#jk>#k{display:block}
+.jk-ok{color:#0a7a3d;font-size:.9em;margin-top:2px}.jk-no{color:#b00;font-size:.9em;margin-top:2px}
+</style>
+<script>
+/* ১০. মেডিকেল প্রস্তুতি + ১১. OMR রিডার = একটি ট্যাব; ১৩. CQ স্ক্যানার = বিশ্ববিদ্যালয় ট্যাবের ভিতরে */
+(function(){
+const j=document.getElementById('j'),k=document.getElementById('k');if(!j||!k||document.getElementById('jk'))return;
+const jp=document.createElement('div');jp.id='jp';while(j.firstChild)jp.appendChild(j.firstChild);
+const bar=document.createElement('div');bar.className='jk-bar no-print';
+bar.innerHTML='<button type="button" class="on" data-jk="1">১. প্রশ্নপত্র তৈরি (সিরিয়ালসহ OMR)</button><button type="button" data-jk="2">২. OMR রিডার — স্ক্যান ও মূল্যায়ন</button>';
+const jk=document.createElement('div');jk.id='jk';jk.hidden=true;
+j.appendChild(bar);j.appendChild(jp);j.appendChild(jk);jk.appendChild(k);
+k.hidden=false;new MutationObserver(()=>{if(k.hidden)k.hidden=false}).observe(k,{attributes:true,attributeFilter:['hidden']});
+function sub(n){jp.hidden=n!=1;jk.hidden=n!=2;bar.querySelectorAll('[data-jk]').forEach(b=>b.classList.toggle('on',b.dataset.jk==n));
+ if(n==2){const on=k.querySelector('.otabs .on')||k.querySelector('[data-ot="1"]');if(on)on.click()}}
+bar.addEventListener('click',e=>{const b=e.target.closest('[data-jk]');if(b)sub(+b.dataset.jk)});
+const nav=t=>document.querySelector('nav button[data-t="'+t+'"]'),nj=nav('j'),nk=nav('k'),nl=nav('l'),nm=nav('m');
+if(nk)nk.addEventListener('click',()=>{nj.click();sub(2)});
+function openUo5(){nl.click();const o=document.querySelector('#l [data-ot="2"]');if(o)o.click();const b=document.querySelector('#ul2 [data-us="5"]');if(b)b.click()}
+if(nm)nm.addEventListener('click',openUo5);
+/* সাইডবার মেনু সাজানো */
+const menu=document.getElementById('sbMenu');
+if(menu){const btns=[...menu.children];let hide=false;
+ btns.forEach(b=>{const t=b.textContent.trim();
+  if(/^১১\./.test(t)){b.style.display='none';hide=true;return}
+  if(hide&&b.classList.contains('sub')){b.style.display='none';return}
+  hide=false;
+  if(/^১৩\./.test(t))b.style.display='none'});
+ const closeM=()=>{const bk=document.getElementById('sbBk');if(bk)bk.click()};
+ const mk=(txt,fn)=>{const y=document.createElement('button');y.className='sub';y.textContent=txt;y.style.setProperty('--d','.1s');y.onclick=()=>{fn();closeM()};return y};
+ const item10=btns.find(b=>/^১০\./.test(b.textContent.trim()));
+ if(item10){let after=item10;[['› প্রশ্নপত্র তৈরি',()=>{nj.click();sub(1)}],['› OMR রিডার (স্ক্যান)',()=>{nj.click();sub(2);const o=k.querySelector('[data-ot="2"]');o&&o.click()}],['› উত্তরপত্র (ঐচ্ছিক)',()=>{nj.click();sub(2);const o=k.querySelector('[data-ot="1"]');o&&o.click()}],['› বিস্তারিত অ্যানালাইসিস ও PDF',()=>{nj.click();sub(2);const o=k.querySelector('[data-ot="3"]');o&&o.click()}]].forEach(([t,f])=>{const y=mk(t,f);after.after(y);after=y})}
+ const item12=btns.find(b=>/^১২\./.test(b.textContent.trim()));
+ if(item12){let a=item12;while(a.nextElementSibling&&a.nextElementSibling.classList.contains('sub'))a=a.nextElementSibling;a.after(mk('› CQ স্ক্যান ও রেজাল্ট শিট',openUo5))}}
+/* স্ক্যানে সিরিয়াল মিললে কোন প্রশ্নপত্র মিলল তা দেখাও */
+const os=document.getElementById('os_res');
+if(os){const mo=new MutationObserver(()=>{mo.disconnect();try{let REG={};try{REG=(window.__md&&__md.REG())||{}}catch(_){}
+ os.querySelectorAll('tr').forEach(tr=>{const si=tr.querySelector('[data-ss]'),se=tr.querySelector('select[data-se]');if(!si||!se||se.parentNode.querySelector('.jk-ok,.jk-no'))return;const r=REG[si.value.trim()];
+  const d=document.createElement('div');if(r&&(se.value=='auto')){d.className='jk-ok';d.textContent='✓ প্রশ্নপত্র মিলেছে: '+(r.exam||'')+' · সেট '+(r.lab||'')}else if(!r&&se.value=='auto'){d.className='jk-no';d.textContent='সিরিয়ালে প্রশ্নপত্র নেই'}else return;se.parentNode.appendChild(d)})}finally{mo.observe(os,{childList:true,subtree:true})}});
+ mo.observe(os,{childList:true,subtree:true})}
+const ot2=document.getElementById('ot2'),fs2=ot2&&ot2.querySelector('fieldset');
+if(fs2){const p=document.createElement('p');p.className='note';p.innerHTML='ℹ <b>স্বয়ংক্রিয়:</b> “প্রশ্নপত্র তৈরি” ট্যাবে সিরিয়ালসহ বানানো প্রশ্নপত্রের উত্তরমালা এখানে OMR-এর সিরিয়াল পড়ে নিজে মিলে যাবে — আলাদা উত্তরপত্র আপলোড বা সেভ করা লাগবে না (দিলে সেটাই অগ্রাধিকার পাবে)।';fs2.insertBefore(p,fs2.children[1]||null)}
+const ot1=document.getElementById('ot1'),fs1=ot1&&ot1.querySelector('fieldset');
+if(fs1){const p=document.createElement('p');p.className='note';p.innerHTML='ℹ এই অংশ <b>ঐচ্ছিক</b> — প্রশ্নপত্র তৈরি ট্যাবের সিরিয়ালের উত্তরমালা না থাকলে (যেমন বাইরের প্রশ্নপত্র) এখানে হাতে উত্তরপত্র দিন।';fs1.insertBefore(p,fs1.children[1]||null)}
+})();
+</script>
+
