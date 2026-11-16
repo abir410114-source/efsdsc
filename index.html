@@ -63,7 +63,18 @@ table.srt{border-collapse:collapse;width:100%;font-size:13px}table.srt th,table.
 .mkdoc .vf{display:flex;gap:3mm;align-items:center;font-size:7.5pt;margin-top:3mm;border-top:1px solid #000;padding-top:2mm;break-inside:avoid}.mkdoc .vf .qr{width:18mm;height:18mm;flex:none}.mkdoc .vf .qr img,.mkdoc .vf .qr canvas{width:18mm!important;height:18mm!important}
 @media print{body[data-mode=sr] .srsheet{margin:0;border:0}.mkdoc{border:0!important;margin:0!important;padding:0!important;max-width:none!important}}
 </style>
-</head><body>
+<style id="mkmin">
+.sblk{display:flex;gap:3mm;align-items:flex-end;border-top:.6px solid #000;border-bottom:.6px solid #000;padding:2.5mm 0;margin:2mm 0;break-inside:avoid;color:#000}
+.sblk figure{margin:0;text-align:center;flex:none}.sblk figure div{border:.5px solid #777;overflow:hidden;display:flex;align-items:center;justify-content:center}.sblk figure img{width:100%;height:100%;object-fit:cover}.sblk figcaption{font-size:6.5pt;color:#444;margin-top:.5mm}
+.sblk .kv{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8mm 4mm}.sblk .kv p{margin:0;font-size:8.5pt}.sblk .kv span{display:block;font-size:6.5pt;color:#555}
+.mkdoc{border:0!important;font-size:9.5pt}.mkdoc .hd{border-bottom:.6px solid #000}.mkdoc .hd b{font-size:12pt;font-weight:600}
+.mkdoc .ti{border:0;font-weight:600;font-size:11pt;margin:2mm 0;letter-spacing:.5px}
+.mkdoc h4{border:0;font-size:8.5pt;font-weight:600;color:#333;margin:4mm 0 1mm;letter-spacing:.5px}
+.mkt th,.mkt td{border:0;border-bottom:.5px solid #999;padding:.7mm 1mm}.mkt th{border-bottom:.8px solid #000;font-weight:600;font-size:8pt}.mkt tfoot td{border-top:.8px solid #000;border-bottom:0}
+.mkdoc .cards div{border:0;border-left:.6px solid #000;text-align:left;padding:0 2mm}.mkdoc .cards b{font-size:12pt;font-weight:600}
+.mkdoc .bar2 .tr{border:0;background:#ddd;height:2mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.mkdoc .sg div{border-top:.5px solid #000}.mkdoc .vf{border-top:.5px solid #999}
+</style></head><body>
 <!DOCTYPE html>
 <html lang="bn"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -778,7 +789,7 @@ admSlip:i=>{const a=D.adm[+i];show([TT('ভর্তির আবেদন প�
 payAdd:()=>{const o=RF('pay');if(!o.sid||!o.amt)return alert('শিক্ষার্থী ও টাকা দিন');o.no='RCT-'+today().slice(0,4)+'-'+String(D.pay.length+1).padStart(4,'0');o.date=today();D.pay.push(o);msave('pay');mgRender()},
 payRcpt:i=>{const p=D.pay[+i],s=sOf(p.sid);show([TT('ডিজিটাল ফি রশিদ / FEE RECEIPT')+KV([['রশিদ নং',p.no],['তারিখ',p.date],['শিক্ষার্থী',s.name],['শ্রেণি / রোল',s.cls+' / '+s.roll],['খাত',p.type],['টাকা',p.amt+' /-'],['মাধ্যম',p.method],['রেফারেন্স',p.ref]])+`<div class="sig"><div>গ্রহীতার স্বাক্ষর</div><div class="seal">সিল</div><div>জমাকারীর স্বাক্ষর</div></div>`],'RECEIPT',p.no)},
 resAdd:()=>{const o=RF('res');if(!o.sid||!o.subs)return;const subs=o.subs.split('\n').map(l=>l.split(',')).filter(a=>a.length>=3).map(a=>({n:a[0].trim(),f:+a[1],m:+a[2]}));if(!subs.length)return alert('বিষয়,পূর্ণমান,প্রাপ্ত ফরম্যাটে দিন');const g=subs.map(s=>gp(s.m/s.f*100)),fail=g.includes(0),G=fail?0:g.reduce((a,b)=>a+b,0)/g.length;D.res.push({sid:o.sid,exam:o.exam,subs,total:subs.reduce((a,s)=>a+s.m,0),gpa:G,grade:gl(G)});msave('res');mgRender()},
-resSheet:i=>{const r=D.res[+i],s=sOf(r.sid),pos=[...D.res.filter(x=>x.exam==r.exam)].sort((a,b)=>b.total-a.total).indexOf(r)+1;show([TT('একাডেমিক মার্কশিট — '+e(r.exam))+KV([['নাম',s.name],['শ্রেণি / রোল',s.cls+' / '+s.roll]])+TB(['বিষয়','পূর্ণমান','প্রাপ্ত','গ্রেড','GP'],r.subs.map(x=>{const g=gp(x.m/x.f*100);return[e(x.n),x.f,x.m,gl(g),g.toFixed(2)]}))+`<p>মোট: <b>${r.total}</b> · GPA: <b>${r.gpa.toFixed(2)}</b> (${r.grade}) · ফলাফল: <b>${r.gpa>0?'উত্তীর্ণ':'অনুত্তীর্ণ'}</b> · মেধাক্রম: ${pos}</p><div class="sig"><div>শ্রেণি শিক্ষক</div><div class="seal">সিল</div><div>অধ্যক্ষ / Principal</div></div>`],'MARKSHEET',s.id+'-'+r.exam)},
+resSheet:i=>{const r=D.res[+i],s=sOf(r.sid),pos=[...D.res.filter(x=>x.exam==r.exam)].sort((a,b)=>b.total-a.total).indexOf(r)+1;show([TT('একাডেমিক মার্কশিট — '+e(r.exam))+(window.__srBlock?__srBlock(s.roll):'')+KV([['নাম',s.name],['শ্রেণি / রোল',s.cls+' / '+s.roll]])+TB(['বিষয়','পূর্ণমান','প্রাপ্ত','গ্রেড','GP'],r.subs.map(x=>{const g=gp(x.m/x.f*100);return[e(x.n),x.f,x.m,gl(g),g.toFixed(2)]}))+`<p>মোট: <b>${r.total}</b> · GPA: <b>${r.gpa.toFixed(2)}</b> (${r.grade}) · ফলাফল: <b>${r.gpa>0?'উত্তীর্ণ':'অনুত্তীর্ণ'}</b> · মেধাক্রম: ${pos}</p><div class="sig"><div>শ্রেণি শিক্ষক</div><div class="seal">সিল</div><div>অধ্যক্ষ / Principal</div></div>`],'MARKSHEET',s.id+'-'+r.exam)},
 attMan:()=>rec($('#am').value,'হাতে'),
 smsGen:k=>{const td=today(),add=(s,t)=>{if(!s.phone||D.sms.some(x=>x.phone==s.phone&&x.text==t))return;D.sms.push({phone:s.phone,text:t,status:'অপেক্ষমাণ',at:nowS()})};
 if(k=='abs'){const pr=presentOn(td);D.st.filter(s=>!pr.has(s.id)).forEach(s=>add(s,fill(TPL.abs,{...s,date:td})))}
@@ -1439,7 +1450,7 @@ const rows=s.ans.map((a,i)=>{const k=R?R.ans[i]:-1,mi=R&&R.mi?R.mi[i]+1:'';retur
 v.innerHTML=`<fieldset><legend>শিক্ষার্থী রিপোর্ট — রোল ${e(s.roll||'—')} · সিরিয়াল ${s.ser} · সেট ${s.set}</legend><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><canvas id="md_ov" style="max-width:260px;border:1px solid var(--bd)"></canvas><div class="note">সবুজ = সঠিক, লাল = ভুল (সঠিক উত্তর সবুজ চেনা), ধূসর = ফাঁকা</div></div><div style="flex:1;min-width:260px"><p><b>সঠিক ${s.c} · ভুল ${s.w} · ফাঁকা ${s.b} · একাধিক ${s.m} · নম্বর ${s.score}</b></p><div style="max-height:360px;overflow:auto"><table class="v"><tr><th>প্রশ্ন</th><th>শিক্ষার্থীর উত্তর</th><th>সঠিক</th><th>ফল</th><th>মা:</th></tr>${rows}</table></div><div class="bar"><button class="p" data-sc="print:${s.id}">এই শিক্ষার্থীর রিপোর্ট প্রিন্ট/PDF</button></div></div></div></fieldset>`;
 if(s.th){const im=new Image();im.onload=()=>{const c=$q('#md_ov');c.width=im.width;c.height=im.height;const x=c.getContext('2d');x.drawImage(im,0,0);const sc=im.width/OW,G=geo(s.N);G.a.forEach(r=>{const a=s.ans[r.q],k=R?R.ans[r.q]:-1;if(k>=0&&a!=k){x.strokeStyle='#0a0';x.lineWidth=2;x.beginPath();x.arc(r.xs[k]*sc,r.y*sc,2.4*sc,0,7);x.stroke()}if(a>=0){x.strokeStyle=a==k?'#0a0':'#d00';x.lineWidth=2;x.beginPath();x.arc(r.xs[a]*sc,r.y*sc,2.4*sc,0,7);x.stroke()}else if(a==-2){x.strokeStyle='#d00';x.strokeRect((r.xs[0]-2.4)*sc,(r.y-1.8)*sc,(r.xs[3]-r.xs[0]+4.8)*sc,3.6*sc)}});};im.src=s.th}v.scrollIntoView({behavior:'smooth'})}
 function stuPage(s){const R=REG[s.useSer||s.ser],cols=Math.ceil(s.N/25),blk=Array.from({length:cols},(_,c)=>{const rs=[];for(let i=c*25;i<Math.min(s.N,c*25+25);i++){const a=s.ans[i],k=R?R.ans[i]:-1;rs.push(`<tr><td>${i+1}</td><td>${a>=0?OPL[a]:a==-2?'**':'—'}</td><td>${k>=0?OPL[k]:'—'}</td><td>${{C:'✓',W:'✗',B:'—',M:'**',N:'?'}[s.res[i]]}</td></tr>`)}return`<table class="rt" style="width:${(100/cols-1).toFixed(1)}%"><tr><th>প্র.</th><th>উত্তর</th><th>সঠিক</th><th>ফল</th></tr>${rs.join('')}</table>`}).join('');
-return TT('OMR ফলাফল রিপোর্ট — শিক্ষার্থী')+KV([['রোল',s.roll||'—'],['সিরিয়াল',s.ser],['সেট',s.set],['পরীক্ষা',R?R.exam:''],['সঠিক',s.c],['ভুল',s.w],['ফাঁকা',s.b],['একাধিক দাগ',s.m],['প্রাপ্ত নম্বর',s.score]])+`<div style="display:flex;gap:1.5%;margin-top:3mm">${blk}</div><p class="note">✓ সঠিক · ✗ ভুল · — ফাঁকা · ** একাধিক দাগ · ? উত্তর নেই</p>`}
+return TT('OMR ফলাফল রিপোর্ট — শিক্ষার্থী')+(window.__srBlock?__srBlock(s.roll):'')+KV([['রোল',s.roll||'—'],['সিরিয়াল',s.ser],['সেট',s.set],['পরীক্ষা',R?R.exam:''],['সঠিক',s.c],['ভুল',s.w],['ফাঁকা',s.b],['একাধিক দাগ',s.m],['প্রাপ্ত নম্বর',s.score]])+`<div style="display:flex;gap:1.5%;margin-top:3mm">${blk}</div><p class="note">✓ সঠিক · ✗ ভুল · — ফাঁকা · ** একাধিক দাগ · ? উত্তর নেই</p>`}
 function qStats(){const m={};SC.forEach(s=>{const R=REG[s.useSer||s.ser];if(!R||!R.mi)return;s.ans.forEach((a,i)=>{const mi=R.mi[i],k=R.ans[i];if(mi==null)return;const t=m[mi]=m[mi]||{n:0,c:0,w:0,b:0,m:0,d:[0,0,0,0],key:-1};t.n++;const mk=k>=0&&R.op?R.op[i][k]:-1;if(mk>=0)t.key=mk;if(a==-2)t.m++;else if(a<0)t.b++;else{const mo=R.op?R.op[i][a]:a;if(mo>=0&&mo<4)t.d[mo]++;if(a==k)t.c++;else t.w++}})});return Object.keys(m).map(Number).sort((a,b)=>a-b).map(i=>({i,...m[i]}))}
 function anaView(){const Q=qStats(),o=$q('#md_ana');if(!Q.length){o.innerHTML='<p class="note">বিশ্লেষণের জন্য আগে সেট তৈরি করে OMR ছাপিয়ে স্ক্যান করুন।</p>';return}
 const sd=SC.length,avg=sd?(SC.reduce((a,s)=>a+s.score,0)/sd).toFixed(2):0,top=Math.max(...SC.map(s=>s.score)),lo=Math.min(...SC.map(s=>s.score));
@@ -3269,9 +3280,13 @@ function analyze(R){
   if(br<=20&&wr<=30&&T.c/T.q>=.7)L.push('নির্ভুলতা ও উত্তরের পরিমাণ — দুটোই সন্তোষজনক; এই ধারা ধরে রাখা ভালো।')}
  return{T,L,ss}}
 /* ---------- মার্কশিট ---------- */
+function sblk(roll){const st=ST[roll]||{roll};const im=(k,c,w,h)=>`<figure class="sf"><div style="width:${w}mm;height:${h}mm">${st[k]?`<img src="${st[k]}">`:''}</div><figcaption>${c}</figcaption></figure>`;
+ const kv=[['নাম',st.nameBn||st.nameEn||'—'],['রোল',st.roll],['শ্রেণি',[st.cls,st.sec].filter(Boolean).join(' / ')||'—'],['গ্রুপ',st.grp||'—'],['সেশন',st.ses||'—'],['জন্মতারিখ',dfmt(st.dob)||'—'],['পিতা',st.fName||'—'],['মাতা',st.mName||'—'],['রেজি. নং',st.reg||st.sscReg||'—']];
+ return`<div class="sblk">${im('photo','ছবি',24,30)}<div class="kv">${kv.map(([a,b])=>`<p><span>${a}</span>${esc(b)}</p>`).join('')}</div>${im('fphoto','পিতা',17,21)}${im('mphoto','মাতা',17,21)}${im('sign','স্বাক্ষর',24,10)}</div>`}
+window.__srBlock=r=>{try{return sblk(nr(r))}catch(_){return''}};
 async function makeSheet(){
  const R=picked();if(!R.length){alert('অন্তত একটি পরীক্ষা বাছাই করুন');return}
- const st=ST[CUR.roll]||{roll:CUR.roll},A=analyze(R),T=A.T,ph=Q('#mk_ph').checked,pass=+Q('#mk_pass').value||40,title=Q('#mk_title').value||'মার্কশিট';
+ const st=ST[CUR.roll]||{roll:CUR.roll},A=analyze(R),T=A.T,ph=true,pass=+Q('#mk_pass').value||40,title=Q('#mk_title').value||'মার্কশিট';
  const kv=[['নাম',st.nameBn||st.nameEn||'—'],['রোল',st.roll],['শ্রেণি',[st.cls,st.sec].filter(Boolean).join(' / ')||'—'],['গ্রুপ',st.grp||'—'],['সেশন',st.ses||'—'],['পিতার নাম',st.fName||'—'],['মাতার নাম',st.mName||'—'],['জন্মতারিখ',dfmt(st.dob)||'—'],['রেজি. নং',st.reg||st.sscReg||'—']];
  const rows=R.map((r,i)=>`<tr><td>${bn(i+1)}</td><td>${bn(dstr(r.ts))}</td><td class="l">${esc(r.exam)}${r.set?' (সেট '+esc(r.set)+')':''}</td><td>${esc(r.sub||'—')}</td><td>${r.hasQ?bn(r.n):'—'}</td><td>${r.hasQ?bn(r.c):'—'}</td><td>${r.hasQ?bn(r.w):'—'}</td><td>${r.hasQ?bn(r.b+r.m):'—'}</td><td>${bn(f2(r.score))}</td><td>${bn(f2(r.full))}</td><td>${bn(f2(Math.round(r.pct*10)/10))}</td><td>${grade(r.pct)}</td>${Q('#mk_rk').checked?`<td>${r.rank?bn(r.rank)+'/'+bn(r.of):'—'}</td>`:''}</tr>`).join('');
  const rk=Q('#mk_rk').checked;
@@ -3286,7 +3301,7 @@ async function makeSheet(){
  let code='';try{code=(await sha('MARKSHEET'+CUR.roll+R.map(r=>r.id+r.score).join(','))).slice(0,12).toUpperCase()}catch(_){code=Date.now().toString(36).toUpperCase()}
  setPage('@page{size:A4 portrait;margin:10mm}');
  Q('#srout').innerHTML=`<div class="mkdoc"><div class="hd"><img src="${lg(0)}"><div><b>EMD FOUNDATION SKILLS DEVELOPMENT SCHOOL AND COLLEGE, RAJSHAHI</b>EFSDSC, RAJSHAHI</div><img src="${lg(1)}"><img src="${lg(2)}"></div><div class="ti">${esc(title)}</div>
- <div class="stu">${ph?`<div class="ph">${st.photo?`<img src="${st.photo}">`:'ছবি'}</div>`:''}<div class="kv">${kv.map(([a,b])=>`<p><span>${a}</span>${esc(b)}</p>`).join('')}</div></div>
+ ${sblk(CUR.roll)}
  <h4>পরীক্ষাভিত্তিক ফলাফল</h4><table class="mkt"><thead><tr><th>ক্র.</th><th>তারিখ</th><th>পরীক্ষা</th><th>বিষয়</th><th>প্রশ্ন</th><th>সঠিক</th><th>ভুল</th><th>ফাঁকা</th><th>প্রাপ্ত</th><th>পূর্ণমান</th><th>%</th><th>গ্রেড</th>${rk?'<th>অবস্থান</th>':''}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="4">মোট</td><td>${T.q?bn(T.q):'—'}</td><td>${T.q?bn(T.c):'—'}</td><td>${T.q?bn(T.w):'—'}</td><td>${T.q?bn(T.b):'—'}</td><td>${bn(f2(T.sc))}</td><td>${bn(f2(T.fu))}</td><td>${bn(f2(Math.round(T.pct*10)/10))}</td><td>${grade(T.pct)}</td>${rk?'<td></td>':''}</tr></tfoot></table>
  <h4>সামগ্রিক সারাংশ</h4><div class="cards"><div><b>${bn(T.n)}</b><span>মোট পরীক্ষা</span></div><div><b>${bn(f2(T.sc))}/${bn(f2(T.fu))}</b><span>মোট নম্বর</span></div><div><b>${bn(f2(Math.round(T.pct*10)/10))}%</b><span>শতকরা নম্বর</span></div><div><b>${T.pct>=pass?'উত্তীর্ণ':'অনুত্তীর্ণ'} · ${grade(T.pct)}</b><span>পাস নম্বর ${bn(pass)}%</span></div></div>
  ${bars}<h4>সংক্ষিপ্ত বিশ্লেষণ</h4><ul>${A.L.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${subT}${det}
@@ -3329,11 +3344,15 @@ Q('#mk_go').onclick=makeSheet;
 Q('#mk_pr').onclick=async()=>{if(!Q('#srout .mkdoc'))await makeSheet();if(Q('#srout .mkdoc'))window.print()};
 window.addEventListener('beforeprint',()=>{if(document.body.dataset.mode=='sr'){const p=Q('#pg');if(p)p.textContent=pageCss}});
 
+function exm(r){const R=allRecords().filter(x=>x.roll==r).sort((x,y)=>(x.ts||0)-(y.ts||0));
+ if(!R.length)return'<h4>পরীক্ষার ফলাফল</h4><p>এই রোলে এখনো কোনো পরীক্ষার তথ্য নেই।</p>';
+ const T=analyze(R.filter(x=>!x.nokey)).T;
+ return`<h4>পরীক্ষার ফলাফল (${bn(R.length)}টি পরীক্ষা)</h4><div style="overflow-x:auto"><table class="srt"><tr><th>তারিখ</th><th>পরীক্ষা</th><th>বিষয়</th><th>সঠিক</th><th>ভুল</th><th>ফাঁকা</th><th>প্রাপ্ত নম্বর</th><th>পূর্ণমান</th><th>%</th><th>গ্রেড</th><th>অবস্থান</th></tr>${R.map(x=>`<tr><td>${dstr(x.ts)}</td><td>${esc(x.exam)}<br><small>${x.src}</small></td><td>${esc(x.sub||'—')}</td><td>${x.hasQ?x.c:'—'}</td><td>${x.hasQ?x.w:'—'}</td><td>${x.hasQ?x.b+x.m:'—'}</td><td>${x.nokey?'—':f2(x.score)}</td><td>${x.nokey?'—':f2(x.full)}</td><td>${x.nokey?'—':f2(Math.round(x.pct*10)/10)}</td><td>${x.nokey?'—':grade(x.pct)}</td><td>${x.rank?x.rank+'/'+x.of:'—'}</td></tr>`).join('')}<tr><th colspan="6">মোট</th><th>${f2(T.sc)}</th><th>${f2(T.fu)}</th><th>${f2(Math.round(T.pct*10)/10)}</th><th>${grade(T.pct)}</th><th></th></tr></table></div>`}
 function sqShow(){const r=nr(Q('#sq_q').value),o=Q('#sq_res');if(!r)return;const st=ST[r];
  if(!st){o.innerHTML='<p>রোল '+esc(r)+' পাওয়া যায়নি। <button type="button" id="sq_new">এই রোলে নতুন ফরম খুলুন</button></p>';Q('#sq_new').onclick=()=>{openTab('sr');fillForm({});setv('roll',r)};return}
  const sec=G.map(([t,fs])=>{const c=fs.filter(f=>!f.np&&f.t!='same').map(f=>{let v=f.v?f.v.map(k=>st[k]).filter(Boolean).join(', '):(f.t=='date'?dfmt(st[f.k]):st[f.k]);return v?`<div><span>${esc(f.l.replace(' *',''))}</span>${esc(v)}</div>`:''}).join('');return c?`<h4>${t}</h4><div class="kv">${c}</div>`:''}).join('');
  const ims=IMGS.filter(([k])=>st[k]).map(([k,l])=>`<figure style="margin:0"><img src="${st[k]}"><figcaption style="font-size:11px">${l}</figcaption></figure>`).join('');
- o.innerHTML=`<div class="bar"><button class="p" type="button" data-q="ed">✏ এডিট</button><button type="button" data-q="pr">🖨 প্রিন্ট (শিক্ষার্থী + অফিস কপি)</button><button type="button" data-q="mk">📊 মার্কশিট</button></div><div class="ims">${ims}</div>${sec}`;
+ o.innerHTML=`<div class="bar"><button class="p" type="button" data-q="ed">✏ এডিট</button><button type="button" data-q="pr">🖨 প্রিন্ট (শিক্ষার্থী + অফিস কপি)</button><button type="button" data-q="mk">📊 মার্কশিট</button></div><div class="ims">${ims}</div>${exm(r)}${sec}`;
  o.onclick=ev=>{const b=ev.target.closest('[data-q]');if(!b)return;if(b.dataset.q=='ed'){openTab('sr');fillForm(ST[r])}else if(b.dataset.q=='pr'){renderForms([ST[r]]);setTimeout(()=>window.print(),400)}else{openTab('mk');Q('#mk_roll').value=r;findRolls()}}}
 Q('#sq_go').onclick=sqShow;Q('#sq_q').addEventListener('keydown',ev=>{if(ev.key=='Enter')sqShow()});
 Q('#sq_q').addEventListener('change',sqShow);
