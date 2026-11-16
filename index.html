@@ -1111,7 +1111,7 @@ qiBuild('qp');qiBuild('en');qiBuild('md');qiStrips();
 /* ===== মেডিকেল প্রস্তুতি: প্রশ্ন শাফলিং ক্লোন + OMR-যুক্ত Legal Landscape প্রশ্নপত্র + OMR স্ক্যান ===== */
 (function(){
 'use strict';
-const OW=112,OH=202,PPM=6;
+const OW=108,OH=202,PPM=6;
 const $q=s=>document.querySelector(s);
 let MDS=[],MDQ=[],mdFmt='',SC=[],REG={};
 try{REG=JSON.parse(localStorage.getItem('mdreg')||'{}')||{}}catch(_){REG={}}
@@ -1165,15 +1165,15 @@ const used=new Set();for(let i=0;i<n;i++){const h=await sha(seed+'|'+i);let v=pa
 
 /* ---------- OMR জ্যামিতি (রেন্ডারার ও স্ক্যানার একই) ---------- */
 function geo(N){N=100;const cols=4,cw=23.5,gx=9,rowY=93,pitch=3.8,a=[];
-for(let q=0;q<N;q++){const c=(q/25)|0,r=q%25,x0=gx+c*cw;a.push({q,c,r,x0,y:rowY+r*pitch+pitch/2,xs:[0,1,2,3].map(i=>x0+7.16+i*4.26)})}
-const roll=[],ser=[],y0=50.9,dp=3.55;for(let i=0;i<7;i++){const x=51+1.85+i*3.7;roll.push([...Array(10)].map((_,d)=>({x,y:y0+d*dp})))}
-for(let i=0;i<6;i++){const x=79+1.85+i*3.7;ser.push([...Array(10)].map((_,d)=>({x,y:y0+d*dp})))}
-return{cols,cw,gx,rowY,pitch,a,roll,ser,fid:[[4.5,4.5],[OW-4.5,4.5],[OW-4.5,OH-4.5],[4.5,OH-4.5]],mark:[10.2,3.4]}}
+for(let q=0;q<N;q++){const c=(q/25)|0,r=q%25,x0=gx+c*cw;a.push({q,c,r,x0,y:rowY+r*pitch+pitch/2,xs:[0,1,2,3].map(i=>x0+5.16+i*4.26)})}
+const roll=[],ser=[],y0=50.9,dp=3.55;for(let i=0;i<7;i++){const x=49+1.85+i*3.7;roll.push([...Array(10)].map((_,d)=>({x,y:y0+d*dp})))}
+for(let i=0;i<6;i++){const x=77+1.85+i*3.7;ser.push([...Array(10)].map((_,d)=>({x,y:y0+d*dp})))}
+return{cols,cw,gx,rowY,pitch,a,roll,ser,fid:[[4.5,4.5],[OW-4.5,4.5],[OW-4.5,OH-4.5],[4.5,OH-4.5]],mark:[8.2,3.4]}}
 const FNT="Arial,'Liberation Sans',Kalpurush,sans-serif",FNT_EN=FNT,FNT_BN=FNT;
 function omrHTML(o){const G=geo(100),P=[],f1=x=>x.toFixed(2);
 const bub=(x,y,t,c)=>P.push(`<i class="mb ${c||''}" style="left:${f1(x)}mm;top:${f1(y)}mm">${t}</i>`);
-const box=(x,y,w,h,st)=>P.push(`<b class="ob" style="left:${f1(x)}mm;top:${f1(y)}mm;width:${f1(w)}mm;height:${f1(h)}mm;${st||''}"></b>`);
-const txt=(x,y,w,h,html,st,cl)=>P.push(`<div class="ot${cl?' '+cl:''}" style="left:${f1(x)}mm;top:${f1(y)}mm;width:${f1(w)}mm;height:${f1(h)}mm;${st||''}">${html}</div>`);
+const box=(x,y,w,h,st)=>P.push(`<b class="ob" style="left:${f1(x-2)}mm;top:${f1(y)}mm;width:${f1(w)}mm;height:${f1(h)}mm;${st||''}"></b>`);
+const txt=(x,y,w,h,html,st,cl)=>P.push(`<div class="ot${cl?' '+cl:''}" style="left:${f1(x-2)}mm;top:${f1(y)}mm;width:${f1(w)}mm;height:${f1(h)}mm;${st||''}">${html}</div>`);
 [[2,2],[OW-7,2],[OW-7,OH-7],[2,OH-7]].forEach(([x,y])=>P.push(`<b class="fd" style="left:${x}mm;top:${y}mm"></b>`));
 P.push(`<b class="om" style="left:${G.mark[0]-.9}mm;top:${G.mark[1]-.9}mm"></b>`);
 P.push(`<b class="tm" style="left:2.5mm;top:10mm;height:${OH-20}mm"></b><b class="tm" style="left:${OW-5.5}mm;top:10mm;height:${OH-20}mm"></b>`);
@@ -1183,9 +1183,9 @@ txt(15,5.2,82,5.2,e(o.title),`font:700 ${Math.min(10.5,tfs).toFixed(2)}pt ${FNT_
 txt(15,10.4,82,3.6,'Answer Sheet',`font:700 7.6pt ${FNT_EN};text-align:center;line-height:3.6mm;letter-spacing:.3pt`);
 box(9,14.4,94,16.6,'border-style:dashed;border-width:.25mm');
 txt(10,14.8,92,4.8,'এই বক্সের ১০ (দশ) অঙ্কের <b>Set Code</b> টি প্রশ্নপত্রে উল্লেখিত <b>Set Code</b> এর সাথে না মিললে প্রশ্নপত্রটি পরিবর্তন করে নিতে হবে।',`font:400 5pt ${FNT_BN};text-align:center;line-height:1.25;border-bottom:.2mm dashed #000`,'fit');
-P.push(`<div class="ob0 bcw" data-bc="${e(o.setCode)}" style="left:11mm;top:20mm;width:27mm;height:9.8mm"><svg></svg></div>`);
+P.push(`<div class="ob0 bcw" data-bc="${e(o.setCode)}" style="left:9mm;top:20mm;width:27mm;height:9.8mm"><svg></svg></div>`);
 txt(40,20,44,9.8,`<span style="font:400 7.6pt ${FNT_EN};letter-spacing:.2pt">Set Code: <b>${o.setCode}</b></span>`,'display:flex;align-items:center;justify-content:center;white-space:nowrap');
-P.push(`<div class="ob0" data-qr="${e(o.qr)}" style="left:88mm;top:19.8mm;width:10.4mm;height:10.4mm"></div>`);
+P.push(`<div class="ob0" data-qr="${e(o.qr)}" style="left:86mm;top:19.8mm;width:10.4mm;height:10.4mm"></div>`);
 txt(9,31.7,94,7,'* “<b>পরীক্ষার্থীদের জন্য নির্দেশাবলী</b>” অপর পৃষ্ঠায় বর্ণিত রয়েছে।<br>* <b>Roll No.</b> ও <b>Serial No.</b> নির্দিষ্ট স্থানে ইংরেজিতে লিখে সংশ্লিষ্ট বৃত্তগুলো ভরাট করতে হবে এবং কোন প্রকার ঘষামাজা, কাটাকাটি করলে উত্তরপত্র বাতিল বলে গণ্য হবে।',`font:400 4.8pt ${FNT_BN};line-height:1.22;text-align:justify`,'fit');
 /* স্বাক্ষর বক্স (শুধু দুটি সিগনেচার) */
 box(9,39.5,40,46.5);['Candidate’s signature','Invigilator’s signature'].forEach((t,k)=>{const y=39.5+k*23.25;txt(10.5,y+2,37,13,'','border-bottom:.25mm dotted #000');txt(9,y+15.6,40,5,t,`font:700 7pt ${FNT_EN};text-align:center;line-height:5mm;white-space:nowrap`)});
@@ -1222,10 +1222,10 @@ function insHTML(){return`<div class="omr insp" style="width:${OW}mm;height:${OH
 function autoOpt(root){root.querySelectorAll('.qo.oauto').forEach(o=>{const sp=[...o.children];if(!sp.length)return;const tryN=n=>{o.style.display=n==1?'block':'grid';o.style.gridTemplateColumns=n==1?'':'repeat('+n+',minmax(0,1fr))';o.style.columnGap='1.5mm';sp.forEach(x=>x.style.display=n==1?'block':'');return sp.every(x=>{const cs=getComputedStyle(x),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.3;return x.scrollHeight<=lh*1.75&&x.scrollWidth<=x.clientWidth+1})};if(!tryN(4))if(!tryN(2))tryN(1)})}
 window.autoOpt=autoOpt;
 function mdFit(){const sheets=[...document.querySelectorAll('#mout .mdsheet')],auto=$q('#md_af')?$q('#md_af').checked:true;
-sheets.forEach(s=>{const q=s.querySelector('.qcols'),fits=f=>{q.style.fontSize=f+'pt';autoOpt(s);return![...s.querySelectorAll('.qcol')].some(c=>c.scrollHeight>c.clientHeight+1)};
-if(!auto){let f=+s.dataset.fs,g=0;while(!fits(f)&&g++<45)f*=.97;s.dataset.qf=f.toFixed(2);return}
-let f=Math.min(9.5,(+s.dataset.fs||8.5)+.5);while(f>4&&!fits(f))f-=.25;if(f<=4)fits(f=4);s.dataset.qf=f.toFixed(2)});
-for(let i=0;i+1<sheets.length;i+=2){const f=Math.min(+sheets[i].dataset.qf,+sheets[i+1].dataset.qf);[sheets[i],sheets[i+1]].forEach(s=>{s.querySelector('.qcols').style.fontSize=f+'pt';autoOpt(s);s.dataset.qf=f.toFixed(2)})}
+for(let i=0;i+1<sheets.length;i+=2){const A=sheets[i],B=sheets[i+1],cols=[...A.querySelectorAll('.qcol'),...B.querySelectorAll('.qcol')],items=cols.flatMap(c=>[...c.querySelectorAll(':scope>.qq')]);
+const flow=f=>{[A,B].forEach(s=>{s.querySelector('.qcols').style.fontSize=f+'pt'});cols.forEach(c=>{c.innerHTML=''});let ci=0;for(const it of items){let placed=false;while(ci<cols.length){const c=cols[ci];c.appendChild(it);autoOpt(it);if(c.scrollHeight<=c.clientHeight+1){placed=true;break}c.removeChild(it);if(c.children.length==0&&ci<cols.length){/* একক প্রশ্নও বসছে না */ci=cols.length;break}ci++}if(!placed)return false}return true};
+let f=auto?15:(+A.dataset.fs||8.5),g=0;while(!flow(f)&&f>3.5&&g++<120)f-=.25;if(f<=3.5)flow(f=3.5);
+[A,B].forEach(s=>{s.dataset.qf=f.toFixed(2)})}
 document.querySelectorAll('#mout .omr .ot.fitw').forEach(t=>{let f=parseFloat(getComputedStyle(t).fontSize),g=0;while(t.scrollWidth>t.clientWidth+.5&&g++<30){f*=.97;t.style.fontSize=f.toFixed(2)+'px'}});
 document.querySelectorAll('#mout .omr .ot.fit').forEach(t=>{let f=parseFloat(getComputedStyle(t).fontSize),g=0;while(t.scrollHeight>t.clientHeight+.5&&g++<30){f*=.96;t.style.fontSize=f.toFixed(2)+'px'}});
 document.querySelectorAll('#mout .insb').forEach(b=>{let f=9.6,g=0;b.style.fontSize=f+'pt';const lim=()=>b.scrollHeight>b.clientHeight+1;while(lim()&&g++<40){f*=.97;b.style.fontSize=f.toFixed(2)+'pt'}})}
@@ -1237,8 +1237,8 @@ if(Sets.some(S=>S.qs.length>2*ppMax))return alert('প্রশ্ন '+Math.max
 const papers=[];Sets.forEach(S=>{for(let c=0;c<copies;c++)papers.push(S)});const sn=await mdSerials(papers.length,Sets[0].id+'|'+vq('md_exam')+'|MD');if(!sn)return;
 const logos=(lgm!='none'&&CUSTLG.md)?custImg('md',lh):lgm=='none'?'':lgm=='all'?`<img src="${L[0]}"><img src="${L[1]}"><img src="${L[2]}">`:`<img src="${L[0]}">`,info=[vq('md_cls'),vq('md_sub'),vq('md_time')&&'সময়: '+vq('md_time'),vq('md_mk')&&'পূর্ণমান: '+vq('md_mk'),vq('md_cen')&&'কেন্দ্র: '+vq('md_cen'),vq('md_sh')&&'শিফট: '+vq('md_sh')].filter(Boolean).join(' · ');
 const omrT=vq('md_omrt')||('MEDICAL ADMISSION TEST'+(ses?'-'+en(ses):''));
-const innerW=PW-12,innerH=PH-.6-12,sc=Math.min((innerW/3)/OW,innerH/OH);
-const pbox=h=>`<div class="mdp"><div class="mdps" style="width:${(OW*sc).toFixed(2)}mm;height:${(OH*sc).toFixed(2)}mm"><div style="width:${OW}mm;height:${OH}mm;transform:scale(${sc.toFixed(4)});transform-origin:0 0">${h}</div></div></div>`;
+const innerW=PW-10,innerH=PH-.6-10,sc=Math.min(1,(innerW/3)/OW,innerH/OH);
+const pbox=h=>`<div class="mdp" style="flex:0 0 ${(OW*sc+2).toFixed(2)}mm"><div class="mdps" style="width:${(OW*sc).toFixed(2)}mm;height:${(OH*sc).toFixed(2)}mm"><div style="width:${OW}mm;height:${OH}mm;transform:scale(${sc.toFixed(4)});transform-origin:0 0">${h}</div></div></div>`;
 let html='',sheets=0;
 for(let pi=0;pi<papers.length;pi++){const S=papers[pi],ser=sn[pi],h=await sha([S.id,ser,vq('md_exam'),'MD'].join('|')),code=h.slice(0,12).toUpperCase(),qs=S.qs,N=qs.length,mcq=qs.filter(q=>!q.w),setCode=String(parseInt(h.slice(12,20),16)%9000+1000)+ser,n1=Math.ceil(N/2),chunks=[qs.slice(0,n1),qs.slice(n1)];
 REG[ser]={lab:S.lab,id:S.id,exam:vq('md_exam')||title,title,t:Date.now(),ans:mcq.map(q=>q.a),mi:mcq.map(q=>q.i),op:mcq.map(q=>q.o.map(o=>(MDQ[q.i]?MDQ[q.i].o:[]).indexOf(o))),code:setCode};
@@ -1248,7 +1248,7 @@ const cols=Array.from({length:col},(_,k)=>ch.slice(k*cs,(k+1)*cs)).map(cl=>`<div
 const head=p==0?`<div class="qh"><div class="ql" style="height:${lh}mm">${logos}</div><div class="qt0"><div class="qtt">${e(title)}</div>${ses?`<div>শিক্ষাবর্ষ: ${e(ses)}</div>`:''}${info?`<div class="qi">${e(info)}</div>`:''}</div><div class="qr0"><div class="qset">${S.lab}</div><div class="qsn">সিরিয়াল: ${ser}</div><div class="qsn">Set Code: ${setCode}</div></div></div>${$q('#md_roll').checked?`<div class="qroll">রোল নং ${'<i></i>'.repeat(7)}<span style="flex:1"></span>নাম: ..........................................</div>`:''}${vq('md_ins')?`<div class="qins">${e(vq('md_ins'))}</div>`:''}`:`<div class="qh c"><div><b>${e(title)}</b>${ses?' · '+e(ses):''}</div><div>সেট ${S.lab} · সিরিয়াল ${ser} · Set Code ${setCode} · পৃষ্ঠা ২/২</div></div>`;
 const qa=`<div class="qp mdq">${head}<div class="qcols" style="grid-template-columns:repeat(${col},1fr)">${cols}</div><div class="qf"><div class="qq0" id="mq${pi}_${p}"></div><div class="qft">EFSDSC, Rajshahi · সেট ${S.lab} · সিরিয়াল ${ser} · Set Code ${setCode} · পেপার আইডি ${S.id} · যাচাই কোড ${code} · ${now} · পৃষ্ঠা ${p+1}/2<div class="micro">${('EFSDSC•'+ser+'•'+code+'•').repeat(30)}</div></div></div></div>`;
 const side=p==0?pbox(omrHTML({N:mcq.length,ser,setCode,title:omrT,qr:['EFSDSC','MED',ser,S.lab,setCode,code].join('|')})).replace('class="mdp"','class="mdp mdl"'):pbox(insHTML()).replace('class="mdp"','class="mdp mdr"');
-html+=`<div class="sheet mdsheet" data-fs="${fs}" style="padding:6mm;font-family:${ff};font-size:${fs}pt;line-height:${lnh}"><div class="mdrow">${p==0?side+qa:qa+side}</div></div>`;sheets++}}
+html+=`<div class="sheet mdsheet" data-fs="${fs}" style="padding:5mm;font-family:${ff};font-size:${fs}pt;line-height:${lnh}"><div class="mdrow">${p==0?side+qa:qa+side}</div></div>`;sheets++}}
 saveReg();
 const cg=Math.max(0,+vq('md_cg')||1.5);$q('#mout').style.setProperty('--cg',cg+'mm');
 $q('#mout').innerHTML=TOOLBAR+`<div class="note no-print">${Sets.length} সেট × ${copies} কপি = ${papers.length}টি পেপার · ${sheets} পৃষ্ঠা (প্রতি পেপার ২ পৃষ্ঠা: সামনে OMR + প্রশ্ন, পেছনে প্রশ্ন + নির্দেশাবলী) · সিরিয়াল ${sn[0]}${sn.length>1?' – '+sn[sn.length-1]:''} · OMR ১/৩ অংশ (${(OW*sc).toFixed(0)}×${(OH*sc).toFixed(0)} মিমি)। প্রিন্টে “Backgrounds/Background graphics” চালু রাখুন; ডুপ্লেক্সে Long-edge flip।</div>`+html;
@@ -2905,8 +2905,14 @@ function list(){var t=tabNow(),a=cache.filter(function(x){return x.tab==t});var 
 b.innerHTML=a.length?'':'<p style="color:var(--mu)">এখনো কোনো ফাইল সংরক্ষিত হয়নি। প্রশ্নপত্র তৈরি করলে নিজে থেকেই এখানে জমা হবে।</p>';
 var sb=document.createElement('input');sb.type='search';sb.placeholder='🔍 সিরিয়াল নম্বর, সেট কোড, পেপার কোড বা নাম দিয়ে খুঁজুন…';sb.style.cssText='width:100%;box-sizing:border-box;padding:9px 12px;margin:0 0 8px;border:1px solid #999;border-radius:8px;font:inherit;position:sticky;top:0;z-index:2';b.insertBefore(sb,b.firstChild);
 var nf=document.createElement('p');nf.style.cssText='color:var(--mu);display:none';nf.textContent='কোনো ফাইল পাওয়া যায়নি।';b.appendChild(nf);
-function skey(e){if(e._k)return e._k;var h=e.html||'',x=(e.title||'')+' '+(e.pg||'')+' ';(h.match(/data-(?:bc|qr)="[^"]*"/g)||[]).forEach(function(m){x+=m+' '});x+=h.replace(/<(script|style)[\s\S]*?<\/\1>/gi,' ').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ');x=x.replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).toLowerCase();return e._k=x}
-sb.addEventListener('input',function(){var t=sb.value.trim().toLowerCase().replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).split(/\s+/).filter(Boolean),n=0;b.querySelectorAll('.hvi').forEach(function(d){var e=cache.find(function(x){return x.id==d.dataset.id}),k=e?skey(e):'',ok=t.every(function(w){return k.indexOf(w)>-1});d.style.display=ok?'':'none';if(ok)n++});nf.style.display=n?'none':'block'});
+function skey(e){if(e._k)return e._k;var h=e.html||'',x=(e.title||'')+' '+(e.pg||'')+' ';(h.match(/data-(?:bc|qr)="[^"]*"/g)||[]).forEach(function(m){x+=m+' '});x+=h.replace(/<(script|style)[\s\S]*?<\/\1>/gi,' ').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ');Object.keys(e.ins||{}).forEach(function(k){var v=e.ins[k]&&e.ins[k].v;if(v&&String(v).length<80)x+=' '+v});x=x.replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).toLowerCase();return e._k=x}
+var FC=[['m5_head','পরীক্ষা'],['md_exam','পরীক্ষা'],['md_title','শিরোনাম'],['qp_ttl','শিরোনাম'],['ua_exam','পরীক্ষা'],['en_org','প্রতিষ্ঠান'],['m5_sub','বিষয়/পত্র'],['md_sub','বিষয়/পত্র'],['m5_test','টেস্ট নং'],['m5_ch','অধ্যায়'],['md_cls','শ্রেণি'],['md_ses','শিক্ষাবর্ষ'],['m5_marks','পূর্ণমান'],['md_mk','পূর্ণমান'],['m5_time','সময়'],['md_time','সময়'],['md_cen','কেন্দ্র'],['md_sh','শিফট']],fsel={},fb=document.createElement('div');fb.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px';
+var fv={};a.forEach(function(e){FC.forEach(function(f){var v=e.ins&&e.ins[f[0]]&&String(e.ins[f[0]].v||'').trim();if(v&&v.length<80){var n=f[1];(fv[n]=fv[n]||{});fv[n][v]=1}})});
+Object.keys(fv).forEach(function(n){var vs=Object.keys(fv[n]);if(!vs.length)return;var sl=document.createElement('select');sl.style.cssText='padding:6px 8px;border:1px solid #999;border-radius:8px;font:inherit;max-width:100%;background:transparent;color:inherit';sl.innerHTML='<option value="">'+n+': সব</option>'+vs.sort().map(function(v){return '<option></option>'}).join('');vs.sort().forEach(function(v,i){sl.options[i+1].value=v;sl.options[i+1].textContent=v});fsel[n]=sl;sl.onchange=flt;fb.appendChild(sl)});
+if(fb.children.length)b.insertBefore(fb,sb.nextSibling);
+function flt(){var t=sb.value.trim().toLowerCase().replace(/[০-৯]/g,function(c){return '০১২৩৪৫৬৭৮৯'.indexOf(c)}).split(/\s+/).filter(Boolean),n=0;b.querySelectorAll('.hvi').forEach(function(d){var e=cache.find(function(x){return x.id==d.dataset.id}),k=e?skey(e):'',ok=t.every(function(w){return k.indexOf(w)>-1});Object.keys(fsel).forEach(function(nm){var val=fsel[nm].value;if(!val||!ok)return;var m=false;FC.forEach(function(f){if(f[1]==nm&&e&&e.ins&&e.ins[f[0]]&&String(e.ins[f[0]].v||'').trim()===val)m=true});if(!m)ok=false});d.style.display=ok?'':'none';if(ok)n++});nf.style.display=n?'none':'block'}
+sb.addEventListener('input',flt);
+
 a.forEach(function(e,i){var d=document.createElement('div');d.className='hvi';d.dataset.id=e.id;d.style.setProperty('--i',i);d.innerHTML='<div><b></b><small></small></div><button data-v="'+e.id+'">খুলুন</button><button data-r="'+e.id+'">ইনপুট ফিরিয়ে আনুন</button><button data-d="'+e.id+'">🗑</button>';d.querySelector('b').textContent=(e.title||'প্রশ্নপত্র');d.querySelector('small').textContent=fmt(e.t)+(e.u-e.t>60000?' · সম্পাদিত '+fmt(e.u):'')+' · '+bn(e.pages)+' পৃষ্ঠা/অংশ';b.appendChild(d)});
 o.addEventListener('click',function(ev){var x=ev.target.closest('button');if(!x)return;if(x.dataset.a=='x')close();else if(x.dataset.v)view(x.dataset.v);else if(x.dataset.d){if(confirm('এই ফাইলটি মুছবেন?')){del(x.dataset.d);cache=cache.filter(function(y){return y.id!=x.dataset.d});badge();list()}}else if(x.dataset.r){restore(x.dataset.r)}})}
 function restore(id){var e=cache.find(function(x){return x.id==id});if(!e||!e.ins)return alert('এই ফাইলের ইনপুট সংরক্ষিত নেই');Object.keys(e.ins).forEach(function(k){var el=k.indexOf('ua:')==0?document.querySelector('textarea[data-ua="'+k.slice(3)+'"]'):document.getElementById(k);if(!el)return;var v=e.ins[k];if('c' in v)el.checked=v.c;else el.value=v.v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});close();alert('ইনপুট ও সেটিংস ফিরিয়ে আনা হয়েছে। আবার “প্রশ্নপত্র তৈরি” চাপলেই হবে।')}
