@@ -2412,7 +2412,7 @@ const LABEL={uo_scn:'OMR স্ক্যান',uo_keys:'উত্তরমা�
 const SKIP=k=>/^__/.test(k);
 const L=(k,d)=>{try{return JSON.parse(origGet(k))||d}catch(_){return d}};
 const origGet=k=>localStorage.getItem(k);
-let tok=null,fileId=null,dirty=false,tmr=null,busy=false,applying=false,log=L('__glog',[]);
+let pulled=false,tok=null,fileId=null,dirty=false,tmr=null,busy=false,applying=false,log=L('__glog',[]);
 const $=s=>document.querySelector(s);
 function status(t,a){let e=$('#gdst');if(!e){e=document.createElement('div');e.id='gdst';document.body.appendChild(e)}e.innerHTML=t+(a?`<a>${a}</a>`:'');const l=e.querySelector('a');if(l)l.onclick=logout}
 function curTab(){const b=document.querySelector('nav button.on');return b?{id:b.dataset.t,name:b.textContent.replace(/^[০-৯0-9]+\.\s*/,'')}:{id:'',name:''}}
@@ -2425,19 +2425,29 @@ for(let i=0;i<log.length-20;i++)log[i].snap=null;
 try{origSet.call(localStorage,'__glog',JSON.stringify(log))}catch(_){log.forEach(x=>x.snap=null);try{origSet.call(localStorage,'__glog',JSON.stringify(log))}catch(_){}}}
 RAW.setItem=function(k,v){origSet.call(this,k,v);if(this===localStorage&&!SKIP(k)&&!applying){addLog(k,v);mark()}};
 RAW.removeItem=function(k){origRem.call(this,k);if(this===localStorage&&!SKIP(k)&&!applying)mark()};
-function mark(){dirty=true;origSet.call(localStorage,'__gdirty','1');if(!tok)return;clearTimeout(tmr);tmr=setTimeout(push,2500)}
+window.__gmark=function(){mark()};
+function mark(){dirty=true;origSet.call(localStorage,'__gdirty','1');if(!tok||!pulled)return;clearTimeout(tmr);tmr=setTimeout(push,2500)}
 function snapshot(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!SKIP(k))d[k]=localStorage.getItem(k)}return d}
 async function api(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+tok},opt.headers||{});const r=await fetch(url,opt);if(r.status==401){tok=null;throw new Error('auth')}if(!r.ok){let m='';try{m=((await r.json()).error||{}).message||''}catch(_){}throw new Error(r.status+' '+m)}return r}
 async function findFile(){if(fileId)return fileId;const r=await api("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id)&q="+encodeURIComponent("name='"+FN+"'"));const j=await r.json();fileId=j.files&&j.files[0]?j.files[0].id:null;return fileId}
-async function push(){if(!tok||busy)return;busy=true;try{status('☁ সেভ হচ্ছে…');const ts=Date.now(),body=JSON.stringify({ts,data:snapshot(),log});await findFile();
+async function push(){if(!tok||busy)return;busy=true;try{status('☁ সেভ হচ্ছে…');const ts=Date.now();let hist=[];try{if(window.__histSync)hist=await new Promise(r=>{let d=0;const f=a=>{if(!d){d=1;r(a||[])}};setTimeout(()=>f([]),4000);__histSync.get(f)});hist=hist.sort((a,b)=>(b.u||0)-(a.u||0)).slice(0,20)}catch(_){}const body=JSON.stringify({ts,data:snapshot(),log,hist});await findFile();
 if(fileId){await api('https://www.googleapis.com/upload/drive/v3/files/'+fileId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body})}
 else{const bd='xb'+ts,meta=JSON.stringify({name:FN,parents:['appDataFolder']});const mp=`--${bd}\r\nContent-Type: application/json\r\n\r\n${meta}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${bd}--`;const r=await api('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});fileId=(await r.json()).id}
 origSet.call(localStorage,'__gts',String(ts));origSet.call(localStorage,'__gdirty','');dirty=false;status('☁ Drive-এ সেভ হয়েছে','লগআউট')}catch(e){console.error(e);status('⚠ সিঙ্ক ব্যর্থ: '+String(e.message).slice(0,140),'লগআউট');if(!/^40[13]/.test(e.message))setTimeout(()=>{if(tok)push()},15000)}busy=false}
-async function pull(){await findFile();if(!fileId){await push();return}const r=await api('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media');const j=await r.json();const lts=+localStorage.getItem('__gts')||0,ldirty=localStorage.getItem('__gdirty')==='1';
-if(j.ts>lts&&!ldirty){applying=true;try{for(const k of Object.keys(j.data||{}))origSet.call(localStorage,k,j.data[k]);origSet.call(localStorage,'__glog',JSON.stringify(j.log||[]));origSet.call(localStorage,'__gts',String(j.ts))}finally{applying=false}
-if(!sessionStorage.getItem('__gr')){sessionStorage.setItem('__gr','1');location.reload();return}}
-else if(ldirty||lts>j.ts){const rm=j.log||[];const seen=new Set(log.map(x=>x.t+x.k));rm.forEach(x=>{if(!seen.has(x.t+x.k))log.push(x)});log.sort((a,b)=>a.t<b.t?-1:1);await push()}
-sessionStorage.removeItem('__gr');status('☁ Drive সিঙ্ক চালু','লগআউট')}
+function mergeVal(a,b){/* a=লোকাল, b=ক্লাউড → ইউনিয়ন */try{const x=JSON.parse(a),y=JSON.parse(b);if(Array.isArray(x)&&Array.isArray(y)){const seen=new Set(x.map(i=>JSON.stringify(i)));return JSON.stringify(x.concat(y.filter(i=>!seen.has(JSON.stringify(i)))))}
+if(x&&y&&typeof x=='object'&&typeof y=='object'&&!Array.isArray(x)&&!Array.isArray(y)){const o=Object.assign({},y);for(const k of Object.keys(x)){o[k]=(k in y&&x[k]&&y[k]&&typeof x[k]=='object'&&typeof y[k]=='object'&&!Array.isArray(x[k])&&!Array.isArray(y[k]))?Object.assign({},y[k],x[k]):x[k]}return JSON.stringify(o)}}catch(_){}return a}
+async function pull(){await findFile();if(!fileId){pulled=true;await push();return}const r=await api('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media');const j=await r.json();const lts=+localStorage.getItem('__gts')||0,ldirty=localStorage.getItem('__gdirty')==='1',cd=j.data||{};let changed=false;
+const fresh=lts===0;/* এই ডিভাইস আগে কখনো সিঙ্ক হয়নি */
+applying=true;try{
+if(j.ts>lts&&!ldirty&&!fresh){for(const k of Object.keys(cd)){if(localStorage.getItem(k)!==cd[k]){origSet.call(localStorage,k,cd[k]);changed=true}}}
+else if(fresh||ldirty||j.ts>lts){for(const k of Object.keys(cd)){const lv=localStorage.getItem(k);if(lv===null){origSet.call(localStorage,k,cd[k]);changed=true}else if(lv!==cd[k]){const m=mergeVal(lv,cd[k]);if(m!==lv){origSet.call(localStorage,k,m);changed=true}}}}
+const seen=new Set(log.map(x=>x.t+x.k));(j.log||[]).forEach(x=>{if(!seen.has(x.t+x.k))log.push(x)});log.sort((a,b)=>a.t<b.t?-1:1);origSet.call(localStorage,'__glog',JSON.stringify(log.slice(-300)));
+origSet.call(localStorage,'__gts',String(j.ts))}finally{applying=false}
+if(window.__histSync&&(j.hist||[]).length){await new Promise(res=>__histSync.merge(j.hist,n=>{if(n)changed=true;res()}))}
+if(changed&&!sessionStorage.getItem('__gr')){sessionStorage.setItem('__gr','1');pulled=true;await push();location.reload();return}
+pulled=true;sessionStorage.removeItem('__gr');
+if(ldirty||fresh||changed)await push();
+status('☁ Drive সিঙ্ক চালু','লগআউট')}
 function overlay(msg){let o=$('#gdov');if(o)o.remove();o=document.createElement('div');o.id='gdov';
 const cid=GCID||localStorage.getItem('__gcid')||'';
 const lgo=(document.querySelector('#wl .lg img')||{}).src||'';
@@ -2472,6 +2482,8 @@ $('#ghx').onclick=()=>m.style.display='none';$('#gha').onclick=()=>showH(!all);
 m.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const x=log[+b.dataset.v],pv=b.parentNode.querySelector('.pv');pv.innerHTML=`<b>${cnt(x.snap)}</b><pre></pre>`;pv.querySelector('pre').textContent=x.snap.slice(0,1500)});
 m.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const x=log[+b.dataset.r];if(!confirm(dstr(x.t)+' '+fmt(x.t)+' সময়ের "'+x.l+'" অবস্থায় ফিরে যাবেন? বর্তমান তথ্য বদলে যাবে।'))return;origSet.call(localStorage,x.k,x.snap);mark();location.reload()})}
 const hb=document.createElement('button');hb.id='gdbtn';hb.className='no-print';hb.textContent='তথ্য';hb.onclick=()=>showH(false);document.body.appendChild(hb);
+let lastPull=Date.now();const autoPull=()=>{if(!tok||!pulled||busy||dirty||Date.now()-lastPull<20000)return;lastPull=Date.now();pull().catch(()=>{})};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else if(dirty&&tok&&pulled)push()});window.addEventListener('focus',autoPull);window.addEventListener('pagehide',()=>{if(dirty&&tok&&pulled)push()});setInterval(autoPull,90000);
 boot();
 })();
 </script>
@@ -2863,8 +2875,9 @@ var DB=null,TABS={h:'প্রশ্নপত্র শাফল',i:'ইঞ্�
 var cache=[],cur={},burst={};
 function open(cb){if(DB)return cb(DB);var r=indexedDB.open('efsdsc_hist',1);r.onupgradeneeded=function(){r.result.createObjectStore('h',{keyPath:'id'})};r.onsuccess=function(){DB=r.result;cb(DB)};r.onerror=function(){cb(null)}}
 function all(cb){open(function(d){if(!d)return cb([]);var q=d.transaction('h').objectStore('h').getAll();q.onsuccess=function(){cb(q.result||[])};q.onerror=function(){cb([])}})}
-function put(e){open(function(d){if(!d)return;try{d.transaction('h','readwrite').objectStore('h').put(e)}catch(_){}})}
-function del(id){open(function(d){if(d)d.transaction('h','readwrite').objectStore('h').delete(id)})}
+function put(e){open(function(d){if(!d)return;try{d.transaction('h','readwrite').objectStore('h').put(e)}catch(_){}window.__gmark&&window.__gmark()})}
+function del(id){try{var t=JSON.parse(localStorage.getItem('hv_del')||'{}');t[id]=Date.now();localStorage.setItem('hv_del',JSON.stringify(t))}catch(_){}open(function(d){if(d)d.transaction('h','readwrite').objectStore('h').delete(id);window.__gmark&&window.__gmark()})}
+window.__histSync={get:function(cb){all(cb)},merge:function(arr,cb){var t={};try{t=JSON.parse(localStorage.getItem('hv_del')||'{}')}catch(_){}var n=0;(arr||[]).forEach(function(r){if(!r||!r.id||t[r.id])return;var l=cache.find(function(x){return x.id==r.id});if(!l||(r.u||0)>(l.u||0)){n++;put(r);cache=cache.filter(function(x){return x.id!=r.id});cache.push(r)}});cache.sort(function(x,y){return y.u-x.u});try{badge()}catch(_){}cb&&cb(n)}};
 function tabNow(){var b=document.querySelector('nav button.on');return b?b.dataset.t:''}
 function bn(n){return String(n).replace(/\d/g,function(d){return'০১২৩৪৫৬৭৮৯'[d]})}
 function inputs(tab){var o={};document.querySelectorAll('#'+tab+' textarea,#'+tab+' input,#'+tab+' select').forEach(function(x){if(x.type=='file'||x.type=='button')return;var k=x.id||(x.dataset&&x.dataset.ua?'ua:'+x.dataset.ua:null);if(!k)return;o[k]=x.type=='checkbox'?{c:x.checked}:{v:x.value}});return o}
