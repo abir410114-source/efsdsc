@@ -2970,4 +2970,16 @@ header h1 #ttl{display:block}
 #hm .hm-c:hover i{transform:scale(1.08) rotate(-4deg);background:rgba(128,128,128,.1)}
 #hm .hm-c:after{left:16px;bottom:10px;max-width:calc(100% - 32px)}
 #hm .hm-c:hover:after{width:calc(100% - 32px)}
-</style><style>.m5ft{position:absolute;left:0;right:0;bottom:2.4mm;text-align:center;font:600 7pt Arial,sans-serif;color:#000;letter-spacing:.02em}</style>
+</style><style>.m5ft{position:absolute;left:0;right:0;bottom:2.4mm;text-align:center;font:600 7pt Arial,sans-serif;color:#000;letter-spacing:.02em}</style><script>(function(){
+var D='০১২৩৪৫৬৭৮৯',nz=function(t){return String(t).replace(/[০-৯]/g,function(c){return D.indexOf(c)}).toLowerCase()};
+['ok_sel','os_ex','oa_sel','m5_ex'].forEach(function(id){var sel=document.getElementById(id);if(!sel||sel.dataset.sb)return;sel.dataset.sb=1;
+var inp=document.createElement('input');inp.type='search';inp.placeholder='🔍 সিরিয়াল / কোড / নাম লিখে খুঁজুন…';inp.autocomplete='off';inp.style.cssText='display:block;width:100%;box-sizing:border-box;margin:0 0 4px;padding:7px 10px;border:1px solid var(--bd,#999);border-radius:8px;font:inherit;background:transparent;color:inherit';
+sel.parentNode.insertBefore(inp,sel);
+function apply(pick){var t=nz(inp.value).trim().split(/\s+/).filter(Boolean),first=null,n=0;
+Array.prototype.forEach.call(sel.options,function(o,i){var ok=!t.length||t.every(function(w){return nz(o.text+' '+o.value).indexOf(w)>-1});if(o.value==='auto'||o.value==='')ok=ok||!t.length||o.value==='auto';var show=ok;o.hidden=!show;o.style.display=show?'':'none';if(show&&!first&&o.value!=='auto'&&o.value!=='')first=o;if(show&&o.value!=='auto'&&o.value!=='')n++});
+if(pick&&t.length&&first&&sel.value!==first.value){sel.value=first.value;sel.dispatchEvent(new Event('change',{bubbles:true}))}
+inp.style.borderColor=t.length&&!n?'#c0392b':''}
+inp.addEventListener('input',function(){apply(true)});
+inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();apply(true)}});
+new MutationObserver(function(){apply(false)}).observe(sel,{childList:true});
+});})();</script>
