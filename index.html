@@ -2632,7 +2632,7 @@ j5.innerHTML=`<div class="m5t"><button type="button" class="on" data-m5="1">১.
 ${inp('m5_head','প্রথম লাইন (হুবহু ছাপা হবে)','[ EFSDSC ] HSC-28 (MOCK TEST-26)')}${inp('m5_sub','বিষয়','Biology 1st Paper')}${inp('m5_marks','Total Marks','25')}${inp('m5_time','Time','15 minutes')}${inp('m5_ch','অধ্যায় নং','1')}${inp('m5_test','টেস্ট নং','01')}
 <label>পেজ সাইজ<select id="m5_sz"><option>A4</option><option>Legal</option></select></label><label>কলাম<select id="m5_col"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
 <label>সেট সংখ্যা (A,B,C…)<select id="m5_n"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label><label>প্রতি সেটের কপি (প্রতিটির ইউনিক সিরিয়াল)<input id="m5_cp" type="number" min="1" max="60" value="1"></label>
-<label>কাস্টম শুরুর সিরিয়াল (৬ ডিজিট, ফাঁকা = স্বয়ংক্রিয় ইউনিক)<input id="m5_ss" inputmode="numeric" maxlength="6"></label>
+<label>সিরিয়াল নম্বর<select id="m5_sm"><option value="auto" selected>স্বয়ংক্রিয় (ইউনিক)</option><option value="custom">কাস্টম</option></select></label><label>কাস্টম শুরুর সিরিয়াল (৬ ডিজিট)<input id="m5_ss" inputmode="numeric" maxlength="6" disabled placeholder="যেমন 250001"></label><label>সেট নম্বর (Set Code-এর প্রথম ৪ ডিজিট)<select id="m5_cm"><option value="auto" selected>স্বয়ংক্রিয়</option><option value="custom">কাস্টম</option></select></label><label>কাস্টম সেট নম্বর (১০০০–৯৯৯৯)<input id="m5_cs" inputmode="numeric" maxlength="4" disabled placeholder="যেমন 1001"></label>
 <label>অপশন লেবেল<select id="m5_lb"><option value="pa" selected>(a) (b) (c) (d)</option><option value="bn">ক. খ. গ. ঘ.</option><option value="bp">(ক) (খ) (গ) (ঘ)</option><option value="en">A. B. C. D.</option></select></label>
 <label>অপশন বিন্যাস<select id="m5_ol"><option value="auto" selected>স্বয়ংক্রিয় (১/২/৪ কলাম)</option><option value="1">১ কলাম</option><option value="2">২ কলাম</option><option value="4">৪ কলাম</option><option value="i">এক সারিতে</option></select></label>
 <label>নম্বর শৈলী<select id="m5_nm"><option value="bn">০১. ০২.</option><option value="en">01. 02.</option><option value="pl">1. 2.</option><option value="bb">১. ২.</option></select></label>
@@ -2659,10 +2659,10 @@ const v=id=>(Q('#'+id).value||'').trim(),vr=id=>Q('#'+id).value;
 const qatm=s=>{s=String(s);const c=Q('#m5_atx'),f=x=>c&&c.checked?autoTex(x):x;return/<\/?[biu]>/.test(s)?s.split(/(<\/?[biu]>)/).map((p,i)=>i%2?p:f(p)).join(''):f(s)};
 const parseT=t=>{const c=Q('#m5_cv');const r=parseQ0(normQ(qiPre(t,'md'),c?c.checked:true));r.forEach(q=>{q.t=qiTake(q.t,q);q.o=q.o.map(o=>qiTake(o,q))});return r};
 let SIG='';Q('#m5_sigf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>SIG=r.result;r.readAsDataURL(f)};
-async function sers(n){const out=[],s0=parseInt(v('m5_ss'));if(Q('#m5_ss').value.trim()){if(!(s0>=100000&&s0+n-1<=999999)){alert('কাস্টম সিরিয়াল ৬ ডিজিটের (১০০০০০–৯৯৯৯৯৯) হতে হবে');return null}for(let i=0;i<n;i++)out.push(String(s0+i));return out}
+async function sers(n){const out=[],s0=parseInt(v('m5_ss'));if(v('m5_sm')=='custom'){if(!(s0>=100000&&s0+n-1<=999999)){alert('কাস্টম সিরিয়াল ৬ ডিজিটের (১০০০০০–৯৯৯৯৯৯) হতে হবে');return null}for(let i=0;i<n;i++)out.push(String(s0+i));return out}
 const used=new Set(Object.keys(REG)),seed=Date.now()+'|'+Math.random();for(let i=0;i<n;i++){const h=await sha(seed+'|'+i);let x=parseInt(h.slice(0,8),16)%900000+100000;while(used.has(String(x)))x=x>=999999?100000:x+1;used.add(String(x));out.push(String(x))}return out}
 const nmFmt=(nm,n)=>nm=='bn'?bn(String(n).padStart(2,'0')):nm=='en'?String(n).padStart(2,'0'):nm=='bb'?bn(n):String(n);
-let LAST=null;
+let LAST=null;[['m5_sm','m5_ss'],['m5_cm','m5_cs']].forEach(([a,b])=>{const A=Q('#'+a),B=Q('#'+b);if(A&&B)A.onchange=()=>{B.disabled=A.value!='custom';if(!B.disabled)B.focus()}});
 async function gen(){const text=vr('m5_text'),Qs=parseT(text).filter(q=>!q.w);if(!Qs.length)return alert('প্রশ্ন পাওয়া যায়নি। ফরম্যাট দেখুন বা “নমুনা” চাপুন');if(Qs.length>50)return alert('সর্বোচ্চ ৫০টি MCQ — আপনার ইনপুটে '+Qs.length+'টি');
 try{localStorage.setItem('m5txt',JSON.stringify(text))}catch(_){}
 const nset=+v('m5_n'),cp=Math.max(1,+v('m5_cp')||1),sq=Q('#m5_sq').checked,so=Q('#m5_so').checked,ka=Q('#m5_ka').checked,mh=await sha(text),papers=[];
@@ -2673,12 +2673,12 @@ const PWH=DIM[v('m5_sz')]||DIM.A4,[PW,PH]=PWH;LAST={papers,sn,PW,PH};
 const out=Q('#m5out');out.innerHTML='';document.body.dataset.mode='m5';Q('#pg').textContent='@page{size:'+(v('m5_sz')=='Legal'?'Legal':'A4')+' portrait;margin:0}';
 const ff=FFM[v('m5_ff')]||FFM.mix,lbs=QLB[v('m5_lb')],ol=v('m5_ol'),nm=v('m5_nm'),col=+v('m5_col')||2,gap=Math.max(0,+v('m5_cg')||0);
 let fits=true;
-for(let pi=0;pi<papers.length;pi++){const P=papers[pi],ser=sn[pi],h=await sha([ser,P.lab,v('m5_sub'),'M5'].join('|')),code=h.slice(0,12).toUpperCase(),setCode=String(parseInt(h.slice(12,20),16)%9000+1000)+ser;
+for(let pi=0;pi<papers.length;pi++){const P=papers[pi],ser=sn[pi],h=await sha([ser,P.lab,v('m5_sub'),'M5'].join('|')),code=h.slice(0,12).toUpperCase(),setCode=(v('m5_cm')=='custom'?String(Math.min(9999,Math.max(1000,(parseInt(v('m5_cs'))||1000)+P.lab.charCodeAt(0)-65))):String(parseInt(h.slice(12,20),16)%9000+1000))+ser;
 REG[ser]={lab:P.lab,exam:v('m5_head'),sub:v('m5_sub'),ch:v('m5_ch'),test:v('m5_test'),n:P.qs.length,ans:P.qs.map(q=>q.a),pm:1,neg:.25,t:Date.now(),code:setCode};
 const oh=omrHTML({head:v('m5_head'),sub:v('m5_sub'),marks:v('m5_marks'),time:v('m5_time'),ch:v('m5_ch'),test:v('m5_test'),setCode,ser,qr:['EFSDSC','M50',ser,P.lab,setCode,code].join('|')});
 const left=(PW-OW)/2,top=7;
-const mkPage=(first)=>{const pg=document.createElement('div');pg.className='m5pg';pg.style.cssText=`width:${PW}mm;height:${PH}mm;padding:${top}mm ${left}mm 8mm;font-family:${ff};line-height:${v('m5_ln')||1.2}`;
-pg.innerHTML=(first?oh:insBlock(0,{name:v('m5_name'),sig:SIG}))+`<div class="m5cut">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>`+(first?`<div class="m5ttl"><span class="tl">Serial: ${ser}</span>প্রশ্ন পত্র<span class="tr">Set Code: ${setCode} · ${code}</span></div>`:'')+'<div class="m5body"></div>';return pg};
+const mkPage=(first)=>{const ft=`<div class="m5ft">UID: ${code} · Serial: ${ser} · Set ${P.lab} · পৃষ্ঠা ${first?'1':'2'}/2</div>`;const pg=document.createElement('div');pg.className='m5pg';pg.style.cssText=`width:${PW}mm;height:${PH}mm;padding:${top}mm ${left}mm 8mm;font-family:${ff};line-height:${v('m5_ln')||1.2}`;
+pg.innerHTML=(first?oh:insBlock(0,{name:v('m5_name'),sig:SIG}))+`<div class="m5cut">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>`+(first?`<div class="m5ttl"><span class="tl">Serial: ${ser}</span>প্রশ্ন পত্র<span class="tr">Set Code: ${setCode} · ${code}</span></div>`:'')+'<div class="m5body"></div>'+ft;return pg};
 const p1=mkPage(true),p2=mkPage(false);out.appendChild(p1);out.appendChild(p2);
 /* প্রশ্ন নোড (ধাপে ধাপে স্থাপন, সমীকরণ বসার পর মাপা) */
 const stage=document.createElement('div');stage.style.cssText=`position:absolute;left:-9999px;top:0;width:${(PW-2*left)/col}mm`;document.body.appendChild(stage);
@@ -2970,4 +2970,4 @@ header h1 #ttl{display:block}
 #hm .hm-c:hover i{transform:scale(1.08) rotate(-4deg);background:rgba(128,128,128,.1)}
 #hm .hm-c:after{left:16px;bottom:10px;max-width:calc(100% - 32px)}
 #hm .hm-c:hover:after{width:calc(100% - 32px)}
-</style>
+</style><style>.m5ft{position:absolute;left:0;right:0;bottom:2.4mm;text-align:center;font:600 7pt Arial,sans-serif;color:#000;letter-spacing:.02em}</style>
