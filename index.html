@@ -2136,7 +2136,7 @@ const ko=$('#ua_keyout');if(ko)new MutationObserver(()=>{const n=importPaperKeys
 /* ===================== নতুন: নাম/স্বাক্ষর ক্রপ + CQ মার্জ + সমন্বিত রেজাল্ট শিট ===================== */
 function imgOr(s,txt,k,h){return txt?'<b>'+esc(txt)+'</b>':(IMG[s.id]&&IMG[s.id][k]?'<img src="'+IMG[s.id][k]+'" style="height:'+h+'mm;max-width:62mm;vertical-align:middle;filter:grayscale(1)">':'<b>………………</b>')}
 /* ঘরের ক্রপ: সংশোধিত (warp) করা ছবি থেকে মিমি-অবস্থানে কেটে, কালি গাঢ় ও কাগজ সাদা করে ছোট JPEG */
-function cropMM(wg,Wt,x0,y0,x1,y1){const X0=Math.round(x0*PPM),Y0=Math.round(y0*PPM),w=Math.round((x1-x0)*PPM),h=Math.round((y1-y0)*PPM);
+function cropMM(wg,Wt,x0,y0,x1,y1,ppm){const P=ppm||PPM,X0=Math.round(x0*P),Y0=Math.round(y0*P),w=Math.round((x1-x0)*P),h=Math.round((y1-y0)*P);
 const px=(x,y)=>{const v=wg[(Y0+y)*Wt+X0+x];return v===undefined?255:v};
 const hist=new Uint32Array(256);for(let y=0;y<h;y++)for(let x=0;x<w;x++)hist[px(x,y)]++;
 const tot=w*h;let a=0,lo=0,hi=255;for(let v=0;v<256;v++){a+=hist[v];if(a>=tot*.01){lo=v;break}}a=0;for(let v=0;v<256;v++){a+=hist[v];if(a>=tot*.7){hi=v;break}}hi=Math.max(hi,lo+45);
@@ -2144,7 +2144,7 @@ const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getCont
 for(let y=0;y<h;y++)for(let x=0;x<w;x++){let v=(px(x,y)-lo)*255/(hi-lo);v=v<0?0:v>255?255:v;const j=(y*w+x)*4;im.data[j]=im.data[j+1]=im.data[j+2]=v;im.data[j+3]=255}
 cx.putImageData(im,0,0);const k=Math.min(1,340/w),o=document.createElement('canvas');o.width=Math.max(1,Math.round(w*k));o.height=Math.max(1,Math.round(h*k));const ox=o.getContext('2d');ox.fillStyle='#fff';ox.fillRect(0,0,o.width,o.height);ox.drawImage(c,0,0,o.width,o.height);return o.toDataURL('image/jpeg',.55)}
 function fieldCrops(wg,Wt){const R={n:[14,42.5,93,57.5],f:[14,65,93,75.5],m:[97,61.5,161.5,75.5],s:[97.5,41.5,161.5,57.5]},o={};for(const k in R){try{o[k]=cropMM(wg,Wt,...R[k])}catch(_){o[k]=''}}return o}
-window.__uoCrop={cropMM,fieldCrops};
+window.__uoCrop={cropMM,fieldCrops};window.__uoEng={toGray,binarize,comps,solveH,warp,discFrac,thrOf,instLogo,hash};
 
 (function(){const ul2=$('#ul2');if(!ul2)return;
 const bar=ul2.querySelector('.uo-sub');if(!bar)return;
@@ -2195,7 +2195,7 @@ grid+=`<table class="${na?'na':''}"><tr><th class="s" colspan="4">${esc(g.K.subj
 const wl=[];if(g)g.res.forEach((x,i)=>{if(x=='W'||x=='B'||x=='M'){const b=(i/15)|0,a=s.all[i],k=g.K.ans[i];wl.push(`${esc(g.K.subj[b])}-${bn(i%15+1)}: ${x=='W'?'দিয়েছেন '+LB[a]:x=='B'?'স্কিপ':'একাধিক দাগ'} → <b>${LB[k]}</b>`)}});
 const unit=[val('uo_unit'),val('uo_exam')?'পরীক্ষা নং '+bn(val('uo_exam')):'',val('uo_chap')].filter(Boolean).join(' · ');
 return`<div class="uos a4 rs"><div class="rh">${il?`<img class="lg" src="${il}">`:''}<div class="c"><b>${esc(val('uo_org')||'')}</b><br><b>সমন্বিত ফলাফল শিট</b> (MCQ + লিখিত)<br><small>${esc(unit)}</small></div><div class="id">রোল: <b>${esc(roll||'—')}</b><br>সিরিয়াল: <b>${esc(ser||'—')}</b></div></div>
-<div class="st"><div><div class="fl"><small>পরীক্ষার্থীর নাম</small>${pic(cn.c||im.n,st.name)}</div><div class="fl"><small>পিতার নাম</small>${pic(cn.f||im.f,st.father)}</div><div class="fl"><small>মাতার নাম</small>${pic(cn.m||im.m,st.mother)}</div></div>
+<div class="st"><div><div class="fl"><small>পরীক্ষার্থীর নাম</small>${pic(im.n||cn.c,st.name)}</div><div class="fl"><small>পিতার নাম</small>${pic(im.f||cn.f,st.father)}</div><div class="fl"><small>মাতার নাম</small>${pic(im.m||cn.m,st.mother)}</div></div>
 <div class="tot"><small>সর্বমোট প্রাপ্ত নম্বর</small><div class="n">${bn(R.tot)}</div><small>${R.full>0?'পূর্ণমান '+bn(R.full)+' · '+bn(R.pct)+'%':'লিখিত '+bn(R.tw)+' + MCQ '+bn(R.tm)}</small></div></div>
 <h4>বিষয়ভিত্তিক ফলাফল</h4><table class="sm"><tr><th class="l" style="width:24%">বিষয়</th><th style="width:25%">অধ্যায়/বিষয়বস্তু</th><th>লিখিত</th><th>MCQ সঠিক/ভুল/স্কিপ</th><th>MCQ নম্বর</th><th>মোট</th></tr>${sum}<tr class="t"><td class="l" colspan="2">সর্বমোট</td><td>${fmt(R.tw)}</td><td>${g?bn(g.c)+' / '+bn(g.w)+' / '+bn(g.b+g.m):'—'}</td><td>${g?fmt(R.tm):'—'}</td><td>${fmt(R.tot)}</td></tr></table>
 ${g?`<p style="margin:1mm 0 0;font-size:.85em">উত্তরপত্র: ${esc(g.K.name||g.K.exam||'')} · সঠিক উত্তরে ${bn(g.pm)} নম্বর${g.ng?', ভুলে −'+bn(g.ng):''}${g.useOpt?' · ঐচ্ছিক বিষয়: যে ২টির বৃত্ত ভরাট শুধু সেগুলো ধরা হয়েছে':''}</p><h4>MCQ-এর বিস্তারিত (৯০টি)</h4><div class="gr">${grid}</div><p style="margin:.8mm 0 0;font-size:.8em">✓ সঠিক · ✗ ভুল (ধূসর) · স্কিপ · ** একাধিক দাগ · – ঐচ্ছিক বিষয় নয়</p><h4>ভুল / স্কিপ প্রশ্ন ও সঠিক উত্তর (${bn(wl.length)}টি)</h4><div class="wl">${wl.length?wl.join('<br>'):'কোনো ভুল বা স্কিপ নেই'}</div>`:`<p style="margin:3mm 0;border:.3mm dashed #000;padding:3mm">এই সিরিয়ালে MCQ OMR স্ক্যান বা উত্তরপত্র পাওয়া যায়নি — শুধু লিখিত নম্বর দেখানো হয়েছে।</p>`}
@@ -2389,6 +2389,237 @@ const ot2=document.getElementById('ot2'),fs2=ot2&&ot2.querySelector('fieldset');
 if(fs2){const p=document.createElement('p');p.className='note';p.innerHTML='ℹ <b>স্বয়ংক্রিয়:</b> “প্রশ্নপত্র তৈরি” ট্যাবে সিরিয়ালসহ বানানো প্রশ্নপত্রের উত্তরমালা এখানে OMR-এর সিরিয়াল পড়ে নিজে মিলে যাবে — আলাদা উত্তরপত্র আপলোড বা সেভ করা লাগবে না (দিলে সেটাই অগ্রাধিকার পাবে)।';fs2.insertBefore(p,fs2.children[1]||null)}
 const ot1=document.getElementById('ot1'),fs1=ot1&&ot1.querySelector('fieldset');
 if(fs1){const p=document.createElement('p');p.className='note';p.innerHTML='ℹ এই অংশ <b>ঐচ্ছিক</b> — প্রশ্নপত্র তৈরি ট্যাবের সিরিয়ালের উত্তরমালা না থাকলে (যেমন বাইরের প্রশ্নপত্র) এখানে হাতে উত্তরপত্র দিন।';fs1.insertBefore(p,fs1.children[1]||null)}
+})();
+</script>
+<style>
+#m5out{display:none}body[data-mode=m5] #m5out{display:block}body[data-mode=m5] #mout,body[data-mode=m5] #uout,body[data-mode=m5] #out,body[data-mode=m5] #rout,body[data-mode=m5] #fout,body[data-mode=m5] #nout,body[data-mode=m5] #uoo{display:none!important}
+#j5 .m5t{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}#j5 .m5t button{padding:6px 12px;border:1px solid var(--bd,#999);background:none;color:inherit;font:inherit;cursor:pointer;border-radius:6px}#j5 .m5t button.on{background:#8883;font-weight:700}
+#j5 textarea{width:100%;box-sizing:border-box;font:inherit;min-height:210px}
+#j5 table.m5v{border-collapse:collapse;width:100%}#j5 .m5v th,#j5 .m5v td{border:1px solid var(--bd,#999);padding:2px 5px;text-align:center}#j5 .m5v img{height:6mm;vertical-align:middle}
+.m5pg{position:relative;background:#fff;color:#000;box-sizing:border-box;overflow:hidden;margin:0 auto 8px;border:1px solid #bbb;break-after:page;page-break-after:always;display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.m5pg:last-child{break-after:auto;page-break-after:auto}
+@media print{.m5pg{margin:0;border:0}}
+.m5pg .omr .mb{font-family:Arial,"Liberation Sans",sans-serif}
+.m5cut{height:4mm;flex:none;border-top:.3mm dotted #000;margin-top:1.2mm;text-align:center;font-size:7pt;line-height:3.4mm;position:relative}
+.m5ttl{flex:none;text-align:center;font-weight:700;font-size:1.15em;border-bottom:.35mm solid #000;border-top:.35mm solid #000;margin:1mm 0 1.5mm;padding:.4mm 0}
+.m5body{display:flex;flex:none;overflow:hidden}
+.m5body .c{flex:1 1 0;min-width:0;height:100%;overflow:hidden;padding:0 1.4mm;border-left:.3mm solid #000;box-sizing:border-box}
+.m5body .c:first-child{border-left:0;padding-left:0}.m5body .c:last-child{padding-right:0}
+.m5body .qq{margin-bottom:1.1mm;break-inside:avoid}
+.m5ins{flex:none;position:relative;box-sizing:border-box;border:.3mm solid #000;padding:1.6mm 2.2mm;overflow:hidden}
+.m5ins h5{margin:0 0 1mm;text-align:center;font-size:1.05em;text-decoration:underline}.m5ins ol{margin:0;padding-left:0;list-style:none}.m5ins li{display:flex;gap:1mm;margin:0 0 .5mm;text-align:justify}.m5ins li b{flex:none}
+.m5ins .sg{position:absolute;left:2.2mm;right:2.2mm;bottom:1.8mm;display:flex;gap:6mm;align-items:flex-end}.m5ins .sg>div{flex:1;text-align:center;font-size:.85em}.m5ins .sg>div.ibx{border:.3mm solid #000;height:17mm;display:flex;align-items:flex-end;justify-content:center}
+.m5ins .sg .nm{display:flex;align-items:flex-end;justify-content:center;min-height:11mm;font-weight:700;font-size:1.15em}.m5ins .sg .nm img{height:10.5mm;max-width:100%;filter:grayscale(1)}.m5ins .sg .ln{display:block;border-top:.3mm solid #000;padding-top:.6mm}
+.m5res{width:210mm;height:296.4mm;box-sizing:border-box;padding:9mm 10mm;background:#fff;color:#000;margin:0 auto 8px;border:1px solid #bbb;position:relative;overflow:hidden;font:11px/1.35 Kalpurush,'Noto Sans Bengali',Arial,sans-serif;break-after:page;page-break-after:always}
+.m5res:last-child{break-after:auto;page-break-after:auto}@media print{.m5res{margin:0;border:0}}
+.m5res table{border-collapse:collapse}.m5res .g{display:flex;gap:2mm}.m5res .g table{flex:1}.m5res .g td,.m5res .g th{border:.2mm solid #000;padding:0 .5mm;text-align:center;font-size:7.4pt;line-height:1.35}.m5res .g tr.x td{background:#ddd;font-weight:700}
+.m5res .hd{display:flex;gap:3mm;align-items:center;border-bottom:.8mm solid #000;padding-bottom:2mm}.m5res .hd img{height:14mm;filter:grayscale(1) contrast(1.3)}.m5res .hd div{flex:1;text-align:center}
+.m5res .st{display:grid;grid-template-columns:1fr 60mm;gap:3mm;margin:3mm 0}.m5res .fl{border-bottom:.25mm dotted #000;min-height:12mm;display:flex;flex-direction:column;justify-content:flex-end}.m5res .fl small{font-size:.78em;opacity:.75}.m5res .fl img{height:9mm;max-width:100%;object-fit:contain;object-position:left bottom;filter:grayscale(1)}
+.m5res .tot{border:.45mm solid #000;text-align:center;padding:2mm}.m5res .tot .n{font-size:2.6em;font-weight:700;line-height:1.15}
+.m5res .sg{display:flex;gap:6mm;position:absolute;left:10mm;right:10mm;bottom:16mm}.m5res .sg div{flex:1;text-align:center;border-top:.3mm solid #000;padding-top:1mm;font-size:.9em}
+</style>
+<script>
+(function(){
+const j=document.getElementById('j'),bar=j&&j.querySelector('.jk-bar'),jp=document.getElementById('jp'),jk=document.getElementById('jk');
+const E=window.__uoEng;if(!j||!bar||!E||document.getElementById('j5'))return;
+const Q=s=>document.querySelector(s),QA=s=>[...document.querySelectorAll(s)];
+const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]),en=s=>String(s).replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d));
+const esc2=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(_){return d}},SS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
+let REG=LS('m5reg',{}),SCN=LS('m5scn',[]),IMGS=LS('m5img',{});
+const sv={reg:()=>SS('m5reg',REG),scn:()=>SS('m5scn',SCN),img:()=>SS('m5img',IMGS)};
+const LB4=['A','B','C','D'];
+/* ---------- জ্যামিতি (রেন্ডারার ও স্ক্যানার একই) ---------- */
+const OW=190,OH=108,PPM=8,GY=63.4,DP=3.75,AX=68,BW=23;
+const GEO=(()=>{const g={fid:[[4,4],[OW-4,4],[OW-4,OH-4],[4,OH-4]],ser:[],reg:[],ans:[],dif:[[134,48.2],[150.5,48.2],[158.5,48.2]]};
+for(let c=0;c<6;c++)g.ser.push([...Array(10)].map((_,d)=>({x:11+c*4,y:GY+d*DP})));
+for(let c=0;c<7;c++)g.reg.push([...Array(10)].map((_,d)=>({x:39+c*4,y:GY+d*DP})));
+for(let b=0;b<5;b++)for(let r=0;r<10;r++)g.ans.push({q:b*10+r,b,r,x0:AX+b*BW,y:GY+r*DP,xs:[0,1,2,3].map(k=>AX+b*BW+6.6+k*4.2)});
+g.dif=[[137,48.4],[152,48.4],[167,48.4]];return g})();
+const NAMEBOX=[46,43.2,128,53];
+/* ---------- OMR HTML ---------- */
+function omrHTML(o){const P=[],f=x=>x.toFixed(2);
+const bub=(x,y,t,c)=>P.push(`<i class="mb ${c||''}" style="left:${f(x)}mm;top:${f(y)}mm">${t}</i>`);
+const box=(x,y,w,h,st)=>P.push(`<b class="ob" style="left:${f(x)}mm;top:${f(y)}mm;width:${f(w)}mm;height:${f(h)}mm;${st||''}"></b>`);
+const txt=(x,y,w,h,html,st,cl)=>P.push(`<div class="ot${cl?' '+cl:''}" style="left:${f(x)}mm;top:${f(y)}mm;width:${f(w)}mm;height:${f(h)}mm;${st||''}">${html}</div>`);
+const sq=(cx,cy,s)=>P.push(`<b class="ob0" style="left:${f(cx-s/2)}mm;top:${f(cy-s/2)}mm;width:${s}mm;height:${s}mm;background:#000"></b>`);
+GEO.fid.forEach(([x,y],i)=>sq(x,y,i==0?7:5));
+for(let r=0;r<10;r++){const y=GY+r*DP;sq(2.4,y,1.6);sq(OW-2.4,y,1.6)}
+const FN="Arial,'Liberation Sans',Kalpurush,sans-serif";
+txt(14,3.2,162,6,esc2(o.head),`font:700 11.5pt ${FN};text-align:center;line-height:6mm;white-space:nowrap`,'fitw');
+txt(14,9.4,162,5,`<span style="float:left;font-weight:700">${esc2(o.sub)}</span><span style="float:right;font-weight:700">Time: ${esc2(o.time)}</span><span style="display:block;text-align:center;font-weight:700">Total Marks: ${esc2(o.marks)}</span>`,`font:700 9pt ${FN};line-height:5mm`,'fitw');
+txt(14,14.6,162,4.6,'Answer Sheet',`font:700 9pt ${FN};text-align:center;line-height:4.6mm;letter-spacing:.3pt`);
+txt(10,16,52,6.5,`অধ্যায়-${esc2(o.ch)};&nbsp; Test-${esc2(o.test)}`,`font:400 8.5pt ${FN};line-height:6.5mm;white-space:nowrap`,'fitw');
+box(18,24,154,17,'border-style:dashed;border-width:.25mm');
+txt(19,24.3,152,4.6,'এই বক্সের ১০ (দশ) অঙ্কের <b>Set Code</b> টি প্রশ্নপত্রে উল্লেখিত <b>Set Code</b> এর সাথে না মিললে প্রশ্নপত্রটি পরিবর্তন করে নিতে হবে।',`font:400 5.6pt ${FN};text-align:center;line-height:1.25;border-bottom:.2mm dashed #000`,'fit');
+P.push(`<div class="ob0 bcw" data-bc="${esc2(o.setCode)}" style="left:21mm;top:29.4mm;width:42mm;height:10mm"><svg></svg></div>`);
+txt(66,29.4,80,10,`<span style="font:400 8.4pt ${FN}">Set Code: <b>${o.setCode}</b></span>`,'display:flex;align-items:center;justify-content:center;white-space:nowrap');
+P.push(`<div class="ob0" data-qr="${esc2(o.qr)}" style="left:152mm;top:28.8mm;width:11mm;height:11mm"></div>`);
+txt(10,45.4,36,8.4,`<b>Nick Name</b> (ডাক নাম):`,`font:400 8.4pt ${FN};line-height:8.4mm;white-space:nowrap`,'fitw');
+txt(46,43.2,82,9.8,'','border-bottom:.3mm dotted #000');
+txt(131,43.4,57,3.6,'প্রশ্নের মান কেমন হয়েছে?',`font:700 5.8pt ${FN};line-height:3.6mm`);
+['স্ট্যান্ডার্ড','কঠিন','সহজ'].forEach((t,i)=>{const x=GEO.dif[i][0];bub(x,GEO.dif[i][1],'','d');txt(x+2,GEO.dif[i][1]-1.9,i==0?13.5:10,3.8,t,`font:400 5.6pt ${FN};line-height:3.8mm;white-space:nowrap`)});
+/* সিরিয়াল ও রেজিস্ট্রেশন */
+box(9,54,26,45.4);txt(9,54.2,26,3.2,'Serial Number',`font:700 6pt ${FN};text-align:center;line-height:3.2mm`);
+for(let i=0;i<6;i++)box(9+4*i,57.2,4,4.2);
+String(o.ser).split('').forEach((d,i)=>txt(9+4*i,57.2,4,4.2,d,`font:700 8pt ${FN};text-align:center;line-height:4.2mm`));
+GEO.ser.forEach(c=>c.forEach((p,d)=>bub(p.x,p.y,d,'d')));
+box(37,54,30,45.4);txt(37,54.2,30,3.2,'Registration Number',`font:700 6pt ${FN};text-align:center;line-height:3.2mm`,'fitw');
+for(let i=0;i<7;i++)box(37+4*i,57.2,4,4.2);
+GEO.reg.forEach(c=>c.forEach((p,d)=>bub(p.x,p.y,d,'d')));
+/* উত্তর ৫০টি */
+for(let b=0;b<5;b++){const x0=AX+b*BW;box(x0,54,BW-.6,45.4);box(x0,54,BW-.6,8);box(x0+5.2,54,0,45.4,'border-width:0 0 0 .25mm');
+txt(x0,54.1,5.2,7.8,'Q.<br>No.',`font:700 4.8pt ${FN};text-align:center;line-height:1.05;display:flex;align-items:center;justify-content:center`);txt(x0+5.2,54.1,BW-5.8,7.8,'Answer',`font:700 7pt ${FN};text-align:center;line-height:7.8mm`)}
+GEO.ans.forEach(a=>{txt(a.x0,a.y-DP/2,5.2,DP,a.q+1,`font:700 6.4pt ${FN};display:flex;align-items:center;justify-content:center`);a.xs.forEach((x,i)=>bub(x,a.y,'abcd'[i]))});
+return`<div class="omr" style="width:${OW}mm;height:${OH}mm">${P.join('')}</div>`}
+function insBlock(h,o){const IT=['OMR উত্তরপত্রের উপর ৬ (ছয়) সংখ্যার Security/Serial Number না থাকলে প্রশ্নপত্রটি পরিবর্তন করে নিতে হবে।','কালো কালির বল পয়েন্ট কলম দিয়ে MCQ পরীক্ষার উত্তরপত্রের সবকিছু পূরণ করতে হবে।','Roll/Registration No. এবং Serial No. প্রতিটি ঘর পূরণ করতে হবে। বৃত্তগুলো এমনভাবে ভরাট করতে হবে যেন ভেতরের লেখাটি দেখা না যায়। (সঠিক পদ্ধতি: ● ; ভুল: ◐ ⊘ ✕)','প্রশ্নপত্রের সাথে সংযুক্ত উত্তরপত্র (OMR Sheet) পারফোরেশন/কাটা দাগ বরাবর আলাদা করে নিতে হবে। আলাদা করার সময় ছিঁড়ে গেলে বা নষ্ট হলে কক্ষ পরিদর্শককে জানাতে হবে।','উত্তরপত্রের নির্দিষ্ট বৃত্তসমূহ ভরাট করা ছাড়া এবং নির্দেশিত স্থান ব্যতীত অন্য কোন স্থানে কিছু লেখা সম্পূর্ণ নিষিদ্ধ। লিখলে উত্তরপত্র বাতিল হবে।','খসড়ার জন্য প্রশ্নপত্র ব্যবহার করা যাবে। কোন পৃথক কাগজ ব্যবহার করা যাবে না। প্রশ্নপত্রের কোন অংশ ছেঁড়া যাবে না কিংবা কারও সাথে বদল করা যাবে না।','পরীক্ষা শেষে ইনভিজিলেটরগণ প্রশ্নপত্র ও উত্তরপত্র Intact অবস্থায় সংগ্রহ করে নেবেন। উত্তরপত্রে পরিদর্শকের নাম ও স্বাক্ষর গ্রহণ করতে হবে; স্বাক্ষরবিহীন উত্তরপত্র বাতিল বলে গণ্য হবে।','পরীক্ষা শেষ না হওয়া পর্যন্ত কক্ষ পরিদর্শকের অনুমতি ব্যতীত পরীক্ষার্থীকে কক্ষ ত্যাগ করতে দেয়া হবে না।','পরীক্ষার্থীকে অসদুপায় অবলম্বন বা বিশৃঙ্খলা সৃষ্টি করতে দেখা গেলে শাস্তিমূলক ব্যবস্থা নেওয়া হবে এবং তার উত্তরপত্র বাতিল হয়ে যাবে।','পরীক্ষার হলে মোবাইল ফোন/ডিজিটাল ডিভাইস, ক্যালকুলেটর ও ঘড়ি ব্যবহার সম্পূর্ণ নিষিদ্ধ। দেখা গেলে উত্তরপত্র বাতিল হবে।'];
+return`<div class="m5ins" style="height:${OH}mm;width:${OW}mm"><h5>শিক্ষার্থীদের জন্য বিশেষ নির্দেশনা (Instructions for Candidates):</h5><ol>${IT.map((t,i)=>`<li><b>${bn(String(i+1).padStart(2,'0'))}।</b><span>${t}</span></li>`).join('')}</ol><div class="sg"><div><span class="nm">${esc2(o.name||'')}</span><span class="ln">পরীক্ষার্থীর নাম<br><small>(প্রবেশপত্রে যেভাবে লেখা আছে)</small></span></div><div><span class="nm">${o.sig?`<img src="${o.sig}">`:''}</span><span class="ln">পরীক্ষার্থীর স্বাক্ষর</span></div><div class="ibx"><span class="ln" style="border:0">পরিদর্শকের স্বাক্ষর</span></div></div></div>`}
+/* ---------- UI ---------- */
+const j5=document.createElement('div');j5.id='j5';j5.hidden=true;j.appendChild(j5);
+const b3=document.createElement('button');b3.type='button';b3.dataset.jk='3';b3.textContent='৩. ২৫–৫০ MCQ স্ক্যানার';bar.appendChild(b3);
+const inp=(id,l,v,x)=>`<label>${l}<input id="${id}" value="${esc2(v||'')}" ${x||''}></label>`;
+j5.innerHTML=`<div class="m5t"><button type="button" class="on" data-m5="1">১. প্রশ্নপত্র তৈরি (OMR সহ)</button><button type="button" data-m5="2">২. OMR স্ক্যানার</button><button type="button" data-m5="3">৩. PDF অ্যানালাইসিস</button></div>
+<div id="m51"><fieldset><legend>২৫–৫০ MCQ — OMR-যুক্ত প্রশ্নপত্র (সর্বোচ্চ ২ পৃষ্ঠা, পোর্ট্রেট)</legend><div class="g">
+${inp('m5_head','প্রথম লাইন (হুবহু ছাপা হবে)','[ EFSDSC ] HSC-28 (MOCK TEST-26)')}${inp('m5_sub','বিষয়','Biology 1st Paper')}${inp('m5_marks','Total Marks','25')}${inp('m5_time','Time','15 minutes')}${inp('m5_ch','অধ্যায় নং','1')}${inp('m5_test','টেস্ট নং','01')}
+<label>পেজ সাইজ<select id="m5_sz"><option>A4</option><option>Legal</option></select></label><label>কলাম<select id="m5_col"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></label>
+<label>সেট সংখ্যা (A,B,C…)<select id="m5_n"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label><label>প্রতি সেটের কপি (প্রতিটির ইউনিক সিরিয়াল)<input id="m5_cp" type="number" min="1" max="60" value="1"></label>
+<label>কাস্টম শুরুর সিরিয়াল (৬ ডিজিট, ফাঁকা = স্বয়ংক্রিয় ইউনিক)<input id="m5_ss" inputmode="numeric" maxlength="6"></label>
+<label>অপশন লেবেল<select id="m5_lb"><option value="pa" selected>(a) (b) (c) (d)</option><option value="bn">ক. খ. গ. ঘ.</option><option value="bp">(ক) (খ) (গ) (ঘ)</option><option value="en">A. B. C. D.</option></select></label>
+<label>অপশন বিন্যাস<select id="m5_ol"><option value="auto" selected>স্বয়ংক্রিয় (১/২/৪ কলাম)</option><option value="1">১ কলাম</option><option value="2">২ কলাম</option><option value="4">৪ কলাম</option><option value="i">এক সারিতে</option></select></label>
+<label>নম্বর শৈলী<select id="m5_nm"><option value="bn">০১. ০২.</option><option value="en">01. 02.</option><option value="pl">1. 2.</option><option value="bb">১. ২.</option></select></label>
+<label>ফন্ট<select id="m5_ff"><option value="mix">Times New Roman + Kalpurush</option><option value="kal">Kalpurush</option><option value="tnr">Times New Roman</option><option value="sol">SolaimanLipi</option><option value="noto">Noto Sans Bengali</option><option value="ari">Arial</option></select></label>
+<label>ফন্ট সাইজ (pt, সর্বোচ্চ)<input id="m5_fs" type="number" step=".25" value="9.5"></label><label>লাইন স্পেস<input id="m5_ln" type="number" step=".05" value="1.2"></label><label>কলামের ফাঁক (মিমি)<input id="m5_cg" type="number" step=".5" value="2.8"></label>
+${inp('m5_name','পরীক্ষার্থীর নাম (ঐচ্ছিক, নির্দেশনার পাতায় ছাপা)')}<label>স্বাক্ষর (ছবি, ঐচ্ছিক)<input type="file" id="m5_sigf" accept="image/*"></label></div>
+<div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_sq" checked>প্রশ্নের ক্রম বদলাও</label><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_so" checked>অপশনের ক্রম বদলাও</label><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_ka" checked>সেট A মূল ক্রমে</label><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_af" checked>অটো-ফিট (২ পৃষ্ঠায় সর্বোচ্চ ফন্ট)</label><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_cv" checked>স্বয়ংক্রিয় ফরম্যাট/সমীকরণ রূপান্তর</label><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="m5_atx" checked>ডেলিমিটারহীন LaTeX → $…$</label></div></fieldset>
+<fieldset><legend>প্রশ্ন ইনপুট (সর্বোচ্চ ৫০টি MCQ — মেডিকেল ট্যাবের মতো একই ফরম্যাট)</legend><div class="bar" id="m5_eq"></div><textarea id="m5_text" placeholder="১. প্রশ্ন&#10;ক. …&#10;খ. …&#10;গ. …&#10;ঘ. …&#10;উত্তর: গ"></textarea><div class="bar"><button type="button" class="p" data-m5a="gen">প্রশ্নপত্র + OMR তৈরি</button><button type="button" data-m5a="print">প্রিন্ট / PDF সেভ</button><button type="button" data-m5a="conv">সব লেখা ফরম্যাট ঠিক করো (এন্টার/স্পেস/সমীকরণ)</button><button type="button" data-m5a="demo">নমুনা</button><button type="button" data-m5a="key">উত্তরমালা CSV</button></div><div id="m5_msg" class="note"></div><p class="note">যেকোনো ফরম্যাট (ক-ঘ / a-d / A-D, একই লাইনে অপশন, বাড়তি ফাঁকা লাইন, MS Word/ChatGPT সমীকরণ) পেস্ট করলে নিজে ঠিক হয়। উত্তরমালা প্রতিটি সিরিয়ালে নিজে থেকে সেভ হয় — “OMR স্ক্যানার” ট্যাবে সিরিয়াল বেছে নিলেই মূল্যায়ন হবে। প্রতিটি OMR-এ ৫০টি ঘর থাকে; কম প্রশ্ন দিলে বাকি ঘর ফাঁকা থাকবে।</p></fieldset></div>
+<div id="m52" hidden><fieldset><legend>OMR স্ক্যানার (২৫–৫০ MCQ)</legend><div class="g"><label>সংরক্ষিত উত্তরপত্র (সিরিয়াল)<select id="m5_ex"></select></label><label>প্রতি সঠিকে নম্বর<input id="m5_pm" type="number" step=".25" value="1"></label><label>প্রতি ভুলে কর্তন<input id="m5_ng" type="number" step=".05" value="0.25"></label><label>দাগ ধরার সংবেদনশীলতা (ভরাট %)<input id="m5_mf" type="number" min="30" max="80" value="50"></label></div>
+<details style="margin:6px 0"><summary>হাতে উত্তরমালা দিন (ঐচ্ছিক — সিরিয়াল না মিললে)</summary><textarea id="m5_man" style="min-height:70px" placeholder="1-A 2-C 3-B … অথবা ABCD…"></textarea></details>
+<div class="bar"><input type="file" id="m5_up" accept="image/*" multiple style="display:none"><input type="file" id="m5_cam" accept="image/*" capture="environment" style="display:none"><button type="button" data-m5a="up">🖼 গ্যালারি/ফাইল (একাধিক)</button><button type="button" data-m5a="cam">📷 ক্যামেরায় তুলুন</button><button type="button" data-m5a="live">🎥 লাইভ ক্যামেরা</button><button type="button" data-m5a="shot" id="m5_shot" hidden>📸 এখন তুলুন</button><button type="button" data-m5a="stop" id="m5_stop" hidden>⏹ বন্ধ</button><button type="button" data-m5a="csv">CSV</button><button type="button" data-m5a="clr">সব মুছুন</button></div>
+<div id="m5_live" hidden><video id="m5_vid" playsinline muted style="max-width:100%;width:520px;background:#000"></video></div><p id="m5_sm" class="note">OMR অংশটি (চার কোণের কালো বর্গসহ) ফ্রেমে আনুন। সিরিয়াল পড়ে নিজে প্রশ্নপত্রের উত্তরমালা মিলিয়ে নেবে; ডাকনামের ঘর ক্রপ হয়ে সংরক্ষিত হবে।</p><div id="m5_res" style="overflow-x:auto"></div><div id="m5_det"></div></fieldset></div>
+<div id="m53" hidden><fieldset><legend>PDF অ্যানালাইসিস (A4, সাদা-কালো, নাম ছবিসহ)</legend><div class="bar"><label style="display:inline">শিক্ষার্থী <select id="m5_as"></select></label><button type="button" class="p" data-m5a="pdf1">এই শিক্ষার্থীর PDF</button><button type="button" data-m5a="pdfall">সবার PDF</button></div><p class="note">প্রিন্ট ডায়ালগে “Save as PDF”; Background graphics চালু রাখুন।</p></fieldset></div>
+<div id="m5out" class="pv"></div>`;
+j5.after(Q('#m5out')||document.createElement('div'));
+{const o=Q('#m5out');if(o)document.body.appendChild(o)}
+Q('#m5_eq').innerHTML=(typeof EQS!='undefined'?EQS:[]).map((x,i)=>`<button type="button" data-m5eq="${i}">${esc2(x[0])}</button>`).join('');
+/* ট্যাব বদল */
+function showTab(n){jp.hidden=n!=1;jk.hidden=n!=2;j5.hidden=n!=3;bar.querySelectorAll('[data-jk]').forEach(b=>b.classList.toggle('on',b.dataset.jk==n))}
+bar.addEventListener('click',e=>{const b=e.target.closest('[data-jk]');if(!b)return;if(b.dataset.jk=='3'){showTab(3);if(!Q('#m5_text').value)Q('#m5_text').value=LS('m5txt','')||''}else j5.hidden=true},true);
+function m5tab(n){['1','2','3'].forEach(i=>Q('#m5'+i).hidden=i!=n);QA('#j5 .m5t [data-m5]').forEach(b=>b.classList.toggle('on',b.dataset.m5==n));if(n==2)fillEx();if(n==3)fillAs()}
+/* ---------- প্রশ্নপত্র ---------- */
+const v=id=>(Q('#'+id).value||'').trim(),vr=id=>Q('#'+id).value;
+const qatm=s=>{s=String(s);const c=Q('#m5_atx'),f=x=>c&&c.checked?autoTex(x):x;return/<\/?[biu]>/.test(s)?s.split(/(<\/?[biu]>)/).map((p,i)=>i%2?p:f(p)).join(''):f(s)};
+const parseT=t=>{const c=Q('#m5_cv');const r=parseQ0(normQ(qiPre(t,'md'),c?c.checked:true));r.forEach(q=>{q.t=qiTake(q.t,q);q.o=q.o.map(o=>qiTake(o,q))});return r};
+let SIG='';Q('#m5_sigf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>SIG=r.result;r.readAsDataURL(f)};
+async function sers(n){const out=[],s0=parseInt(v('m5_ss'));if(Q('#m5_ss').value.trim()){if(!(s0>=100000&&s0+n-1<=999999)){alert('কাস্টম সিরিয়াল ৬ ডিজিটের (১০০০০০–৯৯৯৯৯৯) হতে হবে');return null}for(let i=0;i<n;i++)out.push(String(s0+i));return out}
+const used=new Set(Object.keys(REG)),seed=Date.now()+'|'+Math.random();for(let i=0;i<n;i++){const h=await sha(seed+'|'+i);let x=parseInt(h.slice(0,8),16)%900000+100000;while(used.has(String(x)))x=x>=999999?100000:x+1;used.add(String(x));out.push(String(x))}return out}
+const nmFmt=(nm,n)=>nm=='bn'?bn(String(n).padStart(2,'0')):nm=='en'?String(n).padStart(2,'0'):nm=='bb'?bn(n):String(n);
+let LAST=null;
+async function gen(){const text=vr('m5_text'),Qs=parseT(text).filter(q=>!q.w);if(!Qs.length)return alert('প্রশ্ন পাওয়া যায়নি। ফরম্যাট দেখুন বা “নমুনা” চাপুন');if(Qs.length>50)return alert('সর্বোচ্চ ৫০টি MCQ — আপনার ইনপুটে '+Qs.length+'টি');
+try{localStorage.setItem('m5txt',JSON.stringify(text))}catch(_){}
+const nset=+v('m5_n'),cp=Math.max(1,+v('m5_cp')||1),sq=Q('#m5_sq').checked,so=Q('#m5_so').checked,ka=Q('#m5_ka').checked,mh=await sha(text),papers=[];
+for(let k=0;k<nset;k++){const lab=String.fromCharCode(65+k),h=await sha([mh,lab,'M5'].join('|')),r=mb(parseInt(h.slice(0,8),16)),orig=k==0&&ka;let M=orig||!sq?Qs:shuf(Qs,r);
+const qs=M.map(q=>{if(orig||!so)return{...q};const x=shufOpts(q,r);return{...q,o:x.o,a:x.a}});for(let c=0;c<cp;c++)papers.push({lab,qs})}
+const sn=await sers(papers.length);if(!sn)return;
+const PWH=DIM[v('m5_sz')]||DIM.A4,[PW,PH]=PWH;LAST={papers,sn,PW,PH};
+const out=Q('#m5out');out.innerHTML='';document.body.dataset.mode='m5';Q('#pg').textContent='@page{size:'+(v('m5_sz')=='Legal'?'Legal':'A4')+' portrait;margin:0}';
+const ff=FFM[v('m5_ff')]||FFM.mix,lbs=QLB[v('m5_lb')],ol=v('m5_ol'),nm=v('m5_nm'),col=+v('m5_col')||2,gap=Math.max(0,+v('m5_cg')||0);
+let fits=true;
+for(let pi=0;pi<papers.length;pi++){const P=papers[pi],ser=sn[pi],h=await sha([ser,P.lab,v('m5_sub'),'M5'].join('|')),code=h.slice(0,12).toUpperCase(),setCode=String(parseInt(h.slice(12,20),16)%9000+1000)+ser;
+REG[ser]={lab:P.lab,exam:v('m5_head'),sub:v('m5_sub'),ch:v('m5_ch'),test:v('m5_test'),n:P.qs.length,ans:P.qs.map(q=>q.a),pm:1,neg:.25,t:Date.now(),code:setCode};
+const oh=omrHTML({head:v('m5_head'),sub:v('m5_sub'),marks:v('m5_marks'),time:v('m5_time'),ch:v('m5_ch'),test:v('m5_test'),setCode,ser,qr:['EFSDSC','M50',ser,P.lab,setCode,code].join('|')});
+const left=(PW-OW)/2,top=7;
+const mkPage=(first)=>{const pg=document.createElement('div');pg.className='m5pg';pg.style.cssText=`width:${PW}mm;height:${PH}mm;padding:${top}mm ${left}mm 8mm;font-family:${ff};line-height:${v('m5_ln')||1.2}`;
+pg.innerHTML=(first?oh:insBlock(0,{name:v('m5_name'),sig:SIG}))+`<div class="m5cut">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>`+(first?'<div class="m5ttl">প্রশ্ন পত্র</div>':'')+'<div class="m5body"></div>';return pg};
+const p1=mkPage(true),p2=mkPage(false);out.appendChild(p1);out.appendChild(p2);
+/* প্রশ্ন নোড (ধাপে ধাপে স্থাপন, সমীকরণ বসার পর মাপা) */
+const stage=document.createElement('div');stage.style.cssText=`position:absolute;left:-9999px;top:0;width:${(PW-2*left)/col}mm`;document.body.appendChild(stage);
+const items=P.qs.map((q,i)=>{const d=document.createElement('div');d.className='qq';d.innerHTML=`${qiTop?qiTop(q,'md'):''}<span class="qn">${nmFmt(nm,i+1)}.</span> ${qfm(e(qatm(q.t)))}<div class="qo ${ol=='auto'?'oauto':'o'+ol}">${q.o.map((o,k)=>`<span>${lbs[k]} ${qfm(e(qatm(o)))}</span>`).join('')}</div>${qiBot?qiBot(q,'md'):''}`;return d});
+items.forEach(d=>stage.appendChild(d));try{await mjx(stage)}catch(_){}
+const bodies=[p1.querySelector('.m5body'),p2.querySelector('.m5body')];
+bodies.forEach((b,k)=>{const pg=b.parentNode,r=pg.getBoundingClientRect(),br=b.getBoundingClientRect(),pb=parseFloat(getComputedStyle(pg).paddingBottom);b.style.height=Math.max(60,r.bottom-pb-br.top)+'px';b.style.gap='0';b.style.columnGap=gap+'mm'});
+const layout=fs=>{let ok=true;const fsz=fs+'pt';bodies.forEach(b=>{b.style.fontSize=fsz;b.innerHTML='';b.cols=[];for(let c=0;c<col;c++){const d=document.createElement('div');d.className='c';d.style.margin='0 '+(gap/2)+'mm';b.appendChild(d);b.cols.push(d)}b.ci=0});
+let pgi=0;for(const it of items){let placed=false;for(let g=0;g<200;g++){const b=bodies[pgi];if(!b){ok=false;break}const c=b.cols[b.ci];c.appendChild(it);if(it.querySelector('.oauto')&&window.autoOpt)window.autoOpt(it);const cr=c.getBoundingClientRect(),ir=it.getBoundingClientRect();if(ir.bottom<=cr.bottom+.6||c.children.length==1&&ir.bottom<=cr.bottom+40){placed=true;break}c.removeChild(it);if(b.ci+1<b.cols.length)b.ci++;else pgi++}
+if(!placed){ok=false;break}}return ok};
+const fs0=+v('m5_fs')||9.5,auto=Q('#m5_af').checked;let fs=auto?Math.max(fs0,11.5):fs0,ok=layout(fs);while(!ok&&fs>4.5){fs-=.25;ok=layout(fs)}
+if(!ok){fits=false}
+bodies.forEach(b=>b.querySelectorAll('.c').forEach(c=>{c.style.margin='0';c.style.padding='0 '+(gap/2)+'mm'}));
+stage.remove();P.fs=fs;
+if(!out.dataset.q)out.dataset.q=1}
+saveAll();QA('#m5out [data-qr]').forEach(d=>{try{new QRCode(d,{text:d.dataset.qr,width:120,height:120,correctLevel:QRCode.CorrectLevel.M})}catch(_){}});
+QA('#m5out .bcw').forEach(d=>{const s=d.querySelector('svg');try{JsBarcode(s,d.dataset.bc,{format:'CODE128',displayValue:false,margin:0,height:40});const w=parseFloat(s.getAttribute('width')),h=parseFloat(s.getAttribute('height'));s.setAttribute('viewBox','0 0 '+w+' '+h);s.removeAttribute('width');s.removeAttribute('height');s.setAttribute('preserveAspectRatio','none');s.setAttribute('style','width:100%;height:100%;display:block')}catch(_){}});
+QA('#m5out .omr .ot.fitw').forEach(t=>{let f=parseFloat(getComputedStyle(t).fontSize),g=0;while(t.scrollWidth>t.clientWidth+.5&&g++<30){f*=.97;t.style.fontSize=f.toFixed(2)+'px'}});
+QA('#m5out .omr .ot.fit').forEach(t=>{let f=parseFloat(getComputedStyle(t).fontSize),g=0;while(t.scrollHeight>t.clientHeight+.5&&g++<30){f*=.96;t.style.fontSize=f.toFixed(2)+'px'}});
+QA('#m5out .m5ins').forEach(b=>{let f=10.6,g=0;b.style.fontSize=f+'pt';const ol=b.querySelector('ol'),sg=b.querySelector('.sg');const lim=()=>ol.getBoundingClientRect().bottom>sg.getBoundingClientRect().top-2;while(lim()&&g++<40){f*=.97;b.style.fontSize=f.toFixed(2)+'pt'}});
+Q('#m5_msg').innerHTML=(fits?'':'<span style="color:#b00">⚠ ২ পৃষ্ঠায় সব প্রশ্ন ধরেনি — প্রশ্ন/কলাম কমান বা Legal নিন। </span>')+papers.length+'টি পেপার · সিরিয়াল '+sn[0]+(sn.length>1?' – '+sn[sn.length-1]:'')+' · উত্তরমালা সিরিয়ালসহ সেভ হয়েছে (স্ক্যানার ট্যাবে পাওয়া যাবে)।';
+Q('#m5out').scrollIntoView({behavior:'smooth'})}
+function saveAll(){if(!sv.reg())alert('জায়গা শেষ — পুরনো উত্তরমালা মুছুন')}
+Q('#m5out').style.cssText='';
+/* ---------- স্ক্যান ইঞ্জিন ---------- */
+function findQuadG(C,w,h,asp){const cand=C.filter(c=>{const bw=c.x1-c.x0+1,bh=c.y1-c.y0+1,r=bw/bh;return bw>=6&&bh>=6&&r>.6&&r<1.7&&c.a/(bw*bh)>.6&&bw<w*.1&&bh<h*.2}).sort((a,b)=>b.a-a.a).slice(0,18);if(cand.length<4)return null;let best=null;const d=(p,q)=>Math.hypot(p.cx-q.cx,p.cy-q.cy);
+for(let i=0;i<cand.length;i++)for(let j2=i+1;j2<cand.length;j2++)for(let k=j2+1;k<cand.length;k++)for(let l=k+1;l<cand.length;l++){const q=[cand[i],cand[j2],cand[k],cand[l]],mx=q.reduce((a,c)=>a+c.cx,0)/4,my=q.reduce((a,c)=>a+c.cy,0)/4;q.sort((a,b)=>Math.atan2(a.cy-my,a.cx-mx)-Math.atan2(b.cy-my,b.cx-mx));
+const ar=q.map(c=>c.a),mn=Math.min(...ar),mxA=Math.max(...ar);if(mxA/mn>2.6)continue;let sg=0,ok=true;for(let t=0;t<4;t++){const a=q[t],b=q[(t+1)%4],c=q[(t+2)%4],cr=(b.cx-a.cx)*(c.cy-b.cy)-(b.cy-a.cy)*(c.cx-b.cx);if(!sg)sg=Math.sign(cr);else if(Math.sign(cr)!=sg){ok=false;break}}if(!ok)continue;
+const s0=d(q[0],q[1]),s1=d(q[1],q[2]),s2=d(q[2],q[3]),s3=d(q[3],q[0]);if(Math.max(s0,s2)/Math.min(s0,s2)>1.4||Math.max(s1,s3)/Math.min(s1,s3)>1.4)continue;const A=(s0+s2)/2,B=(s1+s3)/2,r1=Math.min(A,B)/Math.max(A,B);if(Math.abs(r1-asp)/asp>.25)continue;
+const area=Math.abs((q[2].cx-q[0].cx)*(q[3].cy-q[1].cy)-(q[3].cx-q[1].cx)*(q[2].cy-q[0].cy))/2;if(!best||area>best.area)best={area,q}}return best}
+function scanM5(src,mf){const G=E.toGray(src,2200),bin=E.binarize(G),C=E.comps(bin,G.w,G.h),quad=findQuadG(C,G.w,G.h,(OW-8)/(OH-8)<1?(OW-8)/(OH-8):(OH-8)/(OW-8));
+if(!quad)return{ok:false,err:'চার কোণের কালো বর্গ পাওয়া যায়নি — OMR অংশটি পুরো, সমান আলোয় ছবিতে আনুন'};
+const q=quad.q.slice();let k=0;q.forEach((c,i)=>{if(c.a>q[k].a)k=i});const o=[0,1,2,3].map(i=>q[(k+i)%4]);
+const Wt=OW*PPM,Ht=OH*PPM,dst=GEO.fid.map(p=>[p[0]*PPM,p[1]*PPM]),H=E.solveH(o.map(c=>[c.cx,c.cy]),dst);if(!H)return{ok:false,err:'শিটের অবস্থান শনাক্ত হয়নি'};
+const wg=E.warp(G,H,Wt,Ht),thr=E.thrOf(wg,5),fr=p=>E.discFrac(wg,Wt,p.x*PPM,p.y*PPM,1.25*PPM,thr);
+const col=arr=>{const f=arr.map(fr),m=Math.max(...f),i=f.indexOf(m),sec=Math.max(...f.filter((_,j2)=>j2!=i));return m>=mf&&m-sec>=.22?String(i):(m<mf-.12?'':'?')};
+const ser=GEO.ser.map(c=>{const x=col(c);return x===''?'?':x}).join(''),reg=GEO.reg.map(col).join('');
+const ans=GEO.ans.map(a=>{const f=a.xs.map(x=>fr({x,y:a.y})),on=f.map((x,i)=>x>=mf?i:-1).filter(i=>i>=0);if(on.length==1)return on[0];if(on.length>1)return -2;const m=Math.max(...f),i=f.indexOf(m),sec=Math.max(...f.filter((_,j2)=>j2!=i));return m>=mf-.12&&m-sec>=.2?i:-1});
+const dif=GEO.dif.map(([x,y])=>fr({x,y})>=.5);
+let name='';try{name=window.__uoCrop.cropMM(wg,Wt,...NAMEBOX,PPM)}catch(_){}
+return{ok:true,ser,reg,ans,dif,name}}
+/* ---------- মূল্যায়ন ---------- */
+const manKey=()=>{const t=en(vr('m5_man')).toUpperCase();if(!t.trim())return null;const mp={A:0,B:1,C:2,D:3,'ক':0,'খ':1,'গ':2,'ঘ':3},k=Array(50).fill(-1);const pr=[...t.matchAll(/(\d+)\s*[-.:)=]\s*([A-Dকখগঘ])/g)];if(pr.length>=3){pr.forEach(m=>{const n=+m[1]-1;if(n>=0&&n<50)k[n]=mp[m[2]]});return k}let i=0;for(const c of t.replace(/[^A-Dকখগঘ]/g,'')){if(i<50)k[i]=mp[c];i++}return k}
+function keyFor(s){const sel=v('m5_ex');if(sel&&sel!='auto'&&REG[sel])return{k:REG[sel].ans,n:REG[sel].n,r:REG[sel],ser:sel};const r=REG[s.ser];if(r)return{k:r.ans,n:r.n,r,ser:s.ser};const m=manKey();if(m)return{k:m,n:m.filter(x=>x>=0).length||50,r:{exam:'হাতে দেওয়া উত্তরমালা'},ser:''};return null}
+function grade(s){const K=keyFor(s);if(!K)return null;const pm=+v('m5_pm')||1,ng=+v('m5_ng')||0,res=[];let c=0,w=0,b=0,m=0;for(let i=0;i<K.n;i++){const k=K.k[i],a=s.ans[i];let x;if(k<0||k==null)x='N';else if(a==-2){x='M';m++}else if(a<0){x='B';b++}else if(a==k){x='C';c++}else{x='W';w++}res.push(x)}
+const score=+(c*pm-(w+m)*ng).toFixed(2),full=+(K.n*pm).toFixed(2);return{K,res,c,w,b,m,pm,ng,score,full,pct:full?+(score/full*100).toFixed(1):0}}
+function fillEx(){const o=Q('#m5_ex'),cur=o.value,ks=Object.keys(REG).sort((a,b)=>(REG[b].t||0)-(REG[a].t||0));o.innerHTML='<option value="auto">স্বয়ংক্রিয় — OMR-এর সিরিয়াল পড়ে মেলাও</option>'+ks.map(s=>`<option value="${s}">${s} · ${esc2(REG[s].sub||'')} ${esc2(REG[s].exam||'')} · সেট ${REG[s].lab} (${REG[s].n}টি)</option>`).join('');o.value=ks.includes(cur)?cur:'auto';render()}
+function addScan(r,fn){const s={id:'M'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:Date.now(),ser:r.ser,reg:r.reg,ans:r.ans,dif:r.dif,f:fn||''};if(r.name){IMGS[s.id]=r.name;sv.img()}
+const i=r.ser.indexOf('?')<0&&r.reg?SCN.findIndex(x=>x.ser==r.ser&&x.reg==r.reg):-1;if(i>=0){delete IMGS[SCN[i].id];SCN[i]=s}else SCN.push(s);sv.scn();render();return s}
+function render(){const o=Q('#m5_res');if(!o)return;if(!SCN.length){o.innerHTML='<p class="note">এখনো কোনো স্ক্যান নেই।</p>';return}
+o.innerHTML='<table class="m5v"><tr><th>#</th><th>রেজি.</th><th>সিরিয়াল</th><th>নাম</th><th>উত্তরপত্র</th><th>সঠিক</th><th>ভুল</th><th>স্কিপ</th><th>নম্বর</th><th></th></tr>'+SCN.map((s,i)=>{const g=grade(s),r=REG[s.ser];return`<tr><td>${i+1}</td><td><input data-m5f="reg:${s.id}" value="${esc2(s.reg)}" style="width:80px"></td><td><input data-m5f="ser:${s.id}" value="${esc2(s.ser)}" style="width:70px"></td><td>${IMGS[s.id]?`<img src="${IMGS[s.id]}">`:''}</td><td style="font-size:.85em">${g?esc2((g.K.r.sub||'')+' '+(g.K.r.exam||''))+(r?' · সেট '+r.lab:''):'<span style="color:#b00">মেলেনি</span>'}</td>${g?`<td>${g.c}</td><td>${g.w}</td><td>${g.b+g.m}</td><td><b>${g.score}</b>/${g.full}</td>`:'<td colspan="4">—</td>'}<td><button type="button" data-m5a="view:${s.id}">দেখুন/ঠিক করুন</button> <button type="button" data-m5a="del:${s.id}">✕</button></td></tr>`}).join('')+'</table>'}
+function detail(id){const s=SCN.find(x=>x.id==id),d=Q('#m5_det');if(!s){d.innerHTML='';return}const g=grade(s),n=g?g.K.n:50;let h='<hr><p class="note">বৃত্তে ক্লিক করে দাগ ঠিক করুন (আবার ক্লিক = ফাঁকা)।</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px">';
+for(let i=0;i<n;i++)h+=`<div style="white-space:nowrap"><span style="display:inline-block;width:1.8em;text-align:right;font-size:.85em">${i+1}</span> ${LB4.map((l,o)=>`<i class="bb" data-m5b="${s.id}:${i}:${o}" style="${s.ans[i]==o?'background:#000;color:#fff':''}">${l}</i>`).join('')}${g&&g.res[i]=='W'?' ✗':''}</div>`;d.innerHTML=h+'</div>'}
+async function scanFiles(fs){const m=Q('#m5_sm');let ok=0,bad=[];const mf=(+v('m5_mf')||50)/100;for(const f of fs){m.textContent='স্ক্যান হচ্ছে: '+f.name+' …';await new Promise(r=>setTimeout(r,30));try{let im;try{im=await createImageBitmap(f,{imageOrientation:'from-image'})}catch(_){im=await new Promise((res,rej)=>{const u=URL.createObjectURL(f),i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=u})}const r=scanM5(im,mf);if(r.ok){addScan(r,f.name);ok++}else bad.push(f.name+' — '+r.err)}catch(x){bad.push(f.name+' — পড়া যায়নি')}}m.innerHTML=(ok?'✅ '+ok+'টি স্ক্যান হয়েছে। ':'')+bad.map(b=>`<span style="color:#b00">${esc2(b)}</span>`).join('<br>')}
+let stream=null,tm=null,busy=false,lastH='',stab=0,lastAcc='';
+async function liveStart(){const m=Q('#m5_sm'),vd=Q('#m5_vid');if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return m.textContent='এই ব্রাউজারে লাইভ ক্যামেরা নেই; ক্যামেরা বাটন ব্যবহার করুন।';
+try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});vd.srcObject=stream;await vd.play();Q('#m5_live').hidden=false;Q('#m5_shot').hidden=false;Q('#m5_stop').hidden=false;m.textContent='OMR অংশ ফ্রেমে আনুন…';tm=setInterval(tick,800)}catch(x){m.textContent='ক্যামেরা চালু হয়নি: '+(x&&x.name||'')}}
+function liveStop(){clearInterval(tm);tm=null;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}Q('#m5_live').hidden=true;Q('#m5_shot').hidden=true;Q('#m5_stop').hidden=true}
+function tick(){const vd=Q('#m5_vid');if(busy||!vd.videoWidth)return;busy=true;try{const r=scanM5(vd,(+v('m5_mf')||50)/100),m=Q('#m5_sm');if(!r.ok){lastH='';stab=0;lastAcc='';m.textContent='শিট খুঁজছি…';return}const h=r.ser+'|'+r.reg+'|'+r.ans.join(',');stab=h==lastH?stab+1:1;lastH=h;if(h==lastAcc){m.textContent='✅ নেওয়া হয়েছে — পরের শিট আনুন';return}
+if(stab>=3&&r.ser.indexOf('?')<0){addScan(r,'live');lastAcc=h;m.textContent='✅ সিরিয়াল '+r.ser+' স্ক্যান হয়েছে'+(REG[r.ser]?' — প্রশ্নপত্র মিলেছে':' — এই সিরিয়ালের প্রশ্নপত্র নেই');try{navigator.vibrate&&navigator.vibrate(60)}catch(_){}}else m.textContent='শিট ধরা পড়েছে, স্থির রাখুন… ('+stab+')'}finally{busy=false}}
+function shot(){const vd=Q('#m5_vid');if(!vd.videoWidth)return;const r=scanM5(vd,(+v('m5_mf')||50)/100),m=Q('#m5_sm');if(r.ok){addScan(r,'live');m.textContent='✅ স্ক্যান হয়েছে'}else m.textContent=r.err}
+/* ---------- PDF ---------- */
+function fillAs(){const o=Q('#m5_as'),c=o.value;o.innerHTML=SCN.length?SCN.map(s=>`<option value="${s.id}">রেজি. ${esc2(s.reg||'—')} · সিরিয়াল ${esc2(s.ser)}</option>`).join(''):'<option value="">কোনো স্ক্যান নেই</option>';if(c&&SCN.some(x=>x.id==c))o.value=c}
+function sheet(s){const g=grade(s);if(!g)return'';const r=g.K.r,im=IMGS[s.id],lg=E.instLogo(),code=E.hash(s.ser+s.reg+s.ans.join('')),n=g.K.n,per=Math.ceil(n/5);let t='';for(let b=0;b<5;b++){let rows='';for(let q=b*per;q<Math.min(n,(b+1)*per);q++){const a=s.ans[q],k=g.K.k[q],x=g.res[q];rows+=`<tr${x=='W'||x=='M'?' class="x"':''}><td>${q+1}</td><td>${a>=0?LB4[a]:a==-2?'**':'—'}</td><td>${k>=0?LB4[k]:'?'}</td><td>${{C:'✓',W:'✗',B:'—',M:'**',N:'?'}[x]}</td></tr>`}if(rows)t+=`<table><tr><th>প্র.</th><th>দাগ</th><th>সঠিক</th><th>ফল</th></tr>${rows}</table>`}
+const wl=g.res.map((x,i)=>x=='W'||x=='M'||x=='B'?`${i+1}: ${x=='B'?'স্কিপ':'দিয়েছেন '+(s.ans[i]>=0?LB4[s.ans[i]]:'**')} → <b>${LB4[g.K.k[i]]}</b>`:'').filter(Boolean);
+return`<div class="m5res"><div class="hd">${lg?`<img src="${lg}">`:''}<div><b style="font-size:1.25em">${esc2(r.exam||'')}</b><br><b>${esc2(r.sub||'')}</b> · অধ্যায় ${esc2(r.ch||'')} · Test-${esc2(r.test||'')}<br><small>OMR ফলাফল শিট · সেট ${esc2(r.lab||'')}</small></div></div>
+<div class="st"><div><div class="fl"><small>পরীক্ষার্থীর নাম (OMR-এর ডাকনামের ঘর থেকে)</small>${im?`<img src="${im}">`:''}</div><div style="margin-top:2mm">রেজিস্ট্রেশন: <b>${esc2(s.reg||'—')}</b> &nbsp; সিরিয়াল: <b>${esc2(s.ser)}</b></div><div>সঠিক <b>${bn(g.c)}</b> · ভুল <b>${bn(g.w)}</b> · স্কিপ <b>${bn(g.b)}</b> · একাধিক দাগ <b>${bn(g.m)}</b></div><div>প্রতি সঠিকে ${bn(g.pm)}${g.ng?', ভুলে −'+bn(g.ng):''}</div></div><div class="tot"><small>প্রাপ্ত নম্বর</small><div class="n">${bn(g.score)}</div><small>পূর্ণমান ${bn(g.full)} · ${bn(g.pct)}%</small></div></div>
+<b>উত্তরের বিস্তারিত</b><div class="g" style="margin-top:1mm">${t}</div><p style="font-size:.8em;margin:1mm 0">✓ সঠিক · ✗ ভুল (ধূসর) · — স্কিপ · ** একাধিক দাগ</p><b>ভুল/স্কিপ ও সঠিক উত্তর (${bn(wl.length)}টি)</b><div style="columns:4;font-size:7.4pt;line-height:1.4;margin-top:1mm">${wl.length?wl.join('<br>'):'কোনো ভুল বা স্কিপ নেই'}</div>
+<div class="sg"><div>কোঅর্ডিনেটর</div><div>ইনভিজিলেটর</div><div>শিক্ষকের মন্তব্য/স্বাক্ষর</div></div><div style="position:absolute;left:10mm;bottom:7mm;font-size:7pt">OMR REPORT · ${esc2(s.ser)}-${esc2(s.reg||'x')} · যাচাই কোড ${code} · ${new Date().toLocaleString('en-GB')}</div><div data-qr="${esc2('EFSDSC|M50R|'+s.ser+'|'+s.reg+'|'+code)}" style="position:absolute;right:10mm;bottom:6mm"></div></div>`}
+function pdf(list){const h=list.map(sheet).join('');if(!h)return alert('উত্তরপত্র মেলেনি — সিরিয়ালসহ প্রশ্নপত্র তৈরি করুন বা হাতে উত্তরমালা দিন');const o=Q('#m5out');o.innerHTML=h;document.body.dataset.mode='m5';Q('#pg').textContent='@page{size:A4 portrait;margin:0}';o.querySelectorAll('[data-qr]').forEach(d=>{try{new QRCode(d,{text:d.dataset.qr,width:64,height:64,correctLevel:QRCode.CorrectLevel.M})}catch(_){}});o.scrollIntoView({behavior:'smooth'});setTimeout(()=>window.print(),500)}
+/* ---------- ইভেন্ট ---------- */
+j5.addEventListener('click',ev=>{let b=ev.target.closest('[data-m5]');if(b)return m5tab(b.dataset.m5);
+b=ev.target.closest('[data-m5eq]');if(b){const t=Q('#m5_text'),s=EQS[+b.dataset.m5eq][1],a=t.selectionStart,z=t.selectionEnd;t.value=t.value.slice(0,a)+s+t.value.slice(z);t.focus();t.selectionStart=t.selectionEnd=a+s.length;return}
+b=ev.target.closest('.bb[data-m5b]');if(b){const[id,q,o]=b.dataset.m5b.split(':'),s=SCN.find(x=>x.id==id);if(!s)return;s.ans[+q]=s.ans[+q]==+o?-1:+o;sv.scn();render();detail(id);return}
+b=ev.target.closest('[data-m5a]');if(!b)return;const a=b.dataset.m5a;
+if(a=='gen')gen();else if(a=='print'){if(!Q('#m5out .m5pg'))gen().then(()=>setTimeout(()=>window.print(),400));else{document.body.dataset.mode='m5';window.print()}}
+else if(a=='conv'){const t=Q('#m5_text');t.value=normQ(t.value,true)}else if(a=='demo')Q('#m5_text').value=QDEMO;
+else if(a=='key'){if(!LAST)return alert('আগে প্রশ্নপত্র তৈরি করুন');const lb=['A','B','C','D'];let c='\ufeffserial,set,q,answer\n';LAST.papers.forEach((P,i)=>P.qs.forEach((q,n)=>{c+=[LAST.sn[i],P.lab,n+1,q.a>=0?lb[q.a]:''].join(',')+'\n'}));const x=document.createElement('a');x.href=URL.createObjectURL(new Blob([c],{type:'text/csv'}));x.download='m50-answer-keys.csv';x.click()}
+else if(a=='up')Q('#m5_up').click();else if(a=='cam')Q('#m5_cam').click();else if(a=='live')liveStart();else if(a=='stop')liveStop();else if(a=='shot')shot();
+else if(a=='clr'){if(confirm('সব স্ক্যান মুছবেন?')){SCN=[];IMGS={};sv.scn();sv.img();render();Q('#m5_det').innerHTML=''}}
+else if(a=='csv'){const rows=[['#','রেজি.','সিরিয়াল','সঠিক','ভুল','স্কিপ','নম্বর','পূর্ণমান']];SCN.forEach((s,i)=>{const g=grade(s);rows.push([i+1,s.reg,s.ser,...(g?[g.c,g.w,g.b+g.m,g.score,g.full]:['','','','',''])])});const t='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n'),x=document.createElement('a');x.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'}));x.download='m50-results.csv';x.click()}
+else if(a.indexOf('view:')==0)detail(a.slice(5));else if(a.indexOf('del:')==0){const id=a.slice(4);SCN=SCN.filter(x=>x.id!=id);delete IMGS[id];sv.scn();sv.img();render();Q('#m5_det').innerHTML=''}
+else if(a=='pdf1'){const s=SCN.find(x=>x.id==Q('#m5_as').value);if(s)pdf([s]);else alert('আগে স্ক্যান করুন')}else if(a=='pdfall')pdf(SCN)});
+j5.addEventListener('change',ev=>{const t=ev.target;if(t.id=='m5_up'||t.id=='m5_cam'){scanFiles([...t.files]);t.value=''}
+else if(t.dataset&&t.dataset.m5f){const[k,id]=t.dataset.m5f.split(':'),s=SCN.find(x=>x.id==id);if(s){s[k]=en(t.value.trim());sv.scn();render()}}
+else if(t.id=='m5_ex'||t.id=='m5_pm'||t.id=='m5_ng'||t.id=='m5_man')render()});
+Q('#m5_ex').addEventListener('focus',fillEx);
+window.__m5={gen,fillEx,scanM5,tab:m5tab,REG:()=>REG,SCN:()=>SCN,grade};
+/* সাইডবার */
+const menu=document.getElementById('sbMenu');if(menu){const it=[...menu.children].find(b=>/^১০\./.test(b.textContent.trim()));if(it){let a=it;while(a.nextElementSibling&&a.nextElementSibling.classList.contains('sub'))a=a.nextElementSibling;const y=document.createElement('button');y.className='sub';y.textContent='› ২৫–৫০ MCQ স্ক্যানার';y.style.setProperty('--d','.1s');y.onclick=()=>{document.querySelector('nav button[data-t=j]').click();showTab(3);const bk=document.getElementById('sbBk');bk&&bk.click()};a.after(y)}}
 })();
 </script>
 
