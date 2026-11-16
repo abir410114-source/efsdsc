@@ -2412,7 +2412,7 @@ const LABEL={uo_scn:'OMR স্ক্যান',uo_keys:'উত্তরমা�
 const SKIP=k=>/^__/.test(k);
 const L=(k,d)=>{try{return JSON.parse(origGet(k))||d}catch(_){return d}};
 const origGet=k=>localStorage.getItem(k);
-let pulled=false,tok=null,fileId=null,dirty=false,tmr=null,busy=false,applying=false,log=L('__glog',[]);
+let lastPull=Date.now(),pulled=false,tok=null,fileId=null,dirty=false,tmr=null,busy=false,applying=false,log=L('__glog',[]);
 const $=s=>document.querySelector(s);
 function status(t,a){let e=$('#gdst');if(!e){e=document.createElement('div');e.id='gdst';document.body.appendChild(e)}e.innerHTML=t+(a?`<a>${a}</a>`:'');const l=e.querySelector('a');if(l)l.onclick=logout}
 function curTab(){const b=document.querySelector('nav button.on');return b?{id:b.dataset.t,name:b.textContent.replace(/^[০-৯0-9]+\.\s*/,'')}:{id:'',name:''}}
@@ -2434,20 +2434,23 @@ async function push(){if(!tok||busy)return;busy=true;try{status('☁ সেভ �
 if(fileId){await api('https://www.googleapis.com/upload/drive/v3/files/'+fileId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body})}
 else{const bd='xb'+ts,meta=JSON.stringify({name:FN,parents:['appDataFolder']});const mp=`--${bd}\r\nContent-Type: application/json\r\n\r\n${meta}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${bd}--`;const r=await api('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});fileId=(await r.json()).id}
 origSet.call(localStorage,'__gts',String(ts));origSet.call(localStorage,'__gdirty','');dirty=false;status('☁ Drive-এ সেভ হয়েছে','লগআউট')}catch(e){console.error(e);status('⚠ সিঙ্ক ব্যর্থ: '+String(e.message).slice(0,140),'লগআউট');if(!/^40[13]/.test(e.message))setTimeout(()=>{if(tok)push()},15000)}busy=false}
-function mergeVal(a,b){/* a=লোকাল, b=ক্লাউড → ইউনিয়ন */try{const x=JSON.parse(a),y=JSON.parse(b);if(Array.isArray(x)&&Array.isArray(y)){const seen=new Set(x.map(i=>JSON.stringify(i)));return JSON.stringify(x.concat(y.filter(i=>!seen.has(JSON.stringify(i)))))}
-if(x&&y&&typeof x=='object'&&typeof y=='object'&&!Array.isArray(x)&&!Array.isArray(y)){const o=Object.assign({},y);for(const k of Object.keys(x)){o[k]=(k in y&&x[k]&&y[k]&&typeof x[k]=='object'&&typeof y[k]=='object'&&!Array.isArray(x[k])&&!Array.isArray(y[k]))?Object.assign({},y[k],x[k]):x[k]}return JSON.stringify(o)}}catch(_){}return a}
-async function pull(){await findFile();if(!fileId){pulled=true;await push();return}const r=await api('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media');const j=await r.json();const lts=+localStorage.getItem('__gts')||0,ldirty=localStorage.getItem('__gdirty')==='1',cd=j.data||{};let changed=false;
-const fresh=lts===0;/* এই ডিভাইস আগে কখনো সিঙ্ক হয়নি */
-applying=true;try{
-if(j.ts>lts&&!ldirty&&!fresh){for(const k of Object.keys(cd)){if(localStorage.getItem(k)!==cd[k]){origSet.call(localStorage,k,cd[k]);changed=true}}}
-else if(fresh||ldirty||j.ts>lts){for(const k of Object.keys(cd)){const lv=localStorage.getItem(k);if(lv===null){origSet.call(localStorage,k,cd[k]);changed=true}else if(lv!==cd[k]){const m=mergeVal(lv,cd[k]);if(m!==lv){origSet.call(localStorage,k,m);changed=true}}}}
+function mergeVal(a,b,pc){/* a=লোকাল, b=ক্লাউড → ইউনিয়ন (কিছুই মোছা হয় না) */try{const x=JSON.parse(a),y=JSON.parse(b);if(Array.isArray(x)&&Array.isArray(y)){const seen=new Set(x.map(i=>JSON.stringify(i)));return JSON.stringify(x.concat(y.filter(i=>!seen.has(JSON.stringify(i)))))}
+if(x&&y&&typeof x=='object'&&typeof y=='object'&&!Array.isArray(x)&&!Array.isArray(y)){const o=Object.assign({},y);for(const k of Object.keys(x)){o[k]=(k in y&&x[k]&&y[k]&&typeof x[k]=='object'&&typeof y[k]=='object'&&!Array.isArray(x[k])&&!Array.isArray(y[k]))?Object.assign({},y[k],pc?{}:x[k],pc?y[k]:{}):(pc&&k in y?y[k]:x[k])}return JSON.stringify(o)}}catch(_){}return pc?b:a}
+async function pull(){await findFile();if(!fileId){pulled=true;await push();return}const r=await api('https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media');const j=await r.json();const lts=+localStorage.getItem('__gts')||0,ldirty=localStorage.getItem('__gdirty')==='1',cd=j.data||{};let changed=false,need=false;
+const pc=j.ts>lts&&!ldirty;/* ক্লাউড নতুন হলে সাধারণ মানে ক্লাউড জেতে; তালিকা/রেজিস্টার সবসময় ইউনিয়ন */
+let nk=0;applying=true;try{
+for(const k of Object.keys(cd)){nk++;const lv=localStorage.getItem(k);if(lv===null){origSet.call(localStorage,k,cd[k]);changed=true}else if(lv!==cd[k]){const m=mergeVal(lv,cd[k],pc);if(m!==lv){origSet.call(localStorage,k,m);changed=true}if(m!==cd[k])need=true}}
+for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!SKIP(k)&&!(k in cd))need=true}
 const seen=new Set(log.map(x=>x.t+x.k));(j.log||[]).forEach(x=>{if(!seen.has(x.t+x.k))log.push(x)});log.sort((a,b)=>a.t<b.t?-1:1);origSet.call(localStorage,'__glog',JSON.stringify(log.slice(-300)));
 origSet.call(localStorage,'__gts',String(j.ts))}finally{applying=false}
-if(window.__histSync&&(j.hist||[]).length){await new Promise(res=>__histSync.merge(j.hist,n=>{if(n)changed=true;res()}))}
+let nh=(j.hist||[]).length;
+if(window.__histSync){const ids=new Set((j.hist||[]).map(h=>h.id));const loc=await new Promise(res=>{let d=0;setTimeout(()=>{if(!d){d=1;res([])}},4000);__histSync.get(a=>{if(!d){d=1;res(a||[])}})});if(loc.some(h=>!ids.has(h.id)))need=true;
+if(nh)await new Promise(res=>__histSync.merge(j.hist,n=>{if(n)changed=true;res()}))}
 if(changed&&!sessionStorage.getItem('__gr')){sessionStorage.setItem('__gr','1');pulled=true;await push();location.reload();return}
 pulled=true;sessionStorage.removeItem('__gr');
-if(ldirty||fresh||changed)await push();
-status('☁ Drive সিঙ্ক চালু','লগআউট')}
+if(ldirty||need||changed)await push();
+status('☁ Drive সিঙ্ক চালু · '+nk+' তথ্য, '+nh+' ফাইল','লগআউট')}
+window.__gsync=async function(){if(!tok)return alert('আগে Google লগইন করুন');lastPull=0;sessionStorage.removeItem('__gr');await pull();await push()};
 function overlay(msg){let o=$('#gdov');if(o)o.remove();o=document.createElement('div');o.id='gdov';
 const cid=GCID||localStorage.getItem('__gcid')||'';
 const lgo=(document.querySelector('#wl .lg img')||{}).src||'';
@@ -2481,8 +2484,8 @@ m.innerHTML=`<div class="gdbx"><div style="display:flex;justify-content:space-be
 $('#ghx').onclick=()=>m.style.display='none';$('#gha').onclick=()=>showH(!all);
 m.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const x=log[+b.dataset.v],pv=b.parentNode.querySelector('.pv');pv.innerHTML=`<b>${cnt(x.snap)}</b><pre></pre>`;pv.querySelector('pre').textContent=x.snap.slice(0,1500)});
 m.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const x=log[+b.dataset.r];if(!confirm(dstr(x.t)+' '+fmt(x.t)+' সময়ের "'+x.l+'" অবস্থায় ফিরে যাবেন? বর্তমান তথ্য বদলে যাবে।'))return;origSet.call(localStorage,x.k,x.snap);mark();location.reload()})}
-const hb=document.createElement('button');hb.id='gdbtn';hb.className='no-print';hb.textContent='তথ্য';hb.onclick=()=>showH(false);document.body.appendChild(hb);
-let lastPull=Date.now();const autoPull=()=>{if(!tok||!pulled||busy||dirty||Date.now()-lastPull<20000)return;lastPull=Date.now();pull().catch(()=>{})};
+const hb=document.createElement('button');hb.id='gdbtn';hb.className='no-print';hb.textContent='তথ্য';hb.onclick=()=>showH(false);document.body.appendChild(hb);const sb=document.createElement('button');sb.id='gsyncb';sb.className='no-print';sb.textContent='🔄 এখনই সিঙ্ক';sb.style.cssText='position:fixed;left:8px;bottom:96px;z-index:1500;padding:6px 12px;border-radius:99px;border:1px solid #999;background:#fff;color:#000;font:inherit;font-size:12px';sb.onclick=()=>window.__gsync();document.body.appendChild(sb);
+const autoPull=()=>{if(!tok||!pulled||busy||dirty||Date.now()-lastPull<20000)return;lastPull=Date.now();pull().catch(()=>{})};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoPull();else if(dirty&&tok&&pulled)push()});window.addEventListener('focus',autoPull);window.addEventListener('pagehide',()=>{if(dirty&&tok&&pulled)push()});setInterval(autoPull,90000);
 boot();
 })();
