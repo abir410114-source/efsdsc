@@ -2105,6 +2105,11 @@ if(w&&getComputedStyle(w).display!='none'){new MutationObserver((r,o)=>{if(w.cla
 .vs{display:flex;flex-direction:column;gap:12px;margin:0 auto;width:min(100%,1000px)}.vs img{width:100%;background:#fff;border-radius:4px;box-shadow:0 6px 24px #0008}#rs_vw .vzm{display:flex;align-items:center;gap:4px}#rs_vw .vzm b{min-width:46px;text-align:center;font-size:13px}#rs_vw .vbody{padding:6px}
 .vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.vg div{position:relative;cursor:pointer;transition:transform .2s}.vg div:hover{transform:scale(1.04)}.vg img{width:100%;aspect-ratio:3/4;object-fit:cover;background:#fff;border-radius:8px}.vg i{position:absolute;left:6px;top:6px;background:#7c3aed;border-radius:99px;padding:0 8px;font-style:normal;font-size:12px}
 .vif{flex:1;width:100%;border:0;border-radius:10px;background:#fff;min-height:70vh}
+.vp{position:relative}.vs .vp img{width:100%;display:block}.vp canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}.inking .vp canvas{pointer-events:auto;touch-action:none;cursor:crosshair}
+.vann{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:6px 10px;background:rgba(30,22,60,.92);animation:vbIn .3s both;font-size:13px}.vann button{display:flex;flex-direction:column;align-items:center;min-width:46px;padding:3px 6px!important;line-height:1.2}.vann button small{font-size:10px;opacity:.85}.vann .sep{width:1px;height:28px;background:#fff4}
+.vann .sw{width:22px;height:22px;border-radius:50%;border:2px solid #fff6;cursor:pointer;display:inline-block}.vann .sw.on{border-color:#fff;transform:scale(1.2)}.vann input[type=color]{width:28px;height:28px;padding:0;border:0;background:none}.vann .rg{display:flex;gap:4px;align-items:center;color:#fff}.vann .rg input{width:80px}.vann .asv{margin-left:auto;font-size:12px;opacity:.8}
+.vann{position:relative;z-index:7}.vpal{position:absolute;top:100%;left:8px;z-index:6;display:grid;grid-template-columns:repeat(15,1fr);gap:4px;padding:10px;background:rgba(25,18,50,.97);border-radius:0 0 14px 14px;max-width:min(520px,96vw);box-shadow:0 14px 40px #000a}.vpal .sw{width:100%;aspect-ratio:1;border-radius:6px}.vpal[hidden]{display:none}
+.vp img{user-select:none;-webkit-user-drag:none}
 </style>
 <script>
 (function(){
@@ -2245,9 +2250,10 @@ if(b.t=='qa'){U.push({k:'t',n:(b.q+b.a).length,h:`<div class="pt-b">${ti}<div cl
 else if(b.t=='text'){U.push({k:'t',n:b.a.length,h:`<div class="pt-b">${ti}<div>${fmtHtml(b.a,b.fmt)}</div></div>`})}
 else for(const f of(b.files||[])){prog(f.name);const bl=await blobOf(f);if(!bl){U.push({k:'t',n:50,h:`<div class="pt-b">${ti}<div>⚠ ${esc(f.name)} পাওয়া যায়নি</div></div>`});continue}
 const T=f.type||bl.type||'';
-if(T.startsWith('image'))U.push({k:'m',src:await imgUrl(bl,o.bw),cap:b.title});
-else if(T=='application/pdf'||/\.pdf$/i.test(f.name)){try{(await pdfPages(bl,o.bw,prog)).forEach((u,i)=>U.push({k:'m',src:u,cap:i?'':b.title}))}catch(e){U.push({k:'t',n:50,h:`<div class="pt-b">${ti}<div>⚠ ${esc(f.name)} প্রিন্টের জন্য খোলা যায়নি (ইন্টারনেট প্রয়োজন)</div></div>`})}}
-else U.push({k:'t',n:50,h:`<div class="pt-b">${ti}<div>📎 ${esc(f.name)} — এই ধরনের ফাইল প্রিন্ট করা যায় না, ডাউনলোড করে খুলুন</div></div>`})}}}
+if(T.startsWith('image')){const iu=await imgUrl(bl,false);let u=await withInk(iu,f.id+':0',o.bw);if(o.bw&&u==iu)u=await imgUrl(bl,true);else if(o.bw){const im=new Image();await new Promise(r=>{im.onload=r;im.src=u});const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;cv.getContext('2d').drawImage(im,0,0);gray(cv);u=cv.toDataURL('image/jpeg',.92)}U.push({k:'m',src:u,cap:b.title})}
+else if(T=='application/pdf'||/\.pdf$/i.test(f.name)){try{{const pp=await pdfPages(bl,false,prog);for(let i=0;i<pp.length;i++){let u=await withInk(pp[i],f.id+':'+i,o.bw);if(o.bw){const im=new Image();await new Promise(r=>{im.onload=r;im.src=u});const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;cv.getContext('2d').drawImage(im,0,0);gray(cv);u=cv.toDataURL('image/jpeg',.9)}U.push({k:'m',src:u,cap:i?'':b.title})}}}catch(e){U.push({k:'t',n:50,h:`<div class="pt-b">${ti}<div>⚠ ${esc(f.name)} প্রিন্টের জন্য খোলা যায়নি (ইন্টারনেট প্রয়োজন)</div></div>`})}}
+else U.push({k:'t',n:50,h:`<div class="pt-b">${ti}<div>📎 ${esc(f.name)} — এই ধরনের ফাইল প্রিন্ট করা যায় না, ডাউনলোড করে খুলুন</div></div>`})}
+for(let q=0;q<(ANN['__wb:'+b.id]||[]).length;q++){const t=ANN['__wb:'+b.id][q],bl2='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1414"><rect width="1000" height="1414" fill="#fff"/>'+(t=='r'?Array.from({length:35},(_,z)=>`<line x1="0" x2="1000" y1="${90+z*38}" y2="${90+z*38}" stroke="#888" stroke-width="1.5"/>`).join(''):'')+'</svg>');U.push({k:'m',src:await withInk(bl2,'wb:'+b.id+':'+q,o.bw),cap:''})}}}
 return U}
 function layout(U,o){const chars=U.filter(u=>u.k=='t').reduce((a,u)=>a+u.n,0),med=U.filter(u=>u.k=='m').length;
 let paper=o.paper;if(paper=='auto')paper=(med==0&&chars<1800)||(med==1&&chars<300&&!o.fullpg)?'A5':'A4';
@@ -2304,11 +2310,74 @@ d.querySelectorAll('[data-mv]').forEach(x=>x.onclick=()=>{const a=+x.closest('[d
 const q=s=>d.querySelector(s);if(q('[data-fsort]'))q('[data-fsort]').onclick=()=>{b.files.sort(nat);rb()};if(q('[data-frev]'))q('[data-frev]').onclick=()=>{b.files.reverse();rb()};
 if(q('[data-fshuf]'))q('[data-fshuf]').onclick=()=>{for(let i=b.files.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b.files[i],b.files[j]]=[b.files[j],b.files[i]]}rb()};
 let dr=null;d.querySelectorAll('.rs-fr').forEach(r=>{r.ondragstart=e=>{dr=+r.dataset.j;e.dataTransfer.effectAllowed='move';r.classList.add('dg')};r.ondragend=()=>r.classList.remove('dg');r.ondragover=e=>{e.preventDefault();r.classList.add('ov')};r.ondragleave=()=>r.classList.remove('ov');r.ondrop=e=>{e.preventDefault();if(dr!=null)mv(dr,+r.dataset.j);dr=null}})}
+/* ===== নোট / ইংক / মার্কিং ===== */
+let ANN={};try{ANN=JSON.parse(localStorage.getItem('rsc_ann')||'{}')||{}}catch(_){}
+let annT=null;const annSave=()=>{clearTimeout(annT);annT=setTimeout(()=>{try{localStorage.setItem('rsc_ann',JSON.stringify(ANN))}catch(e){alert('নোট সংরক্ষণের জায়গা শেষ')}const s=$('#rs_vw .asv');if(s)s.textContent='✔ সংরক্ষিত'},500);const s=$('#rs_vw .asv');if(s)s.textContent='…'};
+const rnd=n=>Math.round(n*10000)/10000;
+function drawObj(c,o,W,H){c.save();c.strokeStyle=c.fillStyle=o.c;c.lineCap='round';c.lineJoin='round';const lw=o.w*W,P=o.p||[],X=i=>P[i][0]*W,Y=i=>P[i][1]*H;
+if(o.t=='pen'||o.t=='pc'){if(o.t=='pc')c.globalAlpha=.85;const k=o.t=='pc'?.7:1,m=P.length,Wd=i=>Math.max(.6,lw*k*(.35+1.1*(P[i][2]||.5))),mx=(a,b)=>[(X(a)+X(b))/2,(Y(a)+Y(b))/2];
+if(m==1){c.beginPath();c.arc(X(0),Y(0),lw*k*.6,0,7);c.fill()}else{
+c.beginPath();c.lineWidth=Wd(0);c.moveTo(X(0),Y(0));c.lineTo(...mx(0,1));c.stroke();
+for(let i=1;i<m-1;i++){c.beginPath();c.lineWidth=Wd(i);c.moveTo(...mx(i-1,i));c.quadraticCurveTo(X(i),Y(i),...mx(i,i+1));c.stroke()}
+c.beginPath();c.lineWidth=Wd(m-1);c.moveTo(...mx(m-2,m-1));c.lineTo(X(m-1),Y(m-1));c.stroke()}}
+else if(o.t=='hl'){c.globalAlpha=.35;c.lineCap='butt';c.lineWidth=lw*4;c.beginPath();c.moveTo(X(0),Y(0));for(let i=1;i<P.length;i++)c.lineTo(X(i),Y(i));if(P.length==1)c.lineTo(X(0)+1,Y(0));c.stroke()}
+else if(o.t=='txt'){c.font=`${o.fs*W}px "Noto Sans Bengali",Kalpurush,Arial,sans-serif`;c.textBaseline='top';o.s.split('\n').forEach((l,i)=>c.fillText(l,X(0),Y(0)+i*o.fs*W*1.3))}
+else if(P.length>1){c.lineWidth=lw;const x0=X(0),y0=Y(0),x1=X(1),y1=Y(1);c.beginPath();
+if(o.t=='line'||o.t=='ul'||o.t=='arrow'){c.moveTo(x0,y0);c.lineTo(x1,y1);if(o.t=='arrow'){const a=Math.atan2(y1-y0,x1-x0),h=Math.max(10,lw*4);c.moveTo(x1,y1);c.lineTo(x1-h*Math.cos(a-.45),y1-h*Math.sin(a-.45));c.moveTo(x1,y1);c.lineTo(x1-h*Math.cos(a+.45),y1-h*Math.sin(a+.45))}}
+else if(o.t=='rect')c.rect(Math.min(x0,x1),Math.min(y0,y1),Math.abs(x1-x0),Math.abs(y1-y0));
+else if(o.t=='ell')c.ellipse((x0+x1)/2,(y0+y1)/2,Math.abs(x1-x0)/2||1,Math.abs(y1-y0)/2||1,0,0,7);
+c.stroke()}c.restore()}
+function hitObj(o,x,y,W,H){const px=x*W,py=y*H,tol=Math.max(10,o.w*W*2),P=o.p||[];const sg=(ax,ay,bx,by)=>{const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/l)):0;return Math.hypot(px-ax-t*dx,py-ay-t*dy)<tol};
+if(o.t=='txt'){const fs=o.fs*W,w=Math.max(...o.s.split('\n').map(l=>l.length))*fs*.6,h=o.s.split('\n').length*fs*1.3;return px>=P[0][0]*W-tol&&px<=P[0][0]*W+w+tol&&py>=P[0][1]*H-tol&&py<=P[0][1]*H+h+tol}
+if(P.length==1)return Math.hypot(px-P[0][0]*W,py-P[0][1]*H)<tol;
+if(['pen','pc','hl'].includes(o.t)){for(let i=1;i<P.length;i++)if(sg(P[i-1][0]*W,P[i-1][1]*H,P[i][0]*W,P[i][1]*H))return true;return false}
+const x0=P[0][0]*W,y0=P[0][1]*H,x1=P[1][0]*W,y1=P[1][1]*H;
+if(o.t=='rect')return sg(x0,y0,x1,y0)||sg(x1,y0,x1,y1)||sg(x1,y1,x0,y1)||sg(x0,y1,x0,y0);
+if(o.t=='ell'){const rx=Math.abs(x1-x0)/2||1,ry=Math.abs(y1-y0)/2||1,d=Math.hypot((px-(x0+x1)/2)/rx,(py-(y0+y1)/2)/ry);return Math.abs(d-1)*Math.min(rx,ry)<tol}
+return sg(x0,y0,x1,y1)}
+function annInit(v,body,onBoard){const COL=['#111111','#e11d48','#2563eb','#16a34a','#f59e0b','#7c3aed'],TL=[['hand','✋','স্ক্রল'],['pen','🖊','কলম'],['pc','✏','পেন্সিল'],['hl','🖍','হাইলাইটার'],['ul','U̲','আন্ডারলাইন'],['line','╱','রেখা'],['arrow','➜','তীর'],['rect','▭','বক্স'],['ell','◯','বৃত্ত'],['txt','T','লেখা'],['er','🧽','ইরেজার']];
+const S={tool:'hand',c:COL[1],w:3,fd:null,pen:false,hist:[],redo:[]};
+const bar=document.createElement('div');bar.className='vann';bar.hidden=true;
+bar.innerHTML=TL.map(([t,i,n])=>`<button type="button" data-tl="${t}" title="${n}">${i}<small>${n}</small></button>`).join('')+'<span class="sep"></span>'+COL.map(c=>`<i class="sw" data-c="${c}" style="background:${c}"></i>`).join('')+'<button type="button" data-pal>🎨 ১০৮+ রং</button><input type="color" data-cc value="#e11d48"><label class="rg">মোটা <input type="range" min="1" max="14" value="3" data-w></label><span class="sep"></span><button type="button" data-u>↶</button><button type="button" data-r>↷</button><button type="button" data-cl>🗑 পেজ</button><label class="rg"><input type="checkbox" data-fd checked> আঙুলে আঁকা</label><button type="button" data-bd="w">＋ সাদা বোর্ড</button><button type="button" data-bd="r">＋ খাতা</button><b class="asv"></b>';
+const pal=document.createElement('div');pal.className='vpal';pal.hidden=true;const hx=(h,s2,l)=>{s2/=100;l/=100;const a=s2*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12,c=l-a*Math.max(-1,Math.min(k-3,9-k,1));return Math.round(255*c).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4)};
+let all=[];for(let l=0;l<=13;l++)all.push(hx(0,0,l*100/13));[20,32,44,56,68,80,90].forEach((l,li)=>{for(let h=0;h<360;h+=24)all.push(hx(h,li==6?70:88,l))});all=[...new Set(all)];
+pal.innerHTML=all.map(c=>`<i class="sw" data-c="${c}" style="background:${c}"></i>`).join('');bar.appendChild(pal);bar.querySelector('[data-pal]').onclick=()=>{pal.hidden=!pal.hidden};
+bar.querySelectorAll('[data-bd]').forEach(b=>b.onclick=()=>onBoard(b.dataset.bd));
+v.querySelector('.vb').after(bar);
+const sync=()=>{bar.querySelectorAll('[data-tl]').forEach(b=>b.classList.toggle('on',b.dataset.tl==S.tool));bar.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.c==S.c));body.classList.toggle('inking',S.tool!='hand')};
+bar.querySelectorAll('[data-tl]').forEach(b=>b.onclick=()=>{S.tool=b.dataset.tl;sync()});
+bar.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{S.c=b.dataset.c;bar.querySelector('[data-cc]').value=S.c;pal.hidden=true;sync()});bar.querySelector('[data-cc]').oninput=e=>{S.c=e.target.value;sync()};bar.querySelector('[data-w]').oninput=e=>{S.w=+e.target.value};
+bar.querySelector('[data-fd]').onchange=e=>{S.fd=e.target.checked};
+const arr=k=>ANN[k]||(ANN[k]=[]);const pg=k=>body.querySelector('.vp[data-k="'+k+'"]');
+function redraw(k,extra){const vp=pg(k);if(!vp)return;const cv=vp.querySelector('canvas'),c=cv.getContext('2d'),W=cv.clientWidth,H=cv.clientHeight;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cv.width,cv.height);const d=cv.width/(W||1);c.setTransform(d,0,0,d,0,0);(ANN[k]||[]).forEach(o=>drawObj(c,o,W,H));if(extra)drawObj(c,extra,W,H)}
+const push=k=>{S.hist.push({k,s:JSON.stringify(ANN[k]||[])});S.redo=[];if(S.hist.length>200)S.hist.shift()};
+const restore=(from,to)=>{const h=from.pop();if(!h)return;to.push({k:h.k,s:JSON.stringify(ANN[h.k]||[])});ANN[h.k]=JSON.parse(h.s);redraw(h.k);annSave()};
+bar.querySelector('[data-u]').onclick=()=>restore(S.hist,S.redo);bar.querySelector('[data-r]').onclick=()=>restore(S.redo,S.hist);
+bar.querySelector('[data-cl]').onclick=()=>{const r=body.getBoundingClientRect();let best=null;body.querySelectorAll('.vp').forEach(p=>{const b=p.getBoundingClientRect();if(b.top<r.top+r.height/2&&b.bottom>r.top+r.height/2)best=p});if(!best||!(ANN[best.dataset.k]||[]).length)return;if(!confirm('এই পেজের সব নোট মুছবেন?'))return;push(best.dataset.k);ANN[best.dataset.k]=[];redraw(best.dataset.k);annSave()};
+function bind(){body.querySelectorAll('.vp').forEach(vp=>{const k=vp.dataset.k,cv=vp.querySelector('canvas'),img=vp.querySelector('img');
+const fit=()=>{const w=cv.clientWidth,h=cv.clientHeight,d=devicePixelRatio||1;if(!w)return;if(cv.width!=Math.round(w*d)||cv.height!=Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}redraw(k)};
+new ResizeObserver(fit).observe(vp);img.addEventListener('load',fit);fit();
+let cur=null,sc=null,er=false;const pos=e=>{const r=cv.getBoundingClientRect();return[rnd((e.clientX-r.left)/r.width),rnd((e.clientY-r.top)/r.height)]};
+cv.onpointerdown=e=>{if(S.tool=='hand')return;if(e.pointerType=='pen'){S.pen=true;if(S.fd==null){bar.querySelector('[data-fd]').checked=false}}
+const fOK=S.fd==null?!S.pen:S.fd;if(e.pointerType=='touch'&&!fOK){sc={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);return}
+e.preventDefault();cv.setPointerCapture(e.pointerId);const[x,y]=pos(e),W=cv.clientWidth,H=cv.clientHeight,t=S.tool,pr=e.pointerType=='pen'?e.pressure||.5:.5;
+if(t=='er'){er=true;push(k);const a=arr(k),n=a.length;ANN[k]=a.filter(o=>!hitObj(o,x,y,W,H));if(ANN[k].length!=n){redraw(k);annSave()}return}
+if(t=='txt'){const s=prompt('লিখুন:');if(s&&s.trim()){push(k);arr(k).push({t:'txt',c:S.c,fs:rnd((14+S.w*3)/1000),s:s,p:[[x,y]],w:.003});redraw(k);annSave()}return}
+cur={t,c:S.c,w:rnd(S.w/1000*(t=='hl'?3:1)),p:[[x,y,rnd(pr)]]};if(['line','arrow','rect','ell','ul'].includes(t))cur.p.push([x,y]);if(t=='ul'||t=='line'||t=='arrow')cur.w=rnd(Math.max(1.5,S.w*.7)/1000)};
+cv.onpointermove=e=>{if(sc){body.scrollTop-=e.clientY-sc.y;body.scrollLeft-=e.clientX-sc.x;sc={x:e.clientX,y:e.clientY};return}
+if(er){const[x,y]=pos(e),W=cv.clientWidth,H=cv.clientHeight,a=arr(k),n=a.length;ANN[k]=a.filter(o=>!hitObj(o,x,y,W,H));if(ANN[k].length!=n){redraw(k);annSave()}return}
+if(!cur)return;const ev=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const q of(ev.length?ev:[e])){const[x,y]=pos(q),pr=e.pointerType=='pen'?q.pressure||.5:.5;
+if(['line','arrow','rect','ell','ul'].includes(cur.t)){cur.p[1]=[x,cur.t=='ul'?cur.p[0][1]:y]}else{const L=cur.p[cur.p.length-1];if(Math.hypot(x-L[0],y-L[1])>.0008)cur.p.push([x,y,rnd(pr)])}}
+if(cur.t=='pen'||cur.t=='pc'){const c=cv.getContext('2d'),W=cv.clientWidth,H=cv.clientHeight,d=cv.width/W;c.setTransform(d,0,0,d,0,0);const n=cur.p.length;if(n>1)drawObj(c,{...cur,p:cur.p.slice(Math.max(0,n-4))},W,H)}else redraw(k,cur)};
+const end=()=>{sc=null;er=false;if(cur){push(k);arr(k).push(cur);cur=null;redraw(k);annSave()}};cv.onpointerup=end;cv.onpointercancel=end})}
+sync();return{bind,show:on=>{bar.hidden=!on;if(!on){S.tool='hand';sync()}},sync}}
+function withInk(url,key,bw){const a=ANN[key];if(!a||!a.length)return Promise.resolve(url);return new Promise(res=>{const im=new Image();im.onload=()=>{const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;const c=cv.getContext('2d');c.drawImage(im,0,0);a.forEach(o=>drawObj(c,{...o,w:o.w,fs:o.fs},cv.width,cv.height));res(cv.toDataURL('image/jpeg',.92))};im.onerror=()=>res(url);im.src=url})}
+
 /* ===== রিসোর্স ভিউ: হোয়াটসঅ্যাপ-গ্রিড + ভিউয়ার ===== */
 const pgCache=new Map();
 async function resPages(b,prog){const k=b.id+'|'+(b.files||[]).map(f=>f.id).join(',');if(pgCache.has(k))return pgCache.get(k);const out=[];
-for(const f of(b.files||[])){const bl=await blobOf(f);if(!bl)continue;if(isImg(f))out.push({u:URL.createObjectURL(bl),fid:f.id,n:f.name});
-else if(isPdf(f)){try{(await pdfPages(bl,false,prog)).forEach((u,i)=>out.push({u,fid:f.id,n:f.name+' · পৃষ্ঠা '+bn(i+1)}))}catch(e){out.err='PDF পৃষ্ঠা আঁকা যায়নি (ইন্টারনেট প্রয়োজন)'}}}
+for(const f of(b.files||[])){const bl=await blobOf(f);if(!bl)continue;if(isImg(f))out.push({u:URL.createObjectURL(bl),fid:f.id,k:f.id+':0',n:f.name});
+else if(isPdf(f)){try{(await pdfPages(bl,false,prog)).forEach((u,i)=>out.push({u,fid:f.id,k:f.id+':'+i,n:f.name+' · পৃষ্ঠা '+bn(i+1)}))}catch(e){out.err='PDF পৃষ্ঠা আঁকা যায়নি (ইন্টারনেট প্রয়োজন)'}}}
 if(!out.err||out.length)pgCache.set(k,out);return out}
 function resBlock(x,b,el){const fs=b.files||[],im=fs.filter(isImg),pd=fs.filter(isPdf),ot=fs.filter(f=>!isImg(f)&&!isPdf(f));el.innerHTML='';
 if(im.length||pd.length){const tb=document.createElement('div');tb.className='rs-vt';tb.innerHTML='<span>দেখুন:</span>'+[['scroll','📖 বুক / পিডিএফ হিসেবে দেখুন'],['one','🖼 পৃথক'],['grid','▦ গ্রিড']].map(([m,t])=>`<button type="button" data-vm="${m}">${t}</button>`).join('')+(pd.length?'<button type="button" data-vm="pdf">📕 PDF ভিউয়ার</button>':'');
@@ -2321,8 +2390,11 @@ ot.forEach(f=>{const w=document.createElement('div');el.appendChild(w);fileView(
 let vwKey=null;
 async function openViewer(x,b,mode,fid){closeViewer();const fs=b.files||[];const v=document.createElement('div');v.id='rs_vw';v.className='no-print';
 const TABS=[['scroll','📖 বুক / পিডিএফ'],['one','🖼 পৃথক'],['grid','▦ গ্রিড']].concat(fs.some(isPdf)?[['pdf','📕 PDF']]:[]);
-v.innerHTML=`<div class="vb"><b class="vtt">${esc(b.title||x.name||'রিসোর্স')}</b><div class="vtabs">${TABS.map(([m,t])=>`<button type="button" data-m="${m}">${t}</button>`).join('')}</div><span class="vc"></span><span class="vzm"><button type="button" data-z="-">−</button><b class="vzl">100%</b><button type="button" data-z="+">+</button><button type="button" data-z="0" title="ফিট">⤢</button></span><button type="button" data-fs>⛶</button><button type="button" data-pr>🖨</button><button type="button" data-x>✕</button></div><div class="vbody"><div class="vld">লোড হচ্ছে…</div></div>`;document.body.appendChild(v);
+v.innerHTML=`<div class="vb"><b class="vtt">${esc(b.title||x.name||'রিসোর্স')}</b><div class="vtabs">${TABS.map(([m,t])=>`<button type="button" data-m="${m}">${t}</button>`).join('')}</div><button type="button" data-an>✍ নোট</button><span class="vc"></span><span class="vzm"><button type="button" data-z="-">−</button><b class="vzl">100%</b><button type="button" data-z="+">+</button><button type="button" data-z="0" title="ফিট">⤢</button></span><button type="button" data-fs>⛶</button><button type="button" data-pr>🖨</button><button type="button" data-x>✕</button></div><div class="vbody"><div class="vld">লোড হচ্ছে…</div></div>`;document.body.appendChild(v);
 let P=[],i=0,M=mode=='book'?'scroll':mode,Z=100;const body=v.querySelector('.vbody'),vc=v.querySelector('.vc');
+const wbU=t=>'data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1414"><rect width="1000" height="1414" fill="#fff"/>'+(t=='r'?Array.from({length:35},(_,q)=>`<line x1="0" x2="1000" y1="${90+q*38}" y2="${90+q*38}" stroke="#bcd" stroke-width="1.5"/>`).join('')+'<line x1="90" x2="90" y1="0" y2="1414" stroke="#e99" stroke-width="2"/>':'')+'</svg>');
+const wbP=()=>(ANN['__wb:'+b.id]||[]).map((t,n)=>({u:wbU(t),fid:'wb',k:'wb:'+b.id+':'+n,n:'বোর্ড '+bn(n+1)}));let BASE=[];
+const AN=annInit(v,body,t=>{ANN['__wb:'+b.id]=(ANN['__wb:'+b.id]||[]).concat(t);annSave();P=BASE.concat(wbP());if(M!='scroll')setM('scroll');else draw(0);setTimeout(()=>{const a=body.querySelectorAll('.vs .vp');if(a.length)a[a.length-1].scrollIntoView({behavior:'smooth'})},120)});v.querySelector('[data-an]').onclick=e=>{const on=v.querySelector('.vann').hidden;if(on&&M!='scroll')setM('scroll');AN.show(on);e.target.classList.toggle('on',on)};
 const close=()=>closeViewer();v.querySelector('[data-x]').onclick=close;v.querySelector('[data-pr]').onclick=()=>{close();openPrint([{item:x,blocks:[b],nohead:false}])};
 v.onclick=e=>{if(e.target===v||e.target===body)close()};
 const key=e=>{if(e.key=='Escape')close();else if(e.key=='+'||e.key=='=')setZ(Z+20);else if(e.key=='-')setZ(Z-20);else if(e.key=='ArrowRight'||e.key=='ArrowDown'&&M=='one')go(1);else if(e.key=='ArrowLeft'||e.key=='ArrowUp'&&M=='one')go(-1)};document.addEventListener('keydown',key);vwKey=key;v._k=key;
@@ -2332,18 +2404,18 @@ function setM(m){M=m;v.querySelectorAll('[data-m]').forEach(t=>t.classList.toggl
 function setZ(z){Z=Math.max(40,Math.min(400,Math.round(z)));v.querySelector('.vzl').textContent=bn(Z)+'%';const sc=body.querySelector('.vs');if(sc)sc.style.width='calc(min(100%,1000px) * '+Z/100+')';const im=body.querySelector('.vz img');if(im){im.style.maxWidth=Z>100?'none':'100%';im.style.maxHeight=Z>100?'none':'100%';im.style.width=Z>100?Z+'%':''}}
 v.querySelectorAll('[data-z]').forEach(t=>t.onclick=()=>{const k=t.dataset.z;setZ(k=='0'?100:k=='+'?Z+20:Z-20)});v.querySelector('[data-fs]').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():v.requestFullscreen()}catch(_){}};
 v.addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();setZ(Z+(e.deltaY<0?10:-10))}},{passive:false});
-function draw(dir){const n=P.length;body.style.display=M=='scroll'?'block':'flex';body.onscroll=null;
+function draw(dir){const n=P.length;body.style.display=M=='scroll'?'block':'flex';if(M!='scroll'){const a=v.querySelector('.vann');if(a&&!a.hidden){a.hidden=true;v.querySelector('[data-an]').classList.remove('on')}}body.onscroll=null;
 if(M=='pdf'){const f=fs.find(q=>q.id==fid&&isPdf(q))||fs.find(isPdf);vc.textContent='';body.innerHTML='<div class="vld">লোড হচ্ছে…</div>';blobOf(f).then(bl=>{body.innerHTML=bl?`<iframe class="vif" src="${URL.createObjectURL(bl)}#view=FitH"></iframe>`:'<div class="vld">ফাইল পাওয়া যায়নি</div>'});return}
 if(!n){body.innerHTML=`<div class="vld">${P.err||'দেখানোর মতো পৃষ্ঠা নেই'}</div>`;vc.textContent='';return}
 if(M=='one'){vc.textContent=bn(i+1)+' / '+bn(n);body.innerHTML=`<div class="v1"><button type="button" class="nv" data-g="-1">‹</button><div class="vz"><img class="${dir>0?'sl':dir<0?'sr':''}" src="${P[i].u}" alt=""></div><button type="button" class="nv r" data-g="1">›</button></div><div class="vcap">${esc(P[i].n)}</div>`;const im=body.querySelector('img');im.onclick=()=>setZ(Z>100?100:200);setZ(Z);
 let sx=null;const z=body.querySelector('.v1');z.ontouchstart=e=>{sx=e.touches[0].clientX};z.ontouchend=e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)go(dx<0?1:-1);sx=null}}
 else if(M=='book'){const s=step();vc.textContent=bn(i+1)+(s==2&&P[i+1]?'–'+bn(i+2):'')+' / '+bn(n);body.innerHTML=`<div class="v1"><button type="button" class="nv" data-g="-1">‹</button><div class="bk ${dir>0?'fn':dir<0?'fp':''}"><img class="bl" src="${P[i].u}" alt="">${s==2&&P[i+1]?`<img class="br" src="${P[i+1].u}" alt="">`:''}</div><button type="button" class="nv r" data-g="1">›</button></div>`}
-else if(M=='scroll'){vc.textContent=bn(i+1)+' / '+bn(n);body.innerHTML='<div class="vs">'+P.map((p,k)=>`<img loading="lazy" src="${p.u}" alt="${k+1}">`).join('')+'</div>';setZ(Z);const ims=[...body.querySelectorAll('.vs img')];if(i>0&&ims[i])setTimeout(()=>ims[i].scrollIntoView(),60);body.onscroll=()=>{const r=body.getBoundingClientRect();let k=0;ims.forEach((m,q)=>{if(m.getBoundingClientRect().top<r.top+r.height/2)k=q});i=k;vc.textContent=bn(k+1)+' / '+bn(n)}}
+else if(M=='scroll'){vc.textContent=bn(i+1)+' / '+bn(n);body.innerHTML='<div class="vs">'+P.map((p,k)=>`<div class="vp" data-k="${p.k}"><img src="${p.u}" alt="${k+1}"><canvas></canvas></div>`).join('')+'</div>';setZ(Z);AN.bind();const ims=[...body.querySelectorAll('.vs .vp')];if(i>0&&ims[i])setTimeout(()=>ims[i].scrollIntoView(),60);body.onscroll=()=>{const r=body.getBoundingClientRect();let k=0;ims.forEach((m,q)=>{if(m.getBoundingClientRect().top<r.top+r.height/2)k=q});i=k;vc.textContent=bn(k+1)+' / '+bn(n)}}
 else if(M=='grid'){vc.textContent=bn(n)+' টি';body.innerHTML='<div class="vg">'+P.map((p,k)=>`<div data-k="${k}"><img loading="lazy" src="${p.u}" alt=""><i>${bn(k+1)}</i></div>`).join('')+'</div>';body.querySelectorAll('[data-k]').forEach(t=>t.onclick=()=>{i=+t.dataset.k;setM('one')})}
 body.querySelectorAll('[data-g]').forEach(t=>t.onclick=()=>go(+t.dataset.g))}
 v.querySelectorAll('[data-m]').forEach(t=>t.onclick=()=>setM(t.dataset.m));
 if(M=='pdf'){setM('pdf');return}
-P=await resPages(b,t=>{const e=body.querySelector('.vld');if(e)e.textContent=t});if(!document.body.contains(v))return;
+BASE=await resPages(b,t=>{const e=body.querySelector('.vld');if(e)e.textContent=t});P=BASE.concat(wbP());P.err=BASE.err;if(!document.body.contains(v))return;
 if(fid){const k=P.findIndex(p=>p.fid==fid);if(k>=0)i=k}setM(M)}
 function closeViewer(){const v=$('#rs_vw');if(v){document.removeEventListener('keydown',v._k);v.remove()}}
 
