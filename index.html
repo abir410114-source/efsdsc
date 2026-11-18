@@ -2422,6 +2422,81 @@ function closeViewer(){const v=$('#rs_vw');if(v){document.removeEventListener('k
 window.addEventListener('online',pend);
 })();
 </script>
+<script>/* ===== লোগো→হোম + প্রশ্নের মান সূচক ===== */
+(function(){
+var OPT=['ভালো','স্ট্যান্ডার্ড','সহজ','মাঝারি মানের','কঠিন','অতিরিক্ত কঠিন','শিক্ষার্থীরা এ বিষয়ে ল্যাকিং'],
+TABS=['h','i','j','k','l'],SR=/(?:সিরিয়াল|Serial|serial)[^0-9০-৯]{0,8}([0-9০-৯]{6})/;
+function en(s){return String(s).replace(/[০-৯]/g,function(d){return'০১২৩৪৫৬৭৮৯'.indexOf(d)})}
+function ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(_){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}
+var MAP=ld('qq_map',{}),SEL=ld('qq_sel',{});
+function opts(v){return'<option value="">— বাছুন —</option>'+OPT.map(function(o){return'<option'+(o==v?' selected':'')+'>'+o+'</option>'}).join('')}
+/* ১. লোগো → হোম */
+var lg=document.querySelector('header img[data-L="0"]')||document.querySelector('header img');
+if(lg){lg.style.cursor='pointer';lg.title='হোম পেজে যান';lg.addEventListener('click',function(){var b=document.querySelector('nav button[data-t="hm"]');if(b)b.click();scrollTo(0,0)})}
+/* ২. জেনারেটর ট্যাবে সিলেক্ট */
+TABS.forEach(function(t){var p=document.getElementById(t);if(!p||p.querySelector('.qq-gen'))return;
+var d=document.createElement('div');d.className='qq-gen no-print';d.style.cssText='margin:6px 0;padding:6px 8px;border:1px dashed var(--bd);border-radius:6px;font-size:13px';
+d.innerHTML='<b>📝 প্রশ্নের মান:</b> <select>'+opts(SEL[t])+'</select> <small style="color:var(--mu)">(প্রতিটি জেনারেট হওয়া প্রশ্ন/OMR-এ লেখা থাকবে; স্ক্যান ও অ্যানালাইসিসে স্বয়ংক্রিয় আসবে)</small>';
+d.querySelector('select').onchange=function(){SEL[t]=this.value;sv('qq_sel',SEL);p.querySelectorAll('.sheet,.upg').forEach(function(e){e.removeAttribute('data-qq');var o=e.querySelector(':scope>.qq-st');if(o)o.remove()});stampAll()};
+p.insertBefore(d,p.firstChild)});
+function tabOf(e){var p=e.closest('section,div[id]');while(p&&TABS.indexOf(p.id)<0)p=p.parentElement&&p.parentElement.closest('[id]');return p?p.id:''}
+function serOf(e){var m=SR.exec((e.textContent||'').slice(0,3000));return m?en(m[1]):''}
+function qOf(e,ser){var t=tabOf(e);if(ser&&MAP[ser]&&!SEL[t])return MAP[ser];return SEL[t]||(ser&&MAP[ser])||''}
+function tag(q){return'<div class="qq-st" style="font:700 8pt Arial,\'Times New Roman\',serif;color:#000;border:1px solid #000;padding:.3mm 2mm;border-radius:2mm;display:inline-block;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact">প্রশ্নের মান: '+q+'</div>'}
+function stamp(e){if(e.dataset.qq)return;var ser=serOf(e),q=qOf(e,ser);if(!q)return;e.dataset.qq=1;
+if(ser&&SEL[tabOf(e)]){MAP[ser]=SEL[tabOf(e)];sv('qq_map',MAP)}
+var w=document.createElement('div');w.innerHTML=tag(q);var s=w.firstChild;
+if(/\b(sheet|upg)\b/.test(e.className)){s.style.cssText+=';position:absolute;top:1.2mm;left:50%;transform:translateX(-50%);z-index:5;white-space:nowrap';e.appendChild(s)}else{s.style.marginBottom='2mm';e.insertBefore(s,e.firstChild)}}
+function stampAll(){document.querySelectorAll('.sheet,.upg,.srsheet,.m5res,.mkdoc,#uoo>*').forEach(function(e){if(e.closest('.qq-gen'))return;stamp(e)})}
+/* ৩. স্ক্যান/অ্যানালাইসিস ভিউ-তে স্বয়ংক্রিয় ডিটেক্ট + সিলেক্ট */
+var VIEW='[id$="_det"],[id$="scview"],[id="oa_view"],[id$="_view"],[id="m5_as_view"],[id="us_det"]';
+function scanBar(e){if(e.querySelector(':scope>.qq-sc'))return;var ser=serOf(e);if(!ser)return;
+var d=document.createElement('div');d.className='qq-sc no-print';d.style.cssText='margin:6px 0;padding:5px 8px;border:1px solid var(--bd);border-radius:6px;font-size:13px';
+d.innerHTML='<b>📝 প্রশ্নের মান (স্বয়ংক্রিয়):</b> <select>'+opts(MAP[ser])+'</select>';
+d.querySelector('select').onchange=function(){MAP[ser]=this.value;sv('qq_map',MAP);document.querySelectorAll('[data-qq]').forEach(function(x){x.removeAttribute('data-qq');var o=x.querySelector(':scope>.qq-st');if(o)o.remove()});stampAll()};
+e.insertBefore(d,e.firstChild)}
+var tm;new MutationObserver(function(){clearTimeout(tm);tm=setTimeout(function(){stampAll();document.querySelectorAll(VIEW).forEach(function(e){if(e.children.length&&!e.querySelector(':scope>.qq-sc'))scanBar(e)})},120)}).observe(document.body,{childList:true,subtree:true});
+})();</script>
+<script>/* ===== রিসোর্সেস: নোট লিখে আপলোড (A4/Legal/16:9 পেজ) ===== */
+(function(){
+var SZ={'A4 পোর্ট্রেট':[794,1123],'Legal পোর্ট্রেট':[816,1344],'A4 ল্যান্ডস্কেপ':[1123,794],'স্লাইড 16:9':[1280,720]},BG={'সাদা':'#fff','হালকা হলুদ':'#fffbe6','গাঢ় (স্লাইড)':'#1e293b'};
+var ov,pages=[],cur=0,mode='type',pcol='#e11d48',pw=3,sz=SZ['A4 পোর্ট্রেট'],bg='#fff';
+function $(s,r){return(r||document).querySelector(s)}
+function css(){if($('#qn_css'))return;var s=document.createElement('style');s.id='qn_css';s.textContent='#qn{position:fixed;inset:0;z-index:99999;background:#e5e7eb;color:#111;display:flex;flex-direction:column;font:14px/1.4 "Times New Roman",Kalpurush,"Noto Sans Bengali",serif}#qn .tb{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 8px;background:#fff;border-bottom:1px solid #bbb}#qn .tb button,#qn .tb select,#qn .tb input{background:#fff;color:#111;border:1px solid #aaa;border-radius:4px;padding:4px 7px;font:inherit}#qn .tb button.on{background:#111;color:#fff}#qn .tb input[type=color]{padding:0;width:30px;height:26px}#qn .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:5px;padding:6px 8px;background:#f8fafc;border-bottom:1px solid #bbb}#qn .meta input{border:1px solid #aaa;border-radius:4px;padding:4px 6px;background:#fff;color:#111;font:inherit}#qn .area{flex:1;overflow:auto;padding:12px;text-align:center}#qn .pgw{display:inline-block;margin:0 auto 14px;box-shadow:0 2px 10px #0006;position:relative;vertical-align:top}#qn .pgw.cur{outline:3px solid #2563eb}#qn .ed{position:absolute;inset:0;padding:48px;box-sizing:border-box;text-align:left;outline:none;overflow:hidden;font-size:20px;line-height:1.5}#qn canvas{position:absolute;inset:0;width:100%;height:100%}#qn .ed img{max-width:100%;resize:both;overflow:auto}#qn .pn{position:absolute;right:6px;bottom:2px;font:11px Arial;opacity:.5}';document.head.appendChild(s)}
+function mk(){var w=document.createElement('div');w.className='pgw';var e=document.createElement('div');e.className='ed';e.contentEditable='true';var c=document.createElement('canvas'),n=document.createElement('div');n.className='pn';w.append(e,c,n);$('#qn .area').appendChild(w);var p={w:w,e:e,c:c,n:n};pages.push(p);size(p);e.addEventListener('focus',function(){cur=pages.indexOf(p);hl()});c.addEventListener('pointerdown',function(ev){cur=pages.indexOf(p);hl();if(mode=='type')return;ev.preventDefault();c.setPointerCapture(ev.pointerId);var x=c.getContext('2d'),r=c.getBoundingClientRect(),k=c.width/r.width,px=(ev.clientX-r.left)*k,py=(ev.clientY-r.top)*k;x.lineCap=x.lineJoin='round';x.lineWidth=mode=='erase'?pw*6:pw;x.strokeStyle=pcol;x.globalCompositeOperation=mode=='erase'?'destination-out':'source-over';x.beginPath();x.moveTo(px,py);c.onpointermove=function(m){var q=(m.clientX-r.left)*k,z=(m.clientY-r.top)*k;x.lineTo(q,z);x.stroke();x.beginPath();x.moveTo(q,z)};c.onpointerup=function(){c.onpointermove=null}});return p}
+function size(p){p.w.style.width=sz[0]+'px';p.w.style.height=sz[1]+'px';p.e.style.background=bg;p.e.style.color=bg=='#1e293b'?'#f1f5f9':'#111';if(p.c.width!=sz[0]){var d=p.c.toDataURL(),i=new Image();i.onload=function(){p.c.width=sz[0];p.c.height=sz[1];p.c.getContext('2d').drawImage(i,0,0)};p.c.width=sz[0];p.c.height=sz[1];i.src=d}p.c.style.pointerEvents=mode=='type'?'none':'auto'}
+function fit(){var k=Math.min(1,($('#qn .area').clientWidth-30)/sz[0]);pages.forEach(function(p){p.w.style.zoom=k})}
+function hl(){pages.forEach(function(p,i){p.w.classList.toggle('cur',i==cur);p.n.textContent=(i+1)+' / '+pages.length;p.c.style.pointerEvents=mode=='type'?'none':'auto'});['type','pen','erase'].forEach(function(m){var b=$('#qn [data-m="'+m+'"]');if(b)b.classList.toggle('on',m==mode)})}
+function cmd(c,v){var p=pages[cur];if(p)p.e.focus();document.execCommand(c,false,v||null)}
+function open(){css();if(ov)ov.remove();pages=[];cur=0;ov=document.createElement('div');ov.id='qn';
+ov.innerHTML='<div class="tb"><b>✍️ নোট লিখুন</b><select id="qn_sz">'+Object.keys(SZ).map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><select id="qn_bg">'+Object.keys(BG).map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><button data-m="type" class="on">⌨ টাইপ</button><button data-m="pen">🖊 পেন/গ্রাফিক্স ট্যাব</button><button data-m="erase">🧽 রাবার</button><input type="color" id="qn_pc" value="#e11d48" title="পেনের রং"><select id="qn_pw"><option value="2">সরু</option><option value="3" selected>মাঝারি</option><option value="6">মোটা</option></select><span style="flex:1"></span><button id="qn_add">➕ নতুন পেজ</button><button id="qn_del">🗑 পেজ মুছুন</button><button id="qn_x">✕ বাতিল</button></div><div class="tb"><button data-c="bold"><b>B</b></button><button data-c="italic"><i>I</i></button><button data-c="underline"><u>U</u></button><select id="qn_fs"><option value="">সাইজ</option><option value="2">ছোট</option><option value="3">সাধারণ</option><option value="5">বড়</option><option value="6">খুব বড়</option><option value="7">শিরোনাম</option></select>লেখার রং<input type="color" id="qn_tc" value="#111111">হাইলাইট<input type="color" id="qn_hc" value="#fde047"><button data-c="insertUnorderedList">• তালিকা</button><button data-c="insertOrderedList">১. তালিকা</button><button data-c="justifyLeft">⬅</button><button data-c="justifyCenter">↔</button><button data-c="superscript">x²</button><button data-c="subscript">x₂</button><button id="qn_img">🖼 ছবি</button><input type="file" id="qn_if" accept="image/*" hidden></div><div class="meta"><input id="qn_cat" placeholder="বিভাগ"><input id="qn_sub" placeholder="বিষয়"><input id="qn_pap" placeholder="পত্র"><input id="qn_name" placeholder="টপিক / অধ্যায় / নোটের নাম"><input id="qn_det" placeholder="আরও বিবরণ"></div><div class="area"></div><div class="tb"><span id="qn_msg" style="flex:1"></span><button id="qn_fill">📎 রিসোর্স ফর্মে যুক্ত করুন</button><button id="qn_up" style="background:#16a34a;color:#fff">⬆ যুক্ত করে আপলোড</button></div>';
+document.body.appendChild(ov);['cat','sub','pap'].forEach(function(k){var f=document.getElementById('rf_'+k);if(f)$('#qn_'+k).value=f.value});var rn=document.getElementById('rf_name'),rd=document.getElementById('rf_det');if(rn)$('#qn_name').value=rn.value;if(rd)$('#qn_det').value=rd.value;
+mk();hl();fit();addEventListener('resize',fit);
+ov.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){mode=b.dataset.m;hl()}});
+ov.querySelectorAll('[data-c]').forEach(function(b){b.onmousedown=function(e){e.preventDefault()};b.onclick=function(){cmd(b.dataset.c)}});
+$('#qn_sz').onchange=function(){sz=SZ[this.value];pages.forEach(size);fit()};$('#qn_bg').onchange=function(){bg=BG[this.value];pages.forEach(size)};
+$('#qn_pc').oninput=function(){pcol=this.value};$('#qn_pw').onchange=function(){pw=+this.value};
+$('#qn_fs').onchange=function(){if(this.value)cmd('fontSize',this.value);this.value=''};$('#qn_tc').oninput=function(){cmd('foreColor',this.value)};$('#qn_hc').oninput=function(){cmd('hiliteColor',this.value)};
+$('#qn_add').onclick=function(){mk();cur=pages.length-1;hl();fit();pages[cur].w.scrollIntoView({behavior:'smooth'})};
+$('#qn_del').onclick=function(){if(pages.length<2)return alert('কমপক্ষে একটি পেজ থাকতে হবে');if(!confirm('এই পেজটি মুছবেন?'))return;pages[cur].w.remove();pages.splice(cur,1);cur=Math.max(0,cur-1);hl()};
+$('#qn_x').onclick=function(){if(confirm('লেখা বাতিল করবেন?')){ov.remove();ov=null}};
+$('#qn_img').onclick=function(){$('#qn_if').click()};$('#qn_if').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){cmd('insertImage',r.result)};r.readAsDataURL(f);this.value=''};
+$('#qn_fill').onclick=function(){done(false)};$('#qn_up').onclick=function(){done(true)}}
+function lib(){return window.html2canvas?Promise.resolve():new Promise(function(ok,no){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.onload=ok;s.onerror=function(){no(new Error('html2canvas লোড হয়নি — ইন্টারনেট দেখুন'))};document.head.appendChild(s)})}
+async function done(up){var m=$('#qn_msg'),name=$('#qn_name').value.trim();if(!name)return alert('টপিক / নোটের নাম লিখুন');
+if(!pages.some(function(p){return p.e.textContent.trim()||p.e.querySelector('img')||p.c.getContext('2d').getImageData(0,0,p.c.width,p.c.height).data.some(function(v,i){return i%4==3&&v})}))return alert('কোনো লেখা বা আঁকা নেই');
+try{m.textContent='ছবি তৈরি হচ্ছে…';await lib();var files=[],old=pages.map(function(p){return p.w.style.zoom});pages.forEach(function(p){p.w.style.zoom=1;p.w.classList.remove('cur');p.n.style.display='none'});
+for(var i=0;i<pages.length;i++){var p=pages[i],cv=await html2canvas(p.w,{scale:1.5,backgroundColor:bg,useCORS:true}),bl=await new Promise(function(r){cv.toBlob(r,'image/png')});files.push(new File([bl],name+' - পেজ '+(i+1)+'.png',{type:'image/png'}))}
+pages.forEach(function(p,i){p.w.style.zoom=old[i];p.n.style.display=''});
+var set=function(id,v){var e=document.getElementById(id);if(e){e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))}};
+set('rf_cat',$('#qn_cat').value);set('rf_sub',$('#qn_sub').value);set('rf_pap',$('#qn_pap').value);set('rf_name',name);set('rf_det',$('#qn_det').value);
+var ab=document.querySelector('[data-ab="img"]');ab.click();var b=[].slice.call(document.querySelectorAll('#rs_blocks .rs-blk')).pop(),ti=b.querySelector('[data-f="title"]');ti.value=name+' (নোট)';ti.dispatchEvent(new Event('input',{bubbles:true}));ti.dispatchEvent(new Event('change',{bubbles:true}));
+var dt=new DataTransfer();files.forEach(function(f){dt.items.add(f)});var inp=b.querySelector('input[data-pick]');inp.files=dt.files;inp.dispatchEvent(new Event('change',{bubbles:true}));
+ov.remove();ov=null;if(up)setTimeout(function(){var s=document.getElementById('rs_save');if(s)s.click()},1500)}catch(e){m.textContent='⚠ '+e.message}}
+function inject(){var bar=document.querySelector('#rs_in .rs-add');if(!bar||bar.querySelector('#rs_note'))return;var b=document.createElement('button');b.type='button';b.id='rs_note';b.textContent='✍️ নোট লিখে আপলোড করুন (A4 / Legal / 16:9 পেজ)';b.onclick=open;bar.insertBefore(b,bar.firstChild)}
+inject();new MutationObserver(inject).observe(document.body,{childList:true,subtree:true});
+})();</script>
 </body></html>
 <script>
 (function(){
