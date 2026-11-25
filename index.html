@@ -3686,6 +3686,36 @@ const menu=document.getElementById('sbMenu');if(menu){const it=[...menu.children
 
 </script>
 
+<style>
+.prep-sec{margin:0 0 16px;padding:12px;border:3px solid var(--fg);border-radius:14px;background:linear-gradient(135deg,#8881,#8883)}
+.prep-sec h2{margin:0 0 10px;font-size:19px;display:flex;align-items:center;gap:8px}.prep-sec h2:after{content:'';flex:1;height:3px;background:var(--fg);opacity:.35;border-radius:2px}
+.prep-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.prep-c{border:2px solid var(--fg);border-radius:12px;background:var(--bg);padding:12px 14px;box-shadow:3px 3px 0 var(--fg)}
+.prep-c>button.m{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;color:inherit;font:inherit;cursor:pointer;padding:0}
+.prep-c .m i{font-style:normal;font-size:32px}.prep-c .m b{display:block;font-size:17px}.prep-c .m span{display:block;font-size:12px;opacity:.75}
+.prep-c:hover{background:var(--fg);color:var(--bg)}
+.prep-ch{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.prep-ch button{border:1px solid currentColor;background:none;color:inherit;font:inherit;font-size:12px;padding:3px 9px;border-radius:99px;cursor:pointer}.prep-ch button:hover{background:#8883}
+#sbMenu .sbh{font-weight:700;font-size:.85em;letter-spacing:.04em;opacity:.7;padding:4px 10px 2px}
+#sbMenu button.hl{border:2px solid var(--fg);border-left-width:5px;border-radius:8px;margin:3px 0;font-weight:700;background:#8881}
+</style>
+<script>(function(){
+const nv=t=>document.querySelector('nav button[data-t="'+t+'"]');
+const go=(t,fn)=>{const b=nv(t);if(b)b.click();if(fn)setTimeout(fn,60)};
+const jk=n=>()=>{const x=document.querySelector('#j .jk-bar [data-jk="'+n+'"]');x&&x.click()};
+const lot=n=>()=>{const x=document.querySelector('#l [data-ot="'+n+'"]');x&&x.click()};
+const C=[['🩺','মেডিকেল প্রস্তুতি','OMR-যুক্ত প্রশ্নপত্র, রিডার, ২৫–৫০ ও ১০–২০ MCQ','j',[['প্রশ্নপত্র',jk(1)],['OMR রিডার',jk(2)],['২৫–৫০ MCQ',jk(3)],['১০–২০ MCQ',jk(4)]]],
+['⚙️','ইঞ্জিনিয়ারিং প্রস্তুতি','লিখিত ভর্তি পরীক্ষার প্রশ্নপত্র','i',[]],
+['🎓','বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি','প্রশ্নপত্র, OMR স্ক্যানার, CQ','l',[['প্রশ্নপত্র তৈরি',lot(1)],['OMR স্ক্যানার',lot(2)]]]];
+const hm=document.getElementById('hm');
+if(hm){const s=document.createElement('div');s.className='prep-sec';s.innerHTML='<h2>⭐ প্রস্তুতি</h2><div class="prep-g"></div>';const g=s.lastChild;
+C.forEach(([ic,t,d,k,ch])=>{const c=document.createElement('div');c.className='prep-c';c.innerHTML='<button type="button" class="m"><i>'+ic+'</i><div><b>'+t+'</b><span>'+d+'</span></div></button>'+(ch.length?'<div class="prep-ch"></div>':'');
+c.querySelector('.m').onclick=()=>go(k);const h=c.querySelector('.prep-ch');ch.forEach(([n,f])=>{const b=document.createElement('button');b.type='button';b.textContent=n;b.onclick=()=>go(k,f);h.appendChild(b)});g.appendChild(c)});
+hm.insertBefore(s,hm.firstChild)}
+const m=document.getElementById('sbMenu'),bk=document.getElementById('sbBk');
+if(m){const h=document.createElement('div');h.className='sbh';h.textContent='⭐ প্রস্তুতি';const fr=document.createDocumentFragment();fr.appendChild(h);
+C.forEach(([ic,t,d,k],i)=>{const b=document.createElement('button');b.className='hl';b.textContent=ic+' '+t;b.style.setProperty('--d',(.05+i*.03)+'s');b.onclick=()=>{go(k);bk&&bk.click()};fr.appendChild(b)});
+const sp=document.createElement('div');sp.className='sbh';sp.textContent='সব ট্যাব';fr.appendChild(sp);m.insertBefore(fr,m.firstChild)}
+})();</script>
 <script>(function(){var P=document.querySelector('#wl .pp'),h=document.getElementById('hm_pp');if(P&&h)h.src=P.src;
 var F=[['🪪','তথ্য ও কার্ড','অ্যাডমিট কার্ড তৈরি, ছবি ও স্বাক্ষরসহ','a'],['👥','বাল্ক কার্ড','CSV থেকে একসাথে ১০–২০ জন','b'],['✅','যাচাই / বাতিল','QR দিয়ে কার্ড যাচাই','c'],['🗓️','পরীক্ষার রুটিন','রুটিন তৈরি ও প্রিন্ট','d'],['📄','সম্পূর্ণ PDF + ফি রশিদ','এক ক্লিকে সব কার্ড ও রশিদ','e'],['📢','নোটিশ','নোটিশ তৈরি ও ছাপা','f'],['⚙️','ম্যানেজমেন্ট','শিক্ষক ওয়ার্কলোড ও অ্যানালিটিক্স','g'],['🔀','প্রশ্নপত্র শাফল','সেট A/B/C…, প্রশ্ন ও অপশন শাফল','h'],['🛠️','ইঞ্জিনিয়ারিং প্রস্তুতি','লিখিত ভর্তি প্রস্তুতির প্রশ্নপত্র','i'],['🩺','মেডিকেল প্রস্তুতি','OMR-যুক্ত প্রশ্নপত্র, ২৫–৫০ ও ১০–২০ MCQ','j'],['📷','OMR রিডার','ক্যামেরায় স্ক্যান, স্বয়ংক্রিয় মূল্যায়ন','k'],['🎓','বিশ্ববিদ্যালয় প্রস্তুতি','OMR ও CQ স্ক্যান, বিশ্লেষণ','l'],['📊','ফলাফল ও বিশ্লেষণ','ভুল-সঠিক বিশ্লেষণ, PDF রিপোর্ট','m']];
 var g=document.getElementById('hm_g');if(!g)return;F.forEach(function(f,i){var b=document.createElement('button');b.type='button';b.className='hm-c';b.style.setProperty('--i',i);b.innerHTML='<i>'+f[0]+'</i><b>'+f[1]+'</b><span>'+f[2]+'</span>';b.onclick=function(){var n=document.querySelector('nav button[data-t="'+f[3]+'"]');if(n)n.click()};g.appendChild(b)});
