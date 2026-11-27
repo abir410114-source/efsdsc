@@ -4766,6 +4766,7 @@ window.__sqHook=(roll,o)=>{
 .bd-qr{display:flex;align-items:center;justify-content:flex-end;gap:2mm;font-size:.7em}.bd-qr .bq{width:13mm;height:13mm}.bd-qr .bq img,.bd-qr .bq canvas{width:100%!important;height:100%!important}
 .bd-note{border-top:1px solid #000;border-bottom:1px solid #000;margin:2.5mm 0 1.5mm;padding:1.2mm 1mm;font-size:.88em;text-align:justify}
 .bd-c{text-align:center;font-weight:700;font-size:.9em;margin-bottom:1.5mm}
+.bdsheet .qcol{border-left:0!important;padding-left:0!important}.bdsheet .qq{margin-bottom:.5mm!important;line-height:1.22}.bdsheet .qo{margin-top:0;margin-left:5mm}.bdsheet .qq mjx-container,.bdsheet .qq mjx-container[display=true]{display:inline-block!important;margin:0!important;vertical-align:middle;white-space:nowrap}
 .bd-nx{text-align:right;font-size:.85em;margin:.5mm 0}
 </style>
 <script>
@@ -4788,6 +4789,7 @@ bar.addEventListener('click',ev=>{const b=ev.target.closest('[data-qs]');if(!b)r
  if(b.dataset.qs=='5'){ev.stopPropagation();['qs2','qs3','qs4'].forEach(i=>{const p=document.getElementById(i);if(p)p.hidden=true});q1.hidden=false;sec.hidden=false;h.classList.add('bdm');bar.querySelectorAll('[data-qs]').forEach(x=>x.classList.toggle('p',x==b));try{document.getElementById('or').value='portrait';paper()}catch(_){}}
  else{h.classList.remove('bdm');sec.hidden=true;b.parentNode.querySelector('[data-qs="5"]').classList.remove('p')}},true);
 function pick(){const used=new Set(),a=NAMES.slice();return a}
+const dm=x=>String(x).replace(/\$\$([\s\S]+?)\$\$/g,(m,y)=>'$'+y+'$');
 async function render(Sets){
  paper();
  const copies=Math.max(1,+vq('qp_cp')||1),papers=[];Sets.forEach(S=>{for(let c=0;c<copies;c++)papers.push(S)});
@@ -4813,7 +4815,7 @@ async function render(Sets){
  const mout=document.getElementById('mout');
  mout.innerHTML='<div class="note no-print">'+papers.length+'টি পেপার · প্রতিটি ২ পৃষ্ঠা · সিরিয়াল '+sn[0]+(sn.length>1?' – '+sn[sn.length-1]:'')+'</div>'+html;
  const shs=[...mout.querySelectorAll('.bdsheet')];
- const jobs=metas.map(m=>{const s1=shs[m.pi*2],s2=shs[m.pi*2+1];const items=m.qs.map((q,n)=>{const d=document.createElement('div');d.className='qq';d.innerHTML=qiTop(q,'qp')+'<span class="qn">'+BN(n+1)+'।</span> '+qfm(e(qat(q.t)))+'<div class="qo oauto">'+q.o.map((o,i)=>'<span>'+lbs[i]+' '+qfm(e(qat(o)))+'</span>').join('')+'</div>'+qiBot(q,'qp');return d});return{s1,s2,items,f:12.5}});
+ const jobs=metas.map(m=>{const s1=shs[m.pi*2],s2=shs[m.pi*2+1];const items=m.qs.map((q,n)=>{const d=document.createElement('div');d.className='qq';d.innerHTML=qiTop(q,'qp')+'<span class="qn">'+BN(n+1)+'।</span> '+qfm(e(qat(dm(q.t))))+'<div class="qo oauto">'+q.o.map((o,i)=>'<span>'+lbs[i]+' '+qfm(e(qat(dm(o))))+'</span>').join('')+'</div>'+qiBot(q,'qp');return d});return{s1,s2,items,f:12.5}});
  function fill(j){const cols=[...j.s1.querySelectorAll('.qcol'),...j.s2.querySelectorAll('.qcol')],qc=[...j.s1.querySelectorAll('.qcols'),...j.s2.querySelectorAll('.qcols')];let f=j.f;
   for(let g=0;g<70;g++){qc.forEach(c=>c.style.fontSize=f+'pt');cols.forEach(c=>c.innerHTML='');let ci=0,ok=true;
    for(const it of j.items){cols[ci].appendChild(it);autoOpt(it);const ov=()=>cols[ci].scrollHeight>cols[ci].clientHeight+1;
