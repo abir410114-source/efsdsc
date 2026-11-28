@@ -607,7 +607,7 @@ table.rt{width:100%;border-collapse:collapse;font-size:.92em}table.rt th,table.r
 <label>পরীক্ষা নং<input id="ua_exno"></label><label>অধ্যায়ের বিষয়াবলী<input id="ua_chap"></label><label>ক্রমিক নম্বর<select id="ua_cont"><option value="1">সব বিষয়ে ধারাবাহিক</option><option value="0">প্রতি বিষয়ে ১ থেকে</option></select></label>
 </div><div class="bar"><button type="button" class="p" id="ua_go">প্রশ্নপত্র তৈরি করুন</button><button type="button" id="ua_all">সব সেট একসাথে (১–<span id="ua_nn">১৫</span>)</button><label style="display:inline">সেট সংখ্যা <select id="ua_cnt"></select></label><button type="button" id="ua_print">প্রিন্ট / PDF সেভ</button><button type="button" id="ua_key">উত্তরমালা দেখান</button></div>
 <p class="note">MCQ ফরম্যাট (মেডিকেল/শাফলের মতোই): “১. প্রশ্ন”, নিচে নিচে “ক. … খ. … গ. … ঘ. …” (A. B. C. D.-ও চলবে, একই লাইনেও চলবে), তারপর “উত্তর: ক”। বিকল্পভাবে সঠিক অপশনের শেষে <b>*</b> দিলেও হবে। বাড়তি ফাঁকা লাইন/স্পেস নিজে ঠিক হয়ে যায়। <b>স্বয়ংক্রিয় শনাক্ত ফরম্যাট:</b> (১) প্রশ্ন + ক-ঘ নিচে নিচে + উত্তর; (২) এক লাইনে অপশন “(ক) … (খ) …” + Answer: খ; (৩) শেষে উত্তরমালা “Answer Key: 1-B, 2-D” বা “১. গ ২. ক”; (৪) টেবিল/এক্সেল/পাইপ “ক্রম | প্রশ্ন | ক | খ | গ | ঘ | উত্তর”; (৫) মার্কডাউন (**বোল্ড** সঠিক অপশন বা ✓ চিহ্ন); (৬) Q1./প্রশ্ন ১: প্রিফিক্স, ব্যাখ্যা/Explanation লাইনসহ। AI-কে বললেই যেকোনোটা বানিয়ে দেবে — পেস্ট করলেই নিজে স্ট্যান্ডার্ড ফরম্যাটে বসে যাবে। সেট-১-এর বাইরে প্রশ্ন ও অপশনের ক্রম এলোমেলো হবে, উত্তরমালা ও OMR স্ক্যানের সেট-কোড (সিরিয়াল) অনুযায়ী মিলে যাবে। লিখিত অংশে প্রশ্নের শেষে <b>[৫]</b> লিখলে নম্বর লাইনের ডানে সারিবদ্ধ হবে; ফাঁকা লাইন দিয়ে প্রশ্ন আলাদা করুন।</p></fieldset>
-<fieldset><legend>OMR পৃষ্ঠা (প্রশ্নপত্রের প্রথম পৃষ্ঠা) — সিরিয়াল ও নম্বর বণ্টন</legend><div class="g"><label>OMR-এ প্রতিষ্ঠান (সংক্ষিপ্ত)<input id="ua_oorg" value="EFSDSC রাজশাহী"></label><label>৬ ডিজিট সিরিয়াল (সেট-১); পরের সেটে +১ — ফাঁকা রাখলে স্বয়ংক্রিয়, নিজে দিলে কাস্টম<input id="ua_ser" inputmode="numeric" maxlength="6" placeholder="যেমন: 100001"></label><label>&nbsp;<button type="button" id="ua_autoser">স্বয়ংক্রিয় সিরিয়াল বসান</button></label></div><p class="note">প্রতি বিষয়ের MCQ ও লিখিত নম্বর (ফাঁকা রাখলে প্রশ্ন সংখ্যা / [নম্বর] যোগ করে স্বয়ংক্রিয়):</p><div class="g"><label>পদার্থবিজ্ঞান — MCQ<input id="ua_mm0" type="number" step="0.25"></label><label>পদার্থবিজ্ঞান — লিখিত<input id="ua_wm0" type="number" step="0.25"></label><label>রসায়ন — MCQ<input id="ua_mm1" type="number" step="0.25"></label><label>রসায়ন — লিখিত<input id="ua_wm1" type="number" step="0.25"></label><label>জীববিজ্ঞান — MCQ<input id="ua_mm2" type="number" step="0.25"></label><label>জীববিজ্ঞান — লিখিত<input id="ua_wm2" type="number" step="0.25"></label><label>উচ্চতর গণিত — MCQ<input id="ua_mm3" type="number" step="0.25"></label><label>উচ্চতর গণিত — লিখিত<input id="ua_wm3" type="number" step="0.25"></label><label>বাংলা — MCQ<input id="ua_mm4" type="number" step="0.25"></label><label>বাংলা — লিখিত<input id="ua_wm4" type="number" step="0.25"></label><label>ইংরেজি — MCQ<input id="ua_mm5" type="number" step="0.25"></label><label>ইংরেজি — লিখিত<input id="ua_wm5" type="number" step="0.25"></label></div></fieldset>
+<fieldset><legend>OMR পৃষ্ঠা (প্রশ্নপত্রের প্রথম পৃষ্ঠা) — সিরিয়াল ও নম্বর বণ্টন</legend><div class="g"><label>পরীক্ষার শিরোনাম (ডেটাবেসে এই নামে সেভ হবে)<input id="ua_exam" value="ভার্সিটি অ্যাডমিশন টেস্ট ১"></label><label>OMR-এ প্রতিষ্ঠান (সংক্ষিপ্ত)<input id="ua_oorg" value="EFSDSC রাজশাহী"></label><label>৬ ডিজিট সিরিয়াল (সেট-১); পরের সেটে +১ — ফাঁকা রাখলে স্বয়ংক্রিয়, নিজে দিলে কাস্টম<input id="ua_ser" inputmode="numeric" maxlength="6" placeholder="যেমন: 100001"></label><label>&nbsp;<button type="button" id="ua_autoser">স্বয়ংক্রিয় সিরিয়াল বসান</button></label></div><p class="note">প্রতি বিষয়ের MCQ ও লিখিত নম্বর (ফাঁকা রাখলে প্রশ্ন সংখ্যা / [নম্বর] যোগ করে স্বয়ংক্রিয়):</p><div class="g"><label>পদার্থবিজ্ঞান — MCQ<input id="ua_mm0" type="number" step="0.25"></label><label>পদার্থবিজ্ঞান — লিখিত<input id="ua_wm0" type="number" step="0.25"></label><label>রসায়ন — MCQ<input id="ua_mm1" type="number" step="0.25"></label><label>রসায়ন — লিখিত<input id="ua_wm1" type="number" step="0.25"></label><label>জীববিজ্ঞান — MCQ<input id="ua_mm2" type="number" step="0.25"></label><label>জীববিজ্ঞান — লিখিত<input id="ua_wm2" type="number" step="0.25"></label><label>উচ্চতর গণিত — MCQ<input id="ua_mm3" type="number" step="0.25"></label><label>উচ্চতর গণিত — লিখিত<input id="ua_wm3" type="number" step="0.25"></label><label>বাংলা — MCQ<input id="ua_mm4" type="number" step="0.25"></label><label>বাংলা — লিখিত<input id="ua_wm4" type="number" step="0.25"></label><label>ইংরেজি — MCQ<input id="ua_mm5" type="number" step="0.25"></label><label>ইংরেজি — লিখিত<input id="ua_wm5" type="number" step="0.25"></label></div></fieldset>
 <fieldset><legend>সমীকরণ ইনপুট (MCQ ও লিখিত — সব বিষয়ে)</legend><div class="note">যেকোনো ফরম্যাটের সমীকরণ কপি করে নিচের যেকোনো বিষয়ের ঘরে পেস্ট করুন — LaTeX (<code>$ … $</code>, <code>\( … \)</code>, <code>$$ … $$</code>), ChatGPT/KaTeX কপি, MS Word-এর Professional/Unicode/Linear সমীকরণ, MathML, Unicode (x² √ ∫ ≤), বা সাধারণ লেখা (x^2, sqrt(x), a/b)। পেস্ট করতেই স্বয়ংক্রিয়ভাবে সমীকরণে রূপান্তর হবে এবং প্রশ্নপত্র/প্রিন্ট/PDF-এ ছাত্র-ছাত্রীর পড়ার মতো সুন্দর গাণিতিক আকারে আসবে।</div>
 <div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="ua_cv" checked>পেস্টে স্বয়ংক্রিয় রূপান্তর (ChatGPT/Word কপি, Unicode x² √ ∫, x^2, sqrt(x), a/b → সমীকরণ)</label><button type="button" id="ua_conv">সব ঘরের লেখা রূপান্তর করো</button></div>
 <div id="ua_eqbar" class="bar"></div><div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="ua_atx" checked>ডেলিমিটার ছাড়া শুদ্ধ LaTeX হলে নিজে $…$ দাও</label><button type="button" id="ua_pvb">সমীকরণ প্রিভিউ (শেষ ক্লিক করা ঘর)</button></div><div id="ua_pv" style="border:1px solid var(--bd);padding:8px;min-height:30px;background:#fff;color:#000"></div></fieldset>
@@ -1644,7 +1644,7 @@ try{if(MathJax.startup&&MathJax.startup.promise)await MathJax.startup.promise}ca
 try{if(!document.getElementById('ua_mjcss')&&MathJax.svgStylesheet){const st=MathJax.svgStylesheet();st.id='ua_mjcss';document.head.appendChild(st)}}catch(_){}
 return MJOK=true}
 function fmTags(s){const st=[];let out=s.replace(/&lt;(\/?)([biu])&gt;/g,(m,c,t)=>{if(!c){st.push(t);return'<'+t+'>'}const i=st.lastIndexOf(t);if(i<0)return'';let r='';while(st.length>i+1)r+='</'+st.pop()+'>';st.pop();return r+'</'+t+'>'});while(st.length)out+='</'+st.pop()+'>';return out}
-function texH(tex,disp,raw){if(!MJOK)return esc(raw);try{const n=MathJax.tex2svg(tex.trim(),{display:disp});if(n.querySelector('[data-mml-node="merror"],mjx-merror'))return'<span style="color:#b00">'+esc(raw)+'</span>';return n.outerHTML}catch(_){return esc(raw)}}
+function texH(tex,disp,raw){if(!MJOK)return esc(raw);try{const n=MathJax.tex2svg(tex.trim(),{display:disp});if(n.querySelector('[data-mml-node="merror"],mjx-merror,merror'))return'<span style="color:#b00">'+esc(raw)+'</span>';return n.outerHTML}catch(_){return esc(raw)}}
 const atxOn=()=>{const c=$('#ua_atx');return c&&c.checked};
 const cvOn=()=>{const c=$('#ua_cv');return !c||c.checked};
 const DLMU=/(<\/?[biu]>|\[\[(?:img|fig|fa):\d+\]\]|\$\$[\s\S]*?\$\$|\$[^$\n]*\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|\\begin\{[A-Za-z*]+\}[\s\S]*?\\end\{[A-Za-z*]+\})/;
@@ -1929,6 +1929,7 @@ const wr=[];SUBS.forEach((s,i)=>{const b=wBlocks(normU($('[data-ua=w'+i+']').val
 if(mcq.length)mcq.forEach(([s,qs],si)=>{if(!cont)no=0;qs.forEach((q,k)=>{no++;keyLines.push((++kn)+'-'+(q.ans>=0?bnLab(q.ans):'?'));
 let h=(si==0&&k==0?'<div class="ust">MCQ অংশ</div>':'')+(k==0?`<div class="usn">${s}</div>`:'')+mcqHtml(q,no);units.push({h,col:2})})});
 if(wr.length)wr.forEach(([s,bs],si)=>bs.forEach((b,k)=>{units.push({h:(si==0&&k==0?'<div class="ust" style="margin-top:0">লিখিত অংশ</div>':'')+(k==0?`<div class="usn" style="text-align:left">${s}</div>`:'')+wHtml(b),col:1,newPage:si==0&&k==0})}));
+(window.__uaMcq=window.__uaMcq||{})[set]=mcq.map(([s,qs])=>[s,qs.map(q=>q.ans)]);
 const pgs=[];
 const paginate=()=>{pgs.forEach(p=>p.remove());pgs.length=0;let pn=0,page=null,body=null,first=true;
 const mk=(isFirst,col)=>{page=document.createElement('div');page.className='upg';page.innerHTML=(isFirst?header(set):'')+'<div class="ub'+(col==1?' one':'')+'"></div><div class="upn">'+bn(++pn)+'</div>';wrap.appendChild(page);pgs.push(page);body=page.querySelector('.ub');body.col=col;page.style.fontSize=(+gv('ua_fs')||13.5)+'px';page.style.lineHeight=(+gv('ua_ln')||1.35);if(FFM[gv('ua_ff')])page.style.fontFamily=FFM[gv('ua_ff')];
@@ -1951,9 +1952,22 @@ try{(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()
 setTimeout(redo,800);setTimeout(redo,2200);
 wrap.querySelectorAll('img').forEach(i=>{if(!i.complete)i.addEventListener('load',redo,{once:true})});
 return keyLines}
+function uaSaveKeys(sets){let store={};try{store=JSON.parse(localStorage.getItem('uo_keys'))||{}}catch(_){}
+let cols=null;try{const cf=JSON.parse(localStorage.getItem('uo_cfg'))||{};const t=(cf.f&&cf.f.subj)||'';if(t)cols=t.split(',').map(x=>x.trim())}catch(_){}
+if(!cols||cols.length<6)cols='Physics,Chemistry,Mathematics,Biology,Bangla,English'.split(',');cols=cols.slice(0,6);
+const idx=(nm,b)=>{const n=String(nm||'').toLowerCase();return /phys|পদার্থ/.test(n)?0:/chem|রসায়ন/.test(n)?1:/bio|জীব/.test(n)?2:/math|গণিত/.test(n)?3:/bang|বাংলা/.test(n)?4:/eng|ইংরেজি/.test(n)?5:b};
+const exam=($('#ua_exam')&&$('#ua_exam').value.trim())||'ভার্সিটি অ্যাডমিশন টেস্ট';
+sets.forEach(set=>{const mc=(window.__uaMcq||{})[set];if(!mc)return;const ser=serialOf(set),ans=Array(90).fill(-1),mk=[],col=[];
+for(let b=0;b<6;b++)col[b]=cols.findIndex((c,j)=>idx(c,j)==b);
+mc.forEach(([sn,a])=>{const b=SUBS.indexOf(sn);if(b<0)return;const c=col[b]>=0?col[b]:b;a.slice(0,15).forEach((v,r)=>{ans[c*15+r]=v})});
+for(let b=0;b<6;b++){const t=marksOf(b);mk[b]={m:t[0],w:t[1]}}
+const old=store[ser]||{};store[ser]=Object.assign({pm:1,neg:.25,ch:Array(6).fill('')},old,{ser,ans,subj:cols,exam,mk,uni:1})});
+try{localStorage.setItem('uo_keys',JSON.stringify(store));window.__uoKeys&&window.__uoKeys()}catch(_){}
+const m=$('#ua_keyout');if(m&&m.parentNode&&!document.getElementById('ua_ksv')){const d=document.createElement('div');d.id='ua_ksv';d.className='note';m.before(d)}
+const d=document.getElementById('ua_ksv');if(d)d.textContent='✅ MCQ উত্তরমালা সিরিয়াল '+sets.map(x=>serialOf(x)).join(', ')+' দিয়ে সেভ হয়েছে (OMR স্ক্যানার ট্যাব ও Drive সিঙ্কে নিজে আসবে)।'}
 let KEYS={};
 async function gen(sets){await mathReady();try{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,3000))])}catch(_){}let out=$('#uout');if(!out){out=document.createElement('div');out.id='uout';out.className='pv';$('#mout').after(out)}out.innerHTML='';document.body.dataset.mode='u';KEYS={};
-const w=out.parentNode;sets.forEach(s=>{KEYS[s]=build(s,out)});
+const w=out.parentNode;sets.forEach(s=>{KEYS[s]=build(s,out)});try{uaSaveKeys(sets)}catch(_){}
 let pg=$('#pg');if(pg)pg.textContent='@page{size:A4;margin:0}';out.scrollIntoView({behavior:'smooth'});showKey()}
 function showKey(){const ks=Object.keys(KEYS);$('#ua_keyout').textContent=ks.length?ks.map(k=>'সেট-'+bn(k)+': '+KEYS[k].map(x=>bn(x)).join('  ')).join('\n'):''}
 $('#ua_go').onclick=()=>gen([+$('#ua_set').value]);
@@ -2984,6 +2998,8 @@ const g=window.CQG,subs=CQ_SUBS.map((_,s)=>{const gx=g.x0+s*g.gw,dg=c=>col([...A
 const crop=(x0,y0,x1,y1)=>{const X0=Math.round((x0+CQ_OX)*CQK),Y0c=Math.round((y0+CQ_OY)*CQK),w=Math.round((x1-x0)*CQK),h=Math.round((y1-y0)*CQK),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),im=x.createImageData(w,h);
 for(let y=0;y<h;y++)for(let xx=0;xx<w;xx++){const v=wg[(Y0c+y)*Wt+X0+xx]||255,j=(y*w+xx)*4;im.data[j]=im.data[j+1]=im.data[j+2]=v;im.data[j+3]=255}x.putImageData(im,0,0);const s=Math.min(1,380/w),o=document.createElement('canvas');o.width=Math.round(w*s);o.height=Math.round(h*s);o.getContext('2d').drawImage(c,0,0,o.width,o.height);return o.toDataURL('image/jpeg',.5)};
 const names={c:crop(128,166,448,220),f:crop(128,283,452,340),m:crop(128,413,453,470)};
+const ink=(x0,y0,x1,y1)=>{let n=0,t=0;const A=Math.round((x0+CQ_OX)*CQK),B=Math.round((y0+CQ_OY)*CQK),C=Math.round((x1+CQ_OX)*CQK),D=Math.round((y1+CQ_OY)*CQK);for(let y=B;y<D;y++)for(let x=A;x<C;x++){t++;if((wg[y*Wt+x]||255)<thr)n++}return t?n/t:0};
+const SG=[[874,86,996,174],[859,849,1010,911],[869,1179,1022,1243]];names.si=crop(...SG[0]);names.s1=crop(...SG[1]);names.s2=crop(...SG[2]);names.ink=SG.map(a=>+ink(...a).toFixed(4));
 return{ser,roll,subs,names}}
 function cqScan(src,o){o=o||{};const G=toGray(src,o.maxDim||2000),bin=binarize(G),C=comps(bin,G.w,G.h),quad=findQuad(C,G.w,G.h);if(!quad)return{ok:false,err:'চারটি কোণার কালো বর্গ পাওয়া যায়নি — পুরো OMR পৃষ্ঠা, সমান আলোয়, ছবিতে আনুন'};
 const d=cqDecode(G,quad);if(!d)return{ok:false,err:'শিটের অবস্থান শনাক্ত হয়নি'};return Object.assign({ok:true},d)}
@@ -3019,6 +3035,7 @@ const F="Kalpurush,'Noto Sans Bengali',Arial,sans-serif",LB=['A','B','C','D'];
 const DEFSUB='Physics,Chemistry,Mathematics,Biology,Bangla,English';
 let KEYS=lg('uo_keys',{}),STU=lg('uo_stu',{}),SCN=lg('uo_scn',[]),CF=lg('uo_cfg',{}),KS=null;
 const saveK=()=>ls('uo_keys',KEYS),saveS=()=>ls('uo_stu',STU),saveC=()=>ls('uo_scn',SCN),saveCF=()=>ls('uo_cfg',CF);
+window.__uoKeys=()=>{try{Object.assign(KEYS,lg('uo_keys',{}));if(typeof keySel=='function')keySel()}catch(_){}};
 let IMG=lg('uo_img',{});const saveI=()=>{if(!ls('uo_img',IMG))toast('⚠ নাম/স্বাক্ষরের ছবি সেভ হয়নি (জায়গা শেষ) — এই সেশনে থাকবে')};
 const val=i=>{const e=$('#'+i);return e?e.value.trim():''},chk=i=>{const e=$('#'+i);return e&&e.checked};
 const subjects=()=>{const a=(val('uo_subj')||DEFSUB).split(',').map(x=>x.trim());while(a.length<6)a.push('Subject '+(a.length+1));return a.slice(0,6)};
@@ -3351,7 +3368,7 @@ const m=document.getElementById('m');if(m)m.hidden=true;
 function refreshRes(){const o=$('#rs_list');if(!o)return;const L=rsList();if(!L.length){o.innerHTML='<p class="note">এখনো কোনো স্ক্যান নেই।</p>';return}
 o.innerHTML='<table class="uo-tb"><tr><th>#</th><th>রোল</th><th>সিরিয়াল</th><th>নাম (ছবি)</th><th>MCQ</th><th>CQ</th><th>মোট</th><th></th></tr>'+L.map((it,i)=>{const R=rsCalc(it),s=it.s,c=it.c,im=(s&&IMG[s.id])||{},nimg=(c&&c.names&&c.names.c)||im.n;
 return`<tr><td>${bn(i+1)}</td><td>${esc((s&&s.roll)||(c&&c.roll)||'—')}</td><td>${esc((s&&s.ser)||(c&&c.ser)||'')}</td><td>${nimg?'<img src="'+nimg+'" style="height:6mm">':''}</td><td>${R.g?'✓ '+bn(R.tm):(s?'<span class="uo-t3">উত্তরপত্র নেই</span>':'<span class="uo-t3">স্ক্যান নেই</span>')}</td><td>${c?'✓ '+bn(R.tw):'<span class="uo-t3">স্ক্যান নেই</span>'}</td><td><b>${bn(R.tot)}</b></td><td><button type="button" data-rs="one:${i}">রেজাল্ট শিট</button></td></tr>`}).join('')+'</table>'}
-window.__uoRes=refreshRes;
+window.__uoRes=refreshRes;window.__uoRS={list:rsList,calc:rsCalc,KEYS:()=>KEYS,out:outBox};
 async function smart(fs){const msg=$('#rs_msg');let a=0,b=0,bad=[];for(const f of fs){msg.textContent='পড়া হচ্ছে: '+f.name+' …';await new Promise(r=>setTimeout(r,30));try{const im=await loadImg(f);const r=scanSource(im,scOpt());if(r.ok){addScan(r);a++;continue}
 const q=window.__cq.scan(im,{maxDim:2200});if(q.ok){window.__cq.add(q,f.name);b++}else bad.push(f.name+' — '+r.err)}catch(x){bad.push(f.name+' — পড়া যায়নি')}}
 msg.innerHTML=(a||b?'✅ MCQ OMR '+bn(a)+'টি, CQ শিট '+bn(b)+'টি স্ক্যান হয়েছে। ':'')+bad.map(x=>`<span class="uo-t3">${esc(x)}</span>`).join('<br>');if(a&&ST.beep)beep();refreshRes()}
@@ -5050,5 +5067,145 @@ const Q=parseQ(BDTXT),N=Q.filter(q=>!q.w).length;
  const _orig=$('#qp_text').value;$('#qp_text').value=BDTXT;try{await qpGen()}finally{$('#qp_text').value=_orig;try{localStorage.setItem('qpm',_orig)}catch(_){}}$('#qp_res').innerHTML='';
  await render(QS);
  document.getElementById('bd_res').innerHTML='<div class="bar"><button type="button" data-q="qpK:all">সব উত্তরমালা</button><button type="button" data-q="qpCsv">উত্তরমালা CSV</button></div><p class="note">উত্তরমালা সিরিয়াল ধরে সেভ হয়েছে। এই প্রশ্নপত্রের OMR একই OMR শিটে স্ক্যান হবে।</p>'};
+})();
+</script>
+<style id="ua_css">
+#ua_db table.uo-tb{font-size:11.5px}#ua_db .ok{color:#067a2a;font-weight:700}#ua_db .no{color:#b00;font-weight:700}#ua_db small{display:block;white-space:nowrap}
+#ua_man table{border-collapse:collapse;margin:6px 0}#ua_man td,#ua_man th{border:1px solid var(--bd,#999);padding:2px 5px;text-align:center}#ua_man input[type=number]{width:70px}
+.uos.ua{padding:8mm 9mm;font:10.5px/1.35 Kalpurush,'Noto Sans Bengali',Arial,sans-serif;color:#000}
+.uos.ua .rh{display:flex;align-items:center;gap:3mm;border-bottom:.8mm solid #000;padding-bottom:1.6mm}.uos.ua .rh img.lg{height:14mm;filter:grayscale(1) contrast(1.3)}.uos.ua .rh .c{flex:1;text-align:center}.uos.ua .rh .c b{font-size:1.25em}
+.uos.ua .id{border:.3mm solid #000;padding:1mm 2.2mm;line-height:1.5;min-width:36mm}
+.uos.ua .fl{border-bottom:.25mm dotted #000;min-height:9mm;display:flex;flex-direction:column;justify-content:flex-end}.uos.ua .fl small{font-size:.78em;opacity:.75}.uos.ua .fl img{height:8mm;max-width:100%;object-fit:contain;object-position:left bottom;filter:grayscale(1)}
+.uos.ua .st{display:grid;grid-template-columns:1fr 1fr;gap:1mm 5mm;margin-top:2mm}
+.uos.ua table{border-collapse:collapse;width:100%;margin-top:3mm}.uos.ua th,.uos.ua td{border:.25mm solid #000;padding:.9mm .8mm;text-align:center;font-size:.92em}.uos.ua td.l{text-align:left}.uos.ua td.f{background:#d8d8d8;font-weight:700}.uos.ua tr.t td{font-weight:700;border-top:.5mm solid #000}
+.uos.ua .res{display:flex;gap:4mm;margin-top:4mm;align-items:stretch}.uos.ua .res>div{border:.45mm solid #000;padding:2mm;text-align:center;flex:1}.uos.ua .res b{font-size:1.9em;display:block;line-height:1.2}
+.uos.ua .sg{display:flex;gap:6mm;margin-top:16mm;align-items:flex-end}.uos.ua .sg>div{flex:1;text-align:center;border-top:.3mm solid #000;padding-top:.8mm;position:relative;min-height:5mm}.uos.ua .sg img{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);height:16mm;max-width:100%;filter:grayscale(1) contrast(1.4)}
+.uos.ua .nt{font-size:.82em;margin-top:2mm}
+</style>
+<script>
+/* ===== ভার্সিটি অ্যাডমিশন: রেজাল্ট ডেটাবেস (৬ বিষয় × লিখিত + MCQ), পাস/গ্রেড, নিরীক্ষকের স্বাক্ষর, হাতে এন্ট্রি ===== */
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BD='০১২৩৪৫৬৭৮৯',bn=s=>String(s).replace(/\d/g,d=>BD[d]),f2=v=>v==null||v===''?'—':bn(+(+v).toFixed(2)),pc=v=>v==null?'—':bn((+v).toFixed(1))+'%';
+const NAMES=['পদার্থবিজ্ঞান','রসায়ন','জীববিজ্ঞান','উচ্চতর গণিত','বাংলা','ইংরেজি'];
+const lg=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(_){return d}},ls=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+const idx=(nm,b)=>{const n=String(nm||'').toLowerCase();return /phys|পদার্থ/.test(n)?0:/chem|রসায়ন/.test(n)?1:/bio|জীব/.test(n)?2:/math|গণিত/.test(n)?3:/bang|বাংলা/.test(n)?4:/eng|ইংরেজি/.test(n)?5:b};
+const CFG=Object.assign({pass:75,et:'',wf:Array(6).fill(''),mf:Array(6).fill(''),auto:1},lg('uadm_cfg',{}));const saveCfg=()=>ls('uadm_cfg',CFG);
+const SRX=()=>window.__SRX,nr=v=>{const X=SRX();return X&&X.nr?X.nr(v):String(v||'').trim()};
+const grade=(p,ps)=>p>95?'Golden A+':p>=90?'A+':p>=85?'A':p>=80?'B+':p>=75?'B':p+1e-9>=ps?'C':'F';
+/* ---------- মূল্যায়ন ---------- */
+function evalSubs(subs,ps){const W={f:0,g:0,p:0},M={f:0,g:0,p:0};let tf=0,tg=0,pend=0;const fail=[];
+ const rows=subs.map((s,i)=>{const o={nm:NAMES[i]};let sf=0,sg=0,bad=0,pd=0;
+  ['w','m'].forEach(k=>{const c=s[k]||{},f=+c.full||0,g=(c.got===''||c.got==null||isNaN(+c.got))?null:+c.got,x={f,g,p:null,gr:'',st:''},T=k=='w'?W:M;
+   if(f>0){if(g==null){x.st='pend';pend++;pd=1}else{x.p=g/f*100;x.gr=grade(x.p,ps);x.st=x.p+1e-9>=ps?'pass':'fail';sf+=f;sg+=g;T.f+=f;T.g+=g;T.p+=f*ps/100;if(x.st=='fail'){bad=1;fail.push(NAMES[i]+(k=='w'?' (লিখিত)':' (MCQ)'))}}}
+   o[k]=x});
+  o.tf=sf;o.tg=sg;o.tp=sf?sg/sf*100:null;o.st=bad?'fail':pd?'pend':(sf?'pass':'');o.gr=bad?'F':(o.tp==null?'':grade(o.tp,ps));tf+=sf;tg+=sg;return o});
+ const tp=tf?tg/tf*100:null,status=fail.length?'fail':pend?'pend':(tf?'pass':'none');
+ return{rows,W,M,tf,tg,tp,pm:W.p+M.p,gr:status=='fail'?'F':(tp==null?'':grade(tp,ps)),status,fail,pend}}
+const R2=x=>Math.round(x*100)/100;
+function mkRec(roll,exam,ser,subs,ex){ex=ex||{};const E=evalSubs(subs,CFG.pass),X=SRX(),id='uadm|'+exam+'|'+roll,old=X&&X.EX().find(x=>x.id==id);
+ const rec={id,roll,exam,etype:'',cat:'মিশ্র',date:new Date().toISOString().slice(0,10),sub:NAMES.join(', '),subs:NAMES.slice(),serial:ser||'',absent:'',full:R2(E.tf),got:R2(E.tg),
+  passm:E.status=='fail'?R2(Math.max(E.tg,E.pm)+.01):R2(E.pm),partPass:'',grace:'',
+  remark:E.status=='fail'?'ফেল: '+E.fail.join(', '):E.status=='pend'?'অসম্পূর্ণ — কিছু অংশের নম্বর বাকি':'',
+  parts:{w:{type:'লিখিত',full:R2(E.W.f),got:R2(E.W.g),pass:R2(E.W.p)},m:{type:'MCQ',full:R2(E.M.f),got:R2(E.M.g),pass:R2(E.M.p)}},c:'',w:'',b:'',negl:0,
+  uadm:{ps:CFG.pass,st:E.status,rows:E.rows,tp:E.tp,gr:E.gr,sigS:ex.sigS||(old&&old.uadm&&old.uadm.sigS)||'',sigI:ex.sigI||(old&&old.uadm&&old.uadm.sigI)||'',nm:ex.nm||(old&&old.uadm&&old.uadm.nm)||'',src:ex.src||'OMR'},
+  t:old?old.t:Date.now(),u:Date.now()};return rec}
+/* ---------- স্ক্যান থেকে সংগ্রহ (MCQ + লিখিত মার্জ) ---------- */
+function gather(){const RS=window.__uoRS;if(!RS)return{recs:[],bad:[]};const map={},bad=[],KEYS=RS.KEYS(),wfa=+(($('#rs_wf')||{}).value)||0,num=v=>(v===''||v==null||isNaN(+v))?null:+v;
+ RS.list().forEach(it=>{const s=it.s,c=it.c,ser=String((s&&s.ser)||(c&&c.ser)||''),roll=nr(String((s&&s.roll)||(c&&c.roll)||'')).replace(/\s/g,'');
+  if(!/^\d+$/.test(roll)){bad.push((roll||'রোল নেই')+' · সিরিয়াল '+(ser||'?'));return}
+  const K=KEYS[(s&&(s.use||s.ser))||ser]||null,exam=(CFG.et||'').trim()||(K&&K.exam)||'ভার্সিটি অ্যাডমিশন টেস্ট',key=roll+'|'+exam;
+  const m=map[key]=map[key]||{roll,exam,ser,subs:Array.from({length:6},()=>({w:{},m:{}})),ex:{}},R=RS.calc(it);
+  R.rows.forEach((r,b)=>{const ci=idx(r.nm,b),mk=K&&K.mk&&K.mk[ci]?K.mk[ci]:{},cs=c&&c.subs&&c.subs[ci]?c.subs[ci]:null,D=m.subs[ci];
+   const wFull=num(CFG.wf[ci])||num(mk.w)||wfa||0;if(r.w!=null||wFull){if(r.w!=null)D.w.got=r.w;if(wFull)D.w.full=wFull}
+   let mg=null,mf=num(CFG.mf[ci]);
+   if(r.m!=null&&!r.na){mg=r.m;mf=mf||(r.S&&r.S.full)||num(mk.m)||0}
+   else if(cs&&cs.m!==''&&cs.m!=='?'&&cs.m!=null){mg=+cs.m;mf=mf||num(mk.m)||0}
+   else mf=r.na?0:(mf||num(mk.m)||0);
+   if(mg!=null)D.m.got=mg;if(mf)D.m.full=mf});
+  if(c){const n=c.names||{},k=n.ink||[];if(k[2]>.006&&n.s2)m.ex.sigS=n.s2;else if(k[1]>.006&&n.s1)m.ex.sigS=n.s1;if(k[0]>.006&&n.si)m.ex.sigI=n.si;if(n.c)m.ex.nm=n.c}});
+ return{recs:Object.values(map).map(m=>mkRec(m.roll,m.exam,m.ser,m.subs,m.ex)),bad}}
+let LAST=lg('uadm_last',{});
+async function save(quiet){const X=SRX();if(!X||!X.putEx){if(!quiet)alert('ডেটাবেস মডিউল পাওয়া যায়নি');return}
+ const{recs,bad}=gather();let n=0;for(const r of recs){const sig=JSON.stringify([r.got,r.full,r.uadm.rows.map(x=>[x.w.g,x.w.f,x.m.g,x.m.f]),!!r.uadm.sigS,!!r.uadm.sigI,r.serial]);if(LAST[r.id]===sig)continue;try{await X.putEx(r);LAST[r.id]=sig;n++}catch(_){}}
+ ls('uadm_last',LAST);const m=$('#ua_msg');if(m)m.innerHTML=(n?'✅ <b>'+bn(n)+'টি</b> রেজাল্ট ডেটাবেসে সেভ/মার্জ হয়েছে। ':(quiet?'':'নতুন কোনো পরিবর্তন নেই। '))+(bad.length?'<span style="color:#b00">রোল পড়া যায়নি (হাতে ঠিক করুন): '+bad.map(esc).join('; ')+'</span>':'');
+ try{window.__gmark&&window.__gmark()}catch(_){}render();return recs}
+/* ---------- মার্কশিট (PDF) ---------- */
+const orgName=()=>(($('#uo_org')||{}).value||'').trim()||'ইএমডি ফাউন্ডেশন স্কিল ডেভেলপমেন্ট স্কুল ও কলেজ, রাজশাহী';
+const logo=()=>{const i=document.querySelector('img[alt="EFSDSC"]');return i?i.src:''};
+function sheet(rec){const U=rec.uadm,X=SRX(),st=(X&&X.ST()[rec.roll])||{},ok=U.st=='pass',pend=U.st=='pend';
+ const cell=x=>(!x.f&&x.g!=null)?`<td>—</td><td>${f2(x.g)}</td><td>—</td><td>—</td>`:x.f?(x.g==null?`<td>${f2(x.f)}</td><td>—</td><td>—</td><td>—</td>`:`<td>${f2(x.f)}</td><td${x.st=='fail'?' class="f"':''}>${f2(x.g)}</td><td${x.st=='fail'?' class="f"':''}>${pc(x.p)}</td><td${x.st=='fail'?' class="f"':''}>${x.gr}${x.st=='fail'?' ✘':''}</td>`):'<td>—</td><td>—</td><td>—</td><td>—</td>';
+ const tb=U.rows.map((r,i)=>`<tr><td class="l">${esc(r.nm)}</td>${cell(r.w)}${cell(r.m)}<td>${f2(r.tg)} / ${f2(r.tf)}</td><td>${pc(r.tp)}</td><td${r.st=='fail'?' class="f"':''}>${r.gr||'—'}</td></tr>`).join('');
+ const W=U.rows.reduce((a,r)=>({f:a.f+(r.w.g!=null&&r.w.f>0?r.w.f:0),g:a.g+(r.w.g!=null&&r.w.f>0?r.w.g:0)}),{f:0,g:0}),M=U.rows.reduce((a,r)=>({f:a.f+(r.m.g!=null&&r.m.f>0?r.m.f:0),g:a.g+(r.m.g!=null&&r.m.f>0?r.m.g:0)}),{f:0,g:0});
+ const nm=st.nameBn||st.nameEn,lgo=logo();
+ return`<div class="uos a4 ua"><div class="rh">${lgo?`<img class="lg" src="${lgo}">`:''}<div class="c"><b>${esc(orgName())}</b><br><b>${esc(rec.exam)} — ফলাফল শিট</b><br><small>লিখিত + MCQ · ৬ বিষয়</small></div><div class="id">রোল: <b>${esc(rec.roll)}</b><br>সিরিয়াল: <b>${esc(rec.serial||'—')}</b></div></div>
+<div class="st"><div class="fl"><small>পরীক্ষার্থীর নাম</small>${nm?'<b>'+esc(nm)+'</b>':(U.nm?`<img src="${U.nm}">`:'')}</div><div class="fl"><small>শ্রেণি / শাখা</small><b>${esc([st.cls,st.grp,st.sec].filter(Boolean).join(' / '))}</b></div><div class="fl"><small>পিতার নাম</small><b>${esc(st.fName||'')}</b></div><div class="fl"><small>মাতার নাম</small><b>${esc(st.mName||'')}</b></div></div>
+<table><tr><th rowspan="2" style="width:17%">বিষয়</th><th colspan="4">লিখিত</th><th colspan="4">MCQ</th><th colspan="3">বিষয়ভিত্তিক মোট</th></tr><tr><th>পূর্ণ</th><th>প্রাপ্ত</th><th>%</th><th>গ্রেড</th><th>পূর্ণ</th><th>প্রাপ্ত</th><th>%</th><th>গ্রেড</th><th>প্রাপ্ত / পূর্ণ</th><th>%</th><th>গ্রেড</th></tr>${tb}
+<tr class="t"><td class="l">সর্বমোট</td><td>${f2(W.f)}</td><td>${f2(W.g)}</td><td>${W.f?pc(W.g/W.f*100):'—'}</td><td></td><td>${f2(M.f)}</td><td>${f2(M.g)}</td><td>${M.f?pc(M.g/M.f*100):'—'}</td><td></td><td>${f2(rec.got)} / ${f2(rec.full)}</td><td>${pc(U.tp)}</td><td>${U.gr||'—'}</td></tr></table>
+<div class="res"><div><small>সর্বমোট প্রাপ্ত নম্বর</small><b>${f2(rec.got)}</b><small>পূর্ণমান ${f2(rec.full)} · ${pc(U.tp)}</small></div><div><small>গ্রেড</small><b>${U.gr||'—'}</b></div><div><small>ফলাফল</small><b>${pend?'অসম্পূর্ণ':ok?'উত্তীর্ণ':'অনুত্তীর্ণ'}</b>${U.st=='fail'?'<small>'+esc(rec.remark.replace('ফেল: ',''))+'</small>':''}</div></div>
+<p class="nt">পাস মান: প্রতিটি বিষয়ের লিখিত ও MCQ আলাদাভাবে ন্যূনতম ${bn(U.ps)}% — যেকোনো একটি অংশে কম হলে সামগ্রিক ফলাফল অনুত্তীর্ণ। গ্রেড: ৯৫%+ Golden A+, ৯০%+ A+, ৮৫%+ A, ৮০%+ B+, ৭৫%+ B, তার নিচে ফেল (পাস মানের নিচে F)।</p>
+<div class="sg"><div>${U.sigS?`<img src="${U.sigS}">`:''}নিরীক্ষকের স্বাক্ষর</div><div>${U.sigI?`<img src="${U.sigI}">`:''}ইনভিজিলেটরের স্বাক্ষর</div><div>প্রধান শিক্ষক / অধ্যক্ষ</div></div></div>`}
+function show(html,print){const RS=window.__uoRS;if(!RS)return;const pg=$('#pg');if(pg)pg.textContent='@page{size:A4 portrait;margin:0}';const o=RS.out();o.innerHTML=html;document.body.dataset.mode='uo';o.scrollIntoView({behavior:'smooth'});if(print)setTimeout(()=>window.print(),500)}
+/* ---------- ইউআই: স্ক্যান ট্যাবের ভিতরে ---------- */
+const up5=$('#up5');
+function cellTxt(x){if(!x.f)return'—';if(x.g==null)return'<small>বাকি</small>';return`<small class="${x.st=='fail'?'no':'ok'}">${f2(x.g)}/${f2(x.f)} ${x.gr}${x.st=='fail'?' ✘':' ✔'}</small>`}
+function render(){const o=$('#ua_tb');if(!o)return;const{recs}=gather();if(!recs.length){o.innerHTML='<p class="note">স্ক্যান করা শিট এলে এখানে মার্জ হয়ে দেখাবে।</p>';return}
+ o.innerHTML='<table class="uo-tb"><tr><th>রোল</th><th>পরীক্ষা</th>'+NAMES.map(n=>`<th>${n}<br><small>লিখিত | MCQ</small></th>`).join('')+'<th>মোট</th><th>ফলাফল</th><th></th></tr>'+recs.map((r,i)=>{const U=r.uadm;return`<tr><td>${esc(r.roll)}</td><td>${esc(r.exam)}</td>${U.rows.map(x=>`<td>${cellTxt(x.w)}${cellTxt(x.m)}</td>`).join('')}<td>${f2(r.got)}/${f2(r.full)}<small>${pc(U.tp)} · ${U.gr||'—'}</small></td><td class="${U.st=='fail'?'no':U.st=='pass'?'ok':''}">${U.st=='fail'?'ফেল':U.st=='pass'?'পাস':'অসম্পূর্ণ'}</td><td><button type="button" data-uap="${i}">PDF</button></td></tr>`}).join('')+'</table>'}
+if(up5){
+ up5.insertAdjacentHTML('afterbegin',`<fieldset id="ua_db"><legend>🎓 ভার্সিটি অ্যাডমিশন — রেজাল্ট ডেটাবেস (৬ বিষয় × লিখিত + MCQ)</legend>
+<p class="note">নিচের স্মার্ট স্ক্যানে MCQ OMR ও লিখিত OMR (প্রথম পৃষ্ঠা) দুটোই দিন — <b>রোল + সিরিয়াল</b> ধরে নিজে মার্জ হয়ে শিক্ষার্থীর ডেটাবেসে পরীক্ষার শিরোনামের নিচে ৬ বিষয়ের লিখিত ও MCQ নম্বর সেভ হবে। লিখিত OMR-এ MCQ বৃত্ত ভরাট না থাকলে MCQ স্ক্যান থেকে আসবে; MCQ স্ক্যান পরে করলেও আগের লিখিত নম্বর অক্ষত থেকে মার্জ হবে। নিরীক্ষকের স্বাক্ষর ক্রপ হয়ে সেভ হয় ও PDF-এ বসে।</p>
+<div class="g"><label>পরীক্ষার শিরোনাম (ফাঁকা = প্রশ্নপত্র তৈরির সময় দেওয়া নাম)<input id="ua_et" placeholder="ভার্সিটি অ্যাডমিশন টেস্ট ১"></label><label>পাস শতকরা (প্রতিটি বিষয়ের লিখিত ও MCQ আলাদা)<input id="ua_ps" type="number" min="0" max="100" step="1"></label></div>
+<details><summary>প্রতি বিষয়ের পূর্ণমান (ফাঁকা = প্রশ্নপত্র/স্ক্যান থেকে স্বয়ংক্রিয়)</summary><table class="uo-tb"><tr><th>বিষয়</th><th>লিখিত পূর্ণমান</th><th>MCQ পূর্ণমান</th></tr>${NAMES.map((n,i)=>`<tr><td>${n}</td><td><input type="number" min="0" step="any" data-uaf="w${i}" style="width:80px"></td><td><input type="number" min="0" step="any" data-uaf="m${i}" style="width:80px"></td></tr>`).join('')}</table></details>
+<div class="bar"><label style="flex-direction:row;gap:6px;align-items:center;color:inherit"><input type="checkbox" id="ua_au"> স্ক্যানের সাথে সাথে স্বয়ংক্রিয় সেভ/মার্জ</label><button type="button" class="p" id="ua_sv">💾 ডেটাবেসে সেভ / মার্জ করো</button><button type="button" id="ua_pa">🖨 সবার ফলাফল শিট PDF</button></div><div id="ua_msg" class="note"></div><div id="ua_tb" style="overflow-x:auto"></div></fieldset>`);
+ $('#ua_et').value=CFG.et||'';$('#ua_ps').value=CFG.pass;$('#ua_au').checked=!!CFG.auto;$$('[data-uaf]').forEach(e=>{const k=e.dataset.uaf;e.value=CFG[k[0]=='w'?'wf':'mf'][+k.slice(1)]||''});
+ let tm=0;const sched=()=>{if(!CFG.auto)return;clearTimeout(tm);tm=setTimeout(()=>save(true),1500)};
+ up5.addEventListener('input',e=>{const t=e.target;if(t.id=='ua_et')CFG.et=t.value;else if(t.id=='ua_ps')CFG.pass=+t.value||75;else if(t.dataset.uaf){const k=t.dataset.uaf;CFG[k[0]=='w'?'wf':'mf'][+k.slice(1)]=t.value}else if(t.id=='rs_wf'){}else return;saveCfg();render();sched()});
+ up5.addEventListener('change',e=>{if(e.target.id=='ua_au'){CFG.auto=e.target.checked?1:0;saveCfg();sched()}});
+ up5.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;if(b.id=='ua_sv')save(false);else if(b.id=='ua_pa'){const r=await save(true)||gather().recs;if(!r.length)return alert('আগে স্ক্যান করুন');show(r.map(sheet).join(''),true)}else if(b.dataset.uap!==undefined){const{recs}=gather(),r=recs[+b.dataset.uap];if(r){await save(true);show(sheet(r),false)}}});
+ ['#cq_res','#us_res'].forEach(s=>{const el=$(s);if(el)new MutationObserver(()=>{render();sched()}).observe(el,{childList:true})});
+ document.addEventListener('click',e=>{const us=e.target.closest('#ul2 [data-us]');if(us&&us.dataset.us=='5')setTimeout(render,50)});render()}
+/* ---------- হাতে নম্বর এন্ট্রি (মার্কশিট প্রস্তুত ট্যাবে) ---------- */
+const who=$('#mp_who');
+if(who){who.insertAdjacentHTML('afterend',`<fieldset id="ua_man"><legend>🎓 ঢাকা বিশ্ববিদ্যালয় অ্যাডমিশন প্রস্তুতি — হাতে নম্বর এন্ট্রি (OMR ছাড়া)</legend><div class="g"><label>পরীক্ষার শিরোনাম<input id="uam_et" value="ভার্সিটি অ্যাডমিশন টেস্ট ১"></label><label>পাস শতকরা<input id="uam_ps" type="number" value="75"></label><label>সিরিয়াল (ঐচ্ছিক)<input id="uam_ser"></label></div>
+<table><tr><th>বিষয়</th><th>লিখিত পূর্ণ</th><th>লিখিত প্রাপ্ত</th><th>MCQ পূর্ণ</th><th>MCQ প্রাপ্ত</th><th>ফল</th></tr>${NAMES.map((n,i)=>`<tr><td>${n}</td>${['wf','wg','mf','mg'].map(k=>`<td><input type="number" min="0" step="any" data-uam="${k}${i}"></td>`).join('')}<td data-uar="${i}">—</td></tr>`).join('')}</table>
+<div class="bar"><button type="button" class="p" id="uam_sv">💾 ডেটাবেসে সেভ (রোল উপরের ঘর থেকে)</button><button type="button" id="uam_ld">⟲ সেভ করা নম্বর লোড</button><button type="button" id="uam_pdf">🖨 ফলাফল শিট PDF</button><b id="uam_msg"></b></div><div id="uam_sum" class="note"></div></fieldset>`);
+ const gv=()=>NAMES.map((n,i)=>{const g=k=>{const e=$(`[data-uam="${k}${i}"]`);return e?e.value:''};return{w:{full:g('wf'),got:g('wg')},m:{full:g('mf'),got:g('mg')}}});
+ const live=()=>{CFG.pass=+$('#uam_ps').value||75;const E=evalSubs(gv(),CFG.pass);E.rows.forEach((r,i)=>{const c=$(`[data-uar="${i}"]`);c.innerHTML=r.st=='fail'?'<b class="no" style="color:#b00">ফেল '+r.gr+'</b>':r.st=='pass'?'<b style="color:#067a2a">পাস '+r.gr+'</b>':r.st=='pend'?'বাকি':'—'});
+  $('#uam_sum').innerHTML=E.tf?`মোট ${f2(E.tg)} / ${f2(E.tf)} · ${pc(E.tp)} · গ্রেড ${E.gr} · <b>${E.status=='fail'?'ফেল — '+esc(E.fail.join(', ')):E.status=='pass'?'পাস':'অসম্পূর্ণ'}</b>`:''};
+ const rollV=()=>nr(($('#mp_roll')||{}).value||'');
+ const mk=()=>{const r=rollV();if(!r){alert('আগে উপরে রোল দিন');return null}return mkRec(r,($('#uam_et').value||'').trim()||'ভার্সিটি অ্যাডমিশন টেস্ট',$('#uam_ser').value.trim(),gv(),{src:'হাতে'})};
+ $('#ua_man').addEventListener('input',live);
+ $('#ua_man').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id=='uam_sv'){const r=mk();if(!r)return;try{await SRX().putEx(r);$('#uam_msg').textContent='✔ সেভ হয়েছে';setTimeout(()=>$('#uam_msg').textContent='',3500);try{window.__gmark&&window.__gmark()}catch(_){}const f=$('#mp_find');if(f)f.click()}catch(_){alert('সেভ করা যায়নি')}}
+  else if(b.id=='uam_pdf'){const r=mk();if(r)show(sheet(r),true)}
+  else if(b.id=='uam_ld'){const r=rollV(),et=($('#uam_et').value||'').trim()||'ভার্সিটি অ্যাডমিশন টেস্ট',x=SRX().EX().find(y=>y.id=='uadm|'+et+'|'+r);if(!x)return alert('এই রোল ও শিরোনামে সেভ করা নম্বর নেই');
+   x.uadm.rows.forEach((s,i)=>{const set=(k,v)=>{const el=$(`[data-uam="${k}${i}"]`);if(el)el.value=v==null?'':v};set('wf',s.w.f||'');set('wg',s.w.g);set('mf',s.m.f||'');set('mg',s.m.g)});$('#uam_ps').value=x.uadm.ps;$('#uam_ser').value=x.serial||'';live()}});
+ NAMES.forEach((n,i)=>{const a=$(`[data-uam="wf${i}"]`),b=$(`[data-uam="mf${i}"]`);if(a&&CFG.wf[i])a.value=CFG.wf[i];if(b&&CFG.mf[i])b.value=CFG.mf[i]});live()}
+})();
+</script>
+<style id="cm_css">
+math,.cmath math{font-family:"Cambria Math","Cambria",math,serif!important;font-size:1.1em;white-space:nowrap}
+.cmath{font-family:"Cambria Math","Cambria",serif;white-space:nowrap}
+#ua_pv{position:sticky;bottom:0;z-index:5;max-height:34vh;overflow:auto;box-shadow:0 -2px 8px #0003}
+.upg .u,.upg .uw,.upg .uq{break-inside:avoid}
+</style>
+<script>
+/* ===== সমীকরণ: Cambria Math (MathML) — প্রিভিউ, প্রিন্ট/PDF ও লাইভ প্রিভিউ ===== */
+(function(){
+const RX=/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$([^$\n]+?)\$/g;
+function mml(M,tex,d){const s=document.createElement('span');s.className='cmath';if(d)s.style.cssText='display:block;text-align:center;margin:.3em 0;white-space:normal';s.innerHTML=M.tex2mml(tex.trim(),{display:d});return s}
+function typeset(M,root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){const p=n.parentNode;if(!p||p.closest('math,.cmath,script,style,textarea,input,mjx-container'))return NodeFilter.FILTER_REJECT;return /\$|\\\(|\\\[/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}}),L=[];while(w.nextNode())L.push(w.currentNode);
+ L.forEach(n=>{const t=n.nodeValue;RX.lastIndex=0;let m,i=0,f=document.createDocumentFragment(),any=false;while((m=RX.exec(t))){any=true;if(m.index>i)f.appendChild(document.createTextNode(t.slice(i,m.index)));const d=m[1]!=null||m[2]!=null,tex=m[1]!=null?m[1]:m[2]!=null?m[2]:m[3]!=null?m[3]:m[4];try{f.appendChild(mml(M,tex,d))}catch(_){f.appendChild(document.createTextNode(m[0]))}i=m.index+m[0].length}
+  if(any){if(i<t.length)f.appendChild(document.createTextNode(t.slice(i)));n.parentNode.replaceChild(f,n)}})}
+function patch(){const M=window.MathJax;if(!M||M.__cm||typeof M.tex2svg!='function'||typeof M.tex2mml!='function')return false;M.__cm=1;
+ M.tex2svg=(tex,o)=>mml(M,tex,!!(o&&o.display));
+ M.typesetPromise=async els=>{(els&&els.length?els:[document.body]).forEach(e=>typeset(M,e))};
+ return true}
+window.__cmTypeset=typeset;
+let n=0;const iv=setInterval(()=>{if(patch()||++n>150)clearInterval(iv)},200);
+/* লাইভ প্রিভিউ: প্রশ্ন টাইপ/পেস্ট করলেই নিচের প্রিভিউ বক্সে Cambria Math-এ দেখাবে */
+let tm=0;document.addEventListener('input',e=>{const t=e.target;if(!t||!t.matches||!t.matches('[data-ua]'))return;clearTimeout(tm);tm=setTimeout(()=>{const b=document.getElementById('ua_pvb');if(b&&document.activeElement===t)b.click()},600)});
 })();
 </script>
